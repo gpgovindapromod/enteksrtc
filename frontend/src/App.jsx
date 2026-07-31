@@ -344,7 +344,16 @@ function App() {
             <div className="form-grid">
               <div className="input-group">
                 <label>Travelling From</label>
-                <input type="text" className="input-field" placeholder="Origin City" defaultValue="Bangalore" />
+                <select className="input-field" defaultValue="Bangalore">
+                  <option value="" disabled>Select Origin</option>
+                  <option value="Bangalore">Bangalore</option>
+                  <option value="Trivandrum">Trivandrum</option>
+                  <option value="Kochi">Kochi</option>
+                  <option value="Kozhikode">Kozhikode</option>
+                  <option value="Thrissur">Thrissur</option>
+                  <option value="Chennai">Chennai</option>
+                  <option value="Mysore">Mysore</option>
+                </select>
                 <MapPin className="input-icon" size={20} />
               </div>
 
@@ -354,7 +363,17 @@ function App() {
 
               <div className="input-group">
                 <label>Going To</label>
-                <input type="text" className="input-field" placeholder="Destination City" defaultValue="Tirunelveli" />
+                <select className="input-field" defaultValue="Tirunelveli">
+                  <option value="" disabled>Select Destination</option>
+                  <option value="Bangalore">Bangalore</option>
+                  <option value="Trivandrum">Trivandrum</option>
+                  <option value="Kochi">Kochi</option>
+                  <option value="Kozhikode">Kozhikode</option>
+                  <option value="Thrissur">Thrissur</option>
+                  <option value="Chennai">Chennai</option>
+                  <option value="Mysore">Mysore</option>
+                  <option value="Tirunelveli">Tirunelveli</option>
+                </select>
                 <MapPin className="input-icon" size={20} />
               </div>
             </div>
@@ -362,13 +381,11 @@ function App() {
             <div className="form-grid">
               <div className="input-group">
                 <label>Journey Date</label>
-                <input type="text" className="input-field" defaultValue="Tue, 28-Jul-2026" />
-                <Calendar className="input-icon" size={20} />
+                <input type="date" className="input-field" defaultValue="2026-07-28" />
               </div>
               <div className="input-group">
                 <label>Return Date (Optional)</label>
-                <input type="text" className="input-field" placeholder="Choose Date" disabled={tripType === 'one-way'} />
-                <Calendar className="input-icon" size={20} />
+                <input type="date" className="input-field" disabled={tripType === 'one-way'} />
               </div>
             </div>
 
