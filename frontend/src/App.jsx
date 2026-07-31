@@ -134,7 +134,7 @@ const GallerySection = React.memo(({ images }) => (
     <div className="container">
       <div className="section-subtitle">Gallery</div>
       <h2 className="section-title">KSRTC Moments</h2>
-      <div style={{ height: '800px', width: '100%', position: 'relative' }}>
+      <div className="gallery-container">
         <Masonry
           items={images}
           ease="power3.out"

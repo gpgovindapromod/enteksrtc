@@ -947,8 +947,17 @@ button {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+.gallery-container {
+  height: 800px;
+  width: 100%;
+  position: relative;
+}
 
 @media (max-width: 768px) {
+  .gallery-container {
+    height: 1400px; /* Allow enough height for stacked images on mobile */
+  }
+
   .modern-navbar {
     transform: none;
     left: 5%;
