@@ -949,6 +949,16 @@ button {
 }
 
 @media (max-width: 768px) {
+  .modern-navbar {
+    transform: none;
+    left: 5%;
+    width: 90%;
+  }
+
+  .slider-controls {
+    display: none;
+  }
+
   .mobile-toggle {
     display: block;
   }
