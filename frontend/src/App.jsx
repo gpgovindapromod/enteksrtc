@@ -344,8 +344,8 @@ function App() {
             <div className="form-grid">
               <div className="input-group">
                 <label>Travelling From</label>
-                <select className="input-field" defaultValue="Bangalore">
-                  <option value="" disabled>Select Origin</option>
+                <input list="origin-options" className="input-field" placeholder="Select Origin" defaultValue="Bangalore" />
+                <datalist id="origin-options">
                   <option value="Bangalore">Bangalore</option>
                   <option value="Trivandrum">Trivandrum</option>
                   <option value="Kochi">Kochi</option>
@@ -353,7 +353,7 @@ function App() {
                   <option value="Thrissur">Thrissur</option>
                   <option value="Chennai">Chennai</option>
                   <option value="Mysore">Mysore</option>
-                </select>
+                </datalist>
                 <MapPin className="input-icon" size={20} />
               </div>
 
@@ -363,8 +363,8 @@ function App() {
 
               <div className="input-group">
                 <label>Going To</label>
-                <select className="input-field" defaultValue="Tirunelveli">
-                  <option value="" disabled>Select Destination</option>
+                <input list="destination-options" className="input-field" placeholder="Select Destination" defaultValue="Tirunelveli" />
+                <datalist id="destination-options">
                   <option value="Bangalore">Bangalore</option>
                   <option value="Trivandrum">Trivandrum</option>
                   <option value="Kochi">Kochi</option>
@@ -373,7 +373,7 @@ function App() {
                   <option value="Chennai">Chennai</option>
                   <option value="Mysore">Mysore</option>
                   <option value="Tirunelveli">Tirunelveli</option>
-                </select>
+                </datalist>
                 <MapPin className="input-icon" size={20} />
               </div>
             </div>
