@@ -16,11 +16,34 @@ import {
   Phone,
   ChevronDown,
   Sun,
-  Moon
+  Moon,
+  Ticket,
+  Compass,
+  Settings,
+  ChevronRight,
+  Bell,
+  Shield,
+  Info,
+  ArrowLeft,
+  CheckCircle2,
+  RotateCcw,
+  Share2,
+  Heart,
+  Search
 } from 'lucide-react';
 import GradualBlur from './components/GradualBlur';
 import Masonry from './components/Masonry';
 import BorderGlow from './components/BorderGlow';
+import MobileBookingWidget from './components/mobile/MobileBookingWidget';
+import MobileAppHeader from './components/mobile/MobileAppHeader';
+import MobileLiveTracking from './components/mobile/MobileLiveTracking';
+import MobileTimings from './components/mobile/MobileTimings';
+import MobileSearchResults from './components/mobile/MobileSearchResults';
+import MobileTicketsTab from './components/mobile/MobileTicketsTab';
+import MobileProfileTab from './components/mobile/MobileProfileTab';
+import MobileHomeTab from './components/mobile/MobileHomeTab';
+import MobileLoginModal from './components/mobile/MobileLoginModal';
+
 
 const GalleryImages = [
   { id: "1", img: "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=600&auto=format&fit=crop", url: "#", height: 400 },
@@ -177,13 +200,142 @@ const TestimonialsSection = React.memo(({ testimonials }) => (
   </section>
 ));
 
+const MOCK_BUSES = [
+  { id: 'B1', name: 'K-Swift Premium AC Sleeper', departure: '19:30', arrival: '08:45', duration: '13h 15m', fare: 1450, rating: '4.8', type: 'Sleeper (2+1)', brand: 'K-Swift' },
+  { id: 'B2', name: 'Minnal Super Express', departure: '20:15', arrival: '07:30', duration: '11h 15m', fare: 950, rating: '4.2', type: 'Semi-Sleeper (2+2)', brand: 'Minnal' },
+  { id: 'B3', name: 'Swift Deluxe AC Seater', departure: '21:00', arrival: '10:00', duration: '13h 00m', fare: 1100, rating: '4.5', type: 'Seater (2+2)', brand: 'K-Swift' },
+  { id: 'B4', name: 'Fast Passenger (Non-AC)', departure: '18:00', arrival: '09:30', duration: '15h 30m', fare: 650, rating: '3.9', type: 'Seater (3+2)', brand: 'Fast Passenger' }
+];
+
+const TRANSLATIONS = {
+  en: {
+    welcome: "Where are you heading?",
+    searchPlaceholder: "Search destinations...",
+    origin: "Origin",
+    destination: "Destination",
+    date: "Departure Date",
+    searchBuses: "Search Buses",
+    myTickets: "My Tickets",
+    activeJourneys: "Active Journeys",
+    routes: "Popular Routes",
+    profile: "Profile Settings",
+    support: "Support & Helplines",
+    quickActions: "Quick Actions",
+    liveTracking: "Live Tracking",
+    swiftCargo: "Swift Cargo",
+    busTimings: "Bus Timings",
+    kSwift: "K-Swift",
+    seatSelection: "Seat Selection",
+    confirmBooking: "Confirm Booking",
+    paymentSuccess: "Booking Confirmed!",
+    backHome: "Back to Home",
+    boardingPass: "Boarding Pass",
+    tapToScan: "Tap to view boarding pass",
+    theme: "Dark Theme",
+    language: "Language",
+    phoneEnquiry: "Enquiry Helpline",
+    feedback: "Send Feedback"
+  },
+  ml: {
+    welcome: "നിങ്ങൾ എവിടേക്കാണ് പോകുന്നത്?",
+    searchPlaceholder: "സ്ഥലം തിരയുക...",
+    origin: "പുറപ്പെടുന്ന സ്ഥലം",
+    destination: "എത്തുന്ന സ്ഥലം",
+    date: "യാത്രാ തീയതി",
+    searchBuses: "ബസുകൾ തിരയുക",
+    myTickets: "എന്റെ ടിക്കറ്റുകൾ",
+    activeJourneys: "നിലവിലെ യാത്രകൾ",
+    routes: "പ്രധാന റൂട്ടുകൾ",
+    profile: "പ്രൊഫൈൽ ക്രമീകരണങ്ങൾ",
+    support: "സഹായ കേന്ദ്രം",
+    quickActions: "ദ്രുത സേവനങ്ങൾ",
+    liveTracking: "ലൈവ് ട്രാക്കിംഗ്",
+    swiftCargo: "സ്വിഫ്റ്റ് കാർഗോ",
+    busTimings: "ബസ് സമയവിവരങ്ങൾ",
+    kSwift: "കെ-സ്വിഫ്റ്റ്",
+    seatSelection: "സീറ്റ് തിരഞ്ഞെടുക്കുക",
+    confirmBooking: "ബുക്കിംഗ് സ്ഥിരീകരിക്കുക",
+    paymentSuccess: "ബുക്കിംഗ് വിജയിച്ചു!",
+    backHome: "ഹോമിലേക്ക് മടങ്ങുക",
+    boardingPass: "ബോർഡിംഗ് പാസ്",
+    tapToScan: "ബോർഡിംഗ് പാസ് കാണാൻ ക്ലിക്ക് ചെയ്യുക",
+    theme: "ഡാർക്ക് തീം",
+    language: "ഭാഷ",
+    phoneEnquiry: "ഹെൽപ്പ്‌ലൈൻ നമ്പർ",
+    feedback: "അഭിപ്രായങ്ങൾ അറിയിക്കുക"
+  }
+};
+
+
+
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [tripType, setTripType] = useState('one-way');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+
+  // Mobile WebApp States
+  const [isMobile, setIsMobile] = useState(false);
+  const [forceMobilePreview, setForceMobilePreview] = useState(false);
+  const [activeMobileTab, setActiveMobileTab] = useState('home');
+  const [language, setLanguage] = useState('en');
+  const [hasActivatedWebApp, setHasActivatedWebApp] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const renderMobileBookingWidget = () => (
+    <MobileBookingWidget
+      origin={origin}
+      setOrigin={setOrigin}
+      destination={destination}
+      setDestination={setDestination}
+      journeyDate={journeyDate}
+      setJourneyDate={setJourneyDate}
+      tripType={tripType}
+      setTripType={setTripType}
+      onSearch={() => {
+        setSelectedSeats([]);
+        setHasActivatedWebApp(true);
+        setIsSearching(true);
+      }}
+      t={t}
+    />
+  );
+
+  // Search, Selection & Checkout States
+  const [origin, setOrigin] = useState('Bangalore');
+  const [destination, setDestination] = useState('Tirunelveli');
+  const [journeyDate, setJourneyDate] = useState('2026-07-28');
+  const [isSearching, setIsSearching] = useState(false);
+  const [selectedBus, setSelectedBus] = useState(null);
+  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [isBookingSuccess, setIsBookingSuccess] = useState(false);
+  const [showLiveTracking, setShowLiveTracking] = useState(false);
+  const [trackingStep, setTrackingStep] = useState(0);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showTimingsModal, setShowTimingsModal] = useState(false);
+
+  // Profile accordion state
+  const [faqExpanded, setFaqExpanded] = useState({ 0: false, 1: false, 2: false });
+
+  // Ticket status list
+  const [activeBookings, setActiveBookings] = useState([
+    {
+      id: 'KSRTC-9481023',
+      from: 'Trivandrum',
+      to: 'Bangalore',
+      date: '2026-08-05',
+      time: '18:30',
+      busType: 'K-Swift Premium AC Sleeper',
+      seats: ['S5', 'S6'],
+      price: '₹2,900',
+      qrCode: 'KSRTC-9481023-TVM-BLR-050826'
+    }
+  ]);
+  const [expandedTicketId, setExpandedTicketId] = useState(null);
+
+  const t = TRANSLATIONS[language] || TRANSLATIONS.en;
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
@@ -193,6 +345,16 @@ function App() {
       document.body.removeAttribute('data-theme');
     }
   }, [theme]);
+
+  // Screen size resize handler
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toggleTheme = () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
 
@@ -204,10 +366,9 @@ function App() {
   ];
 
   useEffect(() => {
-    // Simulate loading for 2 seconds
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2000);
+    }, 1500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -218,6 +379,81 @@ function App() {
     }, 5000);
     return () => clearInterval(interval);
   }, [isLoading]);
+
+  // Handle tracking step interval
+  useEffect(() => {
+    if (showLiveTracking) {
+      const interval = setInterval(() => {
+        setTrackingStep((prev) => (prev + 1) % 6);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [showLiveTracking]);
+
+  // Bus seat grid builder helper
+  const renderSeatGrid = () => {
+    const rows = 6;
+    const cols = 5;
+    const preBooked = ['0-0', '1-3', '2-4', '3-0', '4-1', '5-3'];
+    const seatLayout = [];
+
+    for (let r = 0; r < rows; r++) {
+      const rowSeats = [];
+      for (let c = 0; c < cols; c++) {
+        if (c === 2) {
+          rowSeats.push(<div key={`aisle-${r}`} className="seat-aisle"></div>);
+          continue;
+        }
+        const seatId = `${r}-${c}`;
+        const seatLabel = `${String.fromCharCode(65 + r)}${c + 1}`;
+        const isBooked = preBooked.includes(seatId);
+        const isSelected = selectedSeats.includes(seatLabel);
+
+        let seatClass = "seat-item";
+        if (isBooked) seatClass += " booked";
+        else if (isSelected) seatClass += " selected";
+
+        rowSeats.push(
+          <button
+            key={seatId}
+            disabled={isBooked}
+            className={seatClass}
+            onClick={() => {
+              if (isSelected) {
+                setSelectedSeats(selectedSeats.filter(s => s !== seatLabel));
+              } else {
+                setSelectedSeats([...selectedSeats, seatLabel]);
+              }
+            }}
+          >
+            {seatLabel}
+          </button>
+        );
+      }
+      seatLayout.push(<div key={`row-${r}`} className="seat-row">{rowSeats}</div>);
+    }
+    return seatLayout;
+  };
+  const handleCheckout = () => {
+    if (selectedSeats.length === 0) return;
+    const newBooking = {
+      id: `KSRTC-${Math.floor(1000000 + Math.random() * 9000000)}`,
+      from: origin,
+      to: destination,
+      date: journeyDate,
+      time: selectedBus.departure,
+      busType: selectedBus.name,
+      seats: selectedSeats,
+      price: `₹${(selectedSeats.length * selectedBus.fare).toLocaleString()}`,
+      qrCode: `KSRTC-${Math.floor(1000000 + Math.random() * 9000000)}-${origin.substring(0,3).toUpperCase()}-${destination.substring(0,3).toUpperCase()}-${journeyDate.replace(/-/g, '')}`
+    };
+    setActiveBookings([newBooking, ...activeBookings]);
+    setIsBookingSuccess(true);
+  };
+
+  const handleCancelBooking = (bookingId) => {
+    setActiveBookings(activeBookings.filter(b => b.id !== bookingId));
+  };
 
   if (isLoading) {
     return (
@@ -233,10 +469,14 @@ function App() {
     );
   }
 
-  return (
+  const showMobileView = isMobile || forceMobilePreview;
+
+
+
+  // Local helper: Entire Website Replica Layout content (reused in desktop and mobile active home tab)
+  const renderWebsiteReplicaContent = () => (
     <>
       {/* Navbar */}
-      {/* Sleek Modern Navbar */}
       <nav className="modern-navbar">
         <div className="navbar-container">
           <div className="nav-brand">
@@ -287,7 +527,7 @@ function App() {
         ))}
         <div className="hero-overlay"></div>
 
-        {/* Modern Slider Controls (Hover to Change) */}
+        {/* Modern Slider Controls */}
         <div className="slider-controls">
           {heroImages.map((_, index) => (
             <div
@@ -302,95 +542,98 @@ function App() {
         </div>
 
         <div className="container hero-content center-content">
-
           <div className="hero-title-area">
             <h1 className="hero-title">Experience the Journey</h1>
             <p className="hero-subtitle">Safe, Reliable, and Comfortable travel across Kerala and beyond.</p>
           </div>
 
-          <BorderGlow
-            className="booking-widget glass-widget"
-            glowColor="25 90 55"
-            backgroundColor="transparent"
-            borderRadius={24}
-            glowIntensity={0.8}
-            colors={['#ea580c', '#308342', '#fbbf24']}
-          >
-            <div className="widget-tabs">
-              <button className="widget-tab active">
-                <Bus size={20} />
-                Book Bus Ticket
-              </button>
-              <button className="widget-tab" style={{ color: 'var(--gray)' }}>
-                Link Ticket Booking
-              </button>
-            </div>
-
-            <div className="trip-type">
-              <button
-                className={`badge-btn ${tripType === 'one-way' ? 'active' : ''}`}
-                onClick={() => setTripType('one-way')}
-              >
-                ONE WAY
-              </button>
-              <button
-                className={`badge-btn ${tripType === 'round' ? 'active' : ''}`}
-                onClick={() => setTripType('round')}
-              >
-                ROUND TRIP
-              </button>
-            </div>
-
-            <div className="form-grid">
-              <div className="input-group">
-                <label>Travelling From</label>
-                <input list="origin-options" className="input-field" placeholder="Select Origin" defaultValue="Bangalore" />
-                <datalist id="origin-options">
-                  <option value="Bangalore">Bangalore</option>
-                  <option value="Trivandrum">Trivandrum</option>
-                  <option value="Kochi">Kochi</option>
-                  <option value="Kozhikode">Kozhikode</option>
-                  <option value="Thrissur">Thrissur</option>
-                  <option value="Chennai">Chennai</option>
-                  <option value="Mysore">Mysore</option>
-                </datalist>
-                <MapPin className="input-icon" size={20} />
+          {showMobileView ? (
+            renderMobileBookingWidget()
+          ) : (
+            <BorderGlow
+              className="booking-widget glass-widget"
+              glowColor="25 90 55"
+              backgroundColor="transparent"
+              borderRadius={24}
+              glowIntensity={0.8}
+              colors={['#ea580c', '#308342', '#fbbf24']}
+            >
+              <div className="widget-tabs">
+                <button className="widget-tab active">
+                  <Bus size={20} />
+                  Book Bus Ticket
+                </button>
+                <button className="widget-tab" style={{ color: 'var(--gray)' }}>
+                  Link Ticket Booking
+                </button>
               </div>
 
-              <button className="swap-btn">
-                <ArrowRightLeft size={18} />
-              </button>
-
-              <div className="input-group">
-                <label>Going To</label>
-                <input list="destination-options" className="input-field" placeholder="Select Destination" defaultValue="Tirunelveli" />
-                <datalist id="destination-options">
-                  <option value="Bangalore">Bangalore</option>
-                  <option value="Trivandrum">Trivandrum</option>
-                  <option value="Kochi">Kochi</option>
-                  <option value="Kozhikode">Kozhikode</option>
-                  <option value="Thrissur">Thrissur</option>
-                  <option value="Chennai">Chennai</option>
-                  <option value="Mysore">Mysore</option>
-                  <option value="Tirunelveli">Tirunelveli</option>
-                </datalist>
-                <MapPin className="input-icon" size={20} />
+              <div className="trip-type">
+                <button
+                  className={`badge-btn ${tripType === 'one-way' ? 'active' : ''}`}
+                  onClick={() => setTripType('one-way')}
+                >
+                  ONE WAY
+                </button>
+                <button
+                  className={`badge-btn ${tripType === 'round' ? 'active' : ''}`}
+                  onClick={() => setTripType('round')}
+                >
+                  ROUND TRIP
+                </button>
               </div>
-            </div>
 
-            <div className="form-grid">
-              <div className="input-group">
-                <label>Journey Date</label>
-                <input type="date" className="input-field" defaultValue="2026-07-28" />
-              </div>
-              <div className="input-group">
-                <label>Return Date (Optional)</label>
-                <input type="date" className="input-field" disabled={tripType === 'one-way'} />
-              </div>
-            </div>
+              <div className="form-grid">
+                <div className="input-group">
+                  <label>Travelling From</label>
+                  <input list="origin-options" className="input-field" placeholder="Select Origin" defaultValue="Bangalore" />
+                  <datalist id="origin-options">
+                    <option value="Bangalore">Bangalore</option>
+                    <option value="Trivandrum">Trivandrum</option>
+                    <option value="Kochi">Kochi</option>
+                    <option value="Kozhikode">Kozhikode</option>
+                    <option value="Thrissur">Thrissur</option>
+                    <option value="Chennai">Chennai</option>
+                    <option value="Mysore">Mysore</option>
+                  </datalist>
+                  <MapPin className="input-icon" size={20} />
+                </div>
 
-            <button className="btn-primary">SEARCH BUSES</button>
-          </BorderGlow>
+                <button className="swap-btn">
+                  <ArrowRightLeft size={18} />
+                </button>
+
+                <div className="input-group">
+                  <label>Going To</label>
+                  <input list="destination-options" className="input-field" placeholder="Select Destination" defaultValue="Tirunelveli" />
+                  <datalist id="destination-options">
+                    <option value="Bangalore">Bangalore</option>
+                    <option value="Trivandrum">Trivandrum</option>
+                    <option value="Kochi">Kochi</option>
+                    <option value="Kozhikode">Kozhikode</option>
+                    <option value="Thrissur">Thrissur</option>
+                    <option value="Chennai">Chennai</option>
+                    <option value="Mysore">Mysore</option>
+                    <option value="Tirunelveli">Tirunelveli</option>
+                  </datalist>
+                  <MapPin className="input-icon" size={20} />
+                </div>
+              </div>
+
+              <div className="form-grid">
+                <div className="input-group">
+                  <label>Journey Date</label>
+                  <input type="date" className="input-field" defaultValue="2026-07-28" />
+                </div>
+                <div className="input-group">
+                  <label>Return Date (Optional)</label>
+                  <input type="date" className="input-field" disabled={tripType === 'one-way'} />
+                </div>
+              </div>
+
+              <button className="btn-primary">SEARCH BUSES</button>
+            </BorderGlow>
+          )}
         </div>
         <GradualBlur
           target="parent"
@@ -403,7 +646,7 @@ function App() {
         />
       </header>
 
-      {/* Memoized and Lazy Loaded Sections */}
+      {/* Sections */}
       <LazyLoad minHeight="500px">
         <TopRoutesSection routes={TopRoutes} />
       </LazyLoad>
@@ -471,7 +714,279 @@ function App() {
         </div>
       </footer>
     </>
-  )
+  );
+
+  // Render Mobile WebApp layout only if active
+  if (showMobileView && hasActivatedWebApp) {
+    return (
+      <div className="mobile-webapp-container">
+        {/* Floating Desktop Back-Toggle (only visible on desktop for testing) */}
+        {!isMobile && (
+          <button className="desktop-back-toggle" onClick={() => setForceMobilePreview(false)}>
+            🖥️ Return to Website
+          </button>
+        )}
+
+        {/* Dynamic Modals / Bottom Sheets */}
+        <MobileLiveTracking
+          showLiveTracking={showLiveTracking}
+          setShowLiveTracking={setShowLiveTracking}
+          trackingStep={trackingStep}
+          setTrackingStep={setTrackingStep}
+        />
+        <MobileTimings
+          showTimingsModal={showTimingsModal}
+          setShowTimingsModal={setShowTimingsModal}
+        />
+        <MobileSearchResults
+          isSearching={isSearching}
+          setIsSearching={setIsSearching}
+          origin={origin}
+          destination={destination}
+          journeyDate={journeyDate}
+          selectedBus={selectedBus}
+          setSelectedBus={setSelectedBus}
+          selectedSeats={selectedSeats}
+          setSelectedSeats={setSelectedSeats}
+          isBookingSuccess={isBookingSuccess}
+          setIsBookingSuccess={setIsBookingSuccess}
+          handleCheckout={handleCheckout}
+          setHasActivatedWebApp={setHasActivatedWebApp}
+          setActiveMobileTab={setActiveMobileTab}
+          t={t}
+        />
+        <MobileLoginModal
+          showLoginModal={showLoginModal}
+          setShowLoginModal={setShowLoginModal}
+          onLoginSuccess={() => {
+            setIsUserLoggedIn(true);
+            setActiveMobileTab('profile');
+          }}
+        />
+
+        {/* Dynamic Active Tab View Render */}
+        {activeMobileTab === 'home' ? (
+          <div className="tab-view-fadein" style={{ paddingBottom: '80px' }}>
+            <MobileHomeTab
+              origin={origin}
+              setOrigin={setOrigin}
+              destination={destination}
+              setDestination={setDestination}
+              journeyDate={journeyDate}
+              setJourneyDate={setJourneyDate}
+              tripType={tripType}
+              setTripType={setTripType}
+              onSearch={() => {
+                setSelectedSeats([]);
+                setHasActivatedWebApp(true);
+                setIsSearching(true);
+              }}
+              t={t}
+              TopRoutesSection={TopRoutesSection}
+              DestinationsSection={DestinationsSection}
+              GallerySection={GallerySection}
+              TestimonialsSection={TestimonialsSection}
+              TopRoutes={TopRoutes}
+              Destinations={Destinations}
+              GalleryImages={GalleryImages}
+              Testimonials={Testimonials}
+              heroImages={heroImages}
+              currentSlide={currentSlide}
+              setCurrentSlide={setCurrentSlide}
+              showMobileView={showMobileView}
+              isMenuOpen={isMenuOpen}
+              setIsMenuOpen={setIsMenuOpen}
+              theme={theme}
+              toggleTheme={toggleTheme}
+            />
+          </div>
+        ) : activeMobileTab === 'tickets' ? (
+          <div className="tab-view-container" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <MobileAppHeader
+              theme={theme}
+              toggleTheme={toggleTheme}
+              showNotifications={showNotifications}
+              setShowNotifications={setShowNotifications}
+              setActiveMobileTab={setActiveMobileTab}
+              isUserLoggedIn={isUserLoggedIn}
+              setShowLoginModal={setShowLoginModal}
+            />
+            <main className="mobile-webapp-content">
+              <MobileTicketsTab
+                activeBookings={activeBookings}
+                expandedTicketId={expandedTicketId}
+                setExpandedTicketId={setExpandedTicketId}
+                handleCancelBooking={handleCancelBooking}
+                setActiveMobileTab={setActiveMobileTab}
+                setIsSearching={setIsSearching}
+                t={t}
+              />
+            </main>
+          </div>
+        ) : (
+          <div className="tab-view-container" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <MobileAppHeader
+              theme={theme}
+              toggleTheme={toggleTheme}
+              showNotifications={showNotifications}
+              setShowNotifications={setShowNotifications}
+              setActiveMobileTab={setActiveMobileTab}
+              isUserLoggedIn={isUserLoggedIn}
+              setShowLoginModal={setShowLoginModal}
+            />
+            <main className="mobile-webapp-content">
+              <MobileProfileTab
+                theme={theme}
+                toggleTheme={toggleTheme}
+                language={language}
+                setLanguage={setLanguage}
+                hasActivatedWebApp={hasActivatedWebApp}
+                setHasActivatedWebApp={setHasActivatedWebApp}
+                faqExpanded={faqExpanded}
+                setFaqExpanded={setFaqExpanded}
+                onLogout={() => {
+                  setIsUserLoggedIn(false);
+                  setActiveMobileTab('home');
+                  setHasActivatedWebApp(false);
+                }}
+                t={t}
+              />
+            </main>
+          </div>
+        )}
+
+        {/* Sticky Persistent Mobile Bottom Navbar */}
+        <nav className="mobile-bottom-navbar">
+          <button
+            className={`navbar-tab-item ${activeMobileTab === 'home' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveMobileTab('home');
+              setIsSearching(false);
+              setSelectedBus(null);
+            }}
+          >
+            <Search size={22} />
+            <span>Home</span>
+          </button>
+          <button
+            className="navbar-tab-item"
+            onClick={() => {
+              setActiveMobileTab('home');
+              setIsSearching(false);
+              setSelectedBus(null);
+              setTimeout(() => {
+                document.getElementById('mobile-routes-section')?.scrollIntoView({ behavior: 'smooth' });
+              }, 100);
+            }}
+          >
+            <Compass size={22} />
+            <span>Routes</span>
+          </button>
+          <button
+            className="navbar-tab-item"
+            onClick={() => {
+              setActiveMobileTab('home');
+              setIsSearching(false);
+              setSelectedBus(null);
+              setTimeout(() => {
+                document.getElementById('mobile-gallery-section')?.scrollIntoView({ behavior: 'smooth' });
+              }, 100);
+            }}
+          >
+            <Compass size={22} style={{ transform: 'rotate(45deg)' }} />
+            <span>Gallery</span>
+          </button>
+
+          {isUserLoggedIn && (
+            <button
+              className={`navbar-tab-item ${activeMobileTab === 'tickets' ? 'active' : ''}`}
+              onClick={() => setActiveMobileTab('tickets')}
+            >
+              <Ticket size={22} />
+              <span>Tickets</span>
+            </button>
+          )}
+          {isUserLoggedIn && (
+            <button
+              className={`navbar-tab-item ${activeMobileTab === 'profile' ? 'active' : ''}`}
+              onClick={() => setActiveMobileTab('profile')}
+            >
+              <User size={22} />
+              <span>Profile</span>
+            </button>
+          )}
+        </nav>
+      </div>
+    );
+  }
+
+  // Render standard Website Replica layout
+  return (
+    <>
+      {/* Desktop Preview Enable Switch */}
+      <button className="desktop-preview-toggle-button" onClick={() => setForceMobilePreview(true)}>
+        📱 Mobile WebApp View
+      </button>
+      {showMobileView ? (
+        <div className="tab-view-fadein">
+          <MobileAppHeader
+            theme={theme}
+            toggleTheme={toggleTheme}
+            showNotifications={showNotifications}
+            setShowNotifications={setShowNotifications}
+            setActiveMobileTab={setActiveMobileTab}
+            isUserLoggedIn={isUserLoggedIn}
+            setShowLoginModal={setShowLoginModal}
+          />
+          <div style={{ paddingTop: '64px' }}>
+            <MobileHomeTab
+              origin={origin}
+              setOrigin={setOrigin}
+              destination={destination}
+              setDestination={setDestination}
+              journeyDate={journeyDate}
+              setJourneyDate={setJourneyDate}
+              tripType={tripType}
+              setTripType={setTripType}
+              onSearch={() => {
+                setSelectedSeats([]);
+                setHasActivatedWebApp(true);
+                setIsSearching(true);
+              }}
+              t={t}
+              TopRoutesSection={TopRoutesSection}
+              DestinationsSection={DestinationsSection}
+              GallerySection={GallerySection}
+              TestimonialsSection={TestimonialsSection}
+              TopRoutes={TopRoutes}
+              Destinations={Destinations}
+              GalleryImages={GalleryImages}
+              Testimonials={Testimonials}
+              heroImages={heroImages}
+              currentSlide={currentSlide}
+              setCurrentSlide={setCurrentSlide}
+              showMobileView={showMobileView}
+              isMenuOpen={isMenuOpen}
+              setIsMenuOpen={setIsMenuOpen}
+              theme={theme}
+              toggleTheme={toggleTheme}
+            />
+          </div>
+          <MobileLoginModal
+            showLoginModal={showLoginModal}
+            setShowLoginModal={setShowLoginModal}
+            onLoginSuccess={() => {
+              setIsUserLoggedIn(true);
+              setHasActivatedWebApp(true);
+              setActiveMobileTab('profile');
+            }}
+          />
+        </div>
+      ) : (
+        renderWebsiteReplicaContent()
+      )}
+    </>
+  );
 }
 
-export default App;
+export default App;
