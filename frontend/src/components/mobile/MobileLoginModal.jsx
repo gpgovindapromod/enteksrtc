@@ -35,6 +35,9 @@ const MobileLoginModal = ({
           </button>
         </div>
         <div className="sheet-body">
+          <div style={{ backgroundColor: '#ff4444', color: 'white', textAlign: 'center', padding: '10px', fontSize: '12px', fontWeight: 'bold', borderRadius: '8px', marginBottom: '15px' }}>
+            ⚠️ ACADEMIC DEMO: Do not enter real credentials.
+          </div>
           <div className="mobile-auth-card" style={{ boxShadow: 'none', border: 'none', padding: 0, marginBottom: 0 }}>
             <div className="auth-tabs">
               <button 

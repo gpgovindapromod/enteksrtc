@@ -717,9 +717,16 @@ function App() {
   );
 
   // Main Render Strategy
+  const AcademicDisclaimer = () => (
+    <div style={{ backgroundColor: '#ff4444', color: 'white', textAlign: 'center', padding: '10px', fontSize: '14px', fontWeight: 'bold', zIndex: 10000, position: 'relative' }}>
+      ⚠️ ACADEMIC PROJECT ONLY: This is a student clone and is NOT the official KSRTC website. Do not enter real credentials.
+    </div>
+  );
+
   if (!showMobileView) {
     return (
       <>
+        <AcademicDisclaimer />
         {/* Desktop Preview Enable Switch */}
         <button className="desktop-preview-toggle-button" onClick={() => setForceMobilePreview(true)}>
           📱 Mobile WebApp View
@@ -732,8 +739,8 @@ function App() {
   // Mobile WebApp Layout (showMobileView is true)
   return (
     <div className="mobile-app-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
-      
-      <button className="desktop-preview-toggle-button" style={{ zIndex: 9999, top: '10px' }} onClick={() => setForceMobilePreview(false)}>
+      <AcademicDisclaimer />
+      <button className="desktop-preview-toggle-button" style={{ zIndex: 9999, top: '50px' }} onClick={() => setForceMobilePreview(false)}>
         💻 Desktop View
       </button>
 
