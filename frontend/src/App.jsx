@@ -716,219 +716,66 @@ function App() {
     </>
   );
 
-  // Render Mobile WebApp layout only if active
-  if (showMobileView && hasActivatedWebApp) {
+  // Main Render Strategy
+  if (!showMobileView) {
     return (
-      <div className="mobile-webapp-container">
-        {/* Floating Desktop Back-Toggle (only visible on desktop for testing) */}
-        {!isMobile && (
-          <button className="desktop-back-toggle" onClick={() => setForceMobilePreview(false)}>
-            🖥️ Return to Website
-          </button>
-        )}
-
-        {/* Dynamic Modals / Bottom Sheets */}
-        <MobileLiveTracking
-          showLiveTracking={showLiveTracking}
-          setShowLiveTracking={setShowLiveTracking}
-          trackingStep={trackingStep}
-          setTrackingStep={setTrackingStep}
-        />
-        <MobileTimings
-          showTimingsModal={showTimingsModal}
-          setShowTimingsModal={setShowTimingsModal}
-        />
-        <MobileSearchResults
-          isSearching={isSearching}
-          setIsSearching={setIsSearching}
-          origin={origin}
-          destination={destination}
-          journeyDate={journeyDate}
-          selectedBus={selectedBus}
-          setSelectedBus={setSelectedBus}
-          selectedSeats={selectedSeats}
-          setSelectedSeats={setSelectedSeats}
-          isBookingSuccess={isBookingSuccess}
-          setIsBookingSuccess={setIsBookingSuccess}
-          handleCheckout={handleCheckout}
-          setHasActivatedWebApp={setHasActivatedWebApp}
-          setActiveMobileTab={setActiveMobileTab}
-          t={t}
-        />
-        <MobileLoginModal
-          showLoginModal={showLoginModal}
-          setShowLoginModal={setShowLoginModal}
-          onLoginSuccess={() => {
-            setIsUserLoggedIn(true);
-            setActiveMobileTab('profile');
-          }}
-        />
-
-        {/* Dynamic Active Tab View Render */}
-        {activeMobileTab === 'home' ? (
-          <div className="tab-view-fadein" style={{ paddingBottom: '80px' }}>
-            <MobileHomeTab
-              origin={origin}
-              setOrigin={setOrigin}
-              destination={destination}
-              setDestination={setDestination}
-              journeyDate={journeyDate}
-              setJourneyDate={setJourneyDate}
-              tripType={tripType}
-              setTripType={setTripType}
-              onSearch={() => {
-                setSelectedSeats([]);
-                setHasActivatedWebApp(true);
-                setIsSearching(true);
-              }}
-              t={t}
-              TopRoutesSection={TopRoutesSection}
-              DestinationsSection={DestinationsSection}
-              GallerySection={GallerySection}
-              TestimonialsSection={TestimonialsSection}
-              TopRoutes={TopRoutes}
-              Destinations={Destinations}
-              GalleryImages={GalleryImages}
-              Testimonials={Testimonials}
-              heroImages={heroImages}
-              currentSlide={currentSlide}
-              setCurrentSlide={setCurrentSlide}
-              showMobileView={showMobileView}
-              isMenuOpen={isMenuOpen}
-              setIsMenuOpen={setIsMenuOpen}
-              theme={theme}
-              toggleTheme={toggleTheme}
-            />
-          </div>
-        ) : activeMobileTab === 'tickets' ? (
-          <div className="tab-view-container" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <MobileAppHeader
-              theme={theme}
-              toggleTheme={toggleTheme}
-              showNotifications={showNotifications}
-              setShowNotifications={setShowNotifications}
-              setActiveMobileTab={setActiveMobileTab}
-              isUserLoggedIn={isUserLoggedIn}
-              setShowLoginModal={setShowLoginModal}
-            />
-            <main className="mobile-webapp-content">
-              <MobileTicketsTab
-                activeBookings={activeBookings}
-                expandedTicketId={expandedTicketId}
-                setExpandedTicketId={setExpandedTicketId}
-                handleCancelBooking={handleCancelBooking}
-                setActiveMobileTab={setActiveMobileTab}
-                setIsSearching={setIsSearching}
-                t={t}
-              />
-            </main>
-          </div>
-        ) : (
-          <div className="tab-view-container" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <MobileAppHeader
-              theme={theme}
-              toggleTheme={toggleTheme}
-              showNotifications={showNotifications}
-              setShowNotifications={setShowNotifications}
-              setActiveMobileTab={setActiveMobileTab}
-              isUserLoggedIn={isUserLoggedIn}
-              setShowLoginModal={setShowLoginModal}
-            />
-            <main className="mobile-webapp-content">
-              <MobileProfileTab
-                theme={theme}
-                toggleTheme={toggleTheme}
-                language={language}
-                setLanguage={setLanguage}
-                hasActivatedWebApp={hasActivatedWebApp}
-                setHasActivatedWebApp={setHasActivatedWebApp}
-                faqExpanded={faqExpanded}
-                setFaqExpanded={setFaqExpanded}
-                onLogout={() => {
-                  setIsUserLoggedIn(false);
-                  setActiveMobileTab('home');
-                  setHasActivatedWebApp(false);
-                }}
-                t={t}
-              />
-            </main>
-          </div>
-        )}
-
-        {/* Sticky Persistent Mobile Bottom Navbar */}
-        <nav className="mobile-bottom-navbar">
-          <button
-            className={`navbar-tab-item ${activeMobileTab === 'home' ? 'active' : ''}`}
-            onClick={() => {
-              setActiveMobileTab('home');
-              setIsSearching(false);
-              setSelectedBus(null);
-            }}
-          >
-            <Search size={22} />
-            <span>Home</span>
-          </button>
-          <button
-            className="navbar-tab-item"
-            onClick={() => {
-              setActiveMobileTab('home');
-              setIsSearching(false);
-              setSelectedBus(null);
-              setTimeout(() => {
-                document.getElementById('mobile-routes-section')?.scrollIntoView({ behavior: 'smooth' });
-              }, 100);
-            }}
-          >
-            <Compass size={22} />
-            <span>Routes</span>
-          </button>
-          <button
-            className="navbar-tab-item"
-            onClick={() => {
-              setActiveMobileTab('home');
-              setIsSearching(false);
-              setSelectedBus(null);
-              setTimeout(() => {
-                document.getElementById('mobile-gallery-section')?.scrollIntoView({ behavior: 'smooth' });
-              }, 100);
-            }}
-          >
-            <Compass size={22} style={{ transform: 'rotate(45deg)' }} />
-            <span>Gallery</span>
-          </button>
-
-          {isUserLoggedIn && (
-            <button
-              className={`navbar-tab-item ${activeMobileTab === 'tickets' ? 'active' : ''}`}
-              onClick={() => setActiveMobileTab('tickets')}
-            >
-              <Ticket size={22} />
-              <span>Tickets</span>
-            </button>
-          )}
-          {isUserLoggedIn && (
-            <button
-              className={`navbar-tab-item ${activeMobileTab === 'profile' ? 'active' : ''}`}
-              onClick={() => setActiveMobileTab('profile')}
-            >
-              <User size={22} />
-              <span>Profile</span>
-            </button>
-          )}
-        </nav>
-      </div>
+      <>
+        {/* Desktop Preview Enable Switch */}
+        <button className="desktop-preview-toggle-button" onClick={() => setForceMobilePreview(true)}>
+          📱 Mobile WebApp View
+        </button>
+        {renderWebsiteReplicaContent()}
+      </>
     );
   }
 
-  // Render standard Website Replica layout
+  // Mobile WebApp Layout (showMobileView is true)
   return (
-    <>
-      {/* Desktop Preview Enable Switch */}
-      <button className="desktop-preview-toggle-button" onClick={() => setForceMobilePreview(true)}>
-        📱 Mobile WebApp View
+    <div className="mobile-app-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+      
+      <button className="desktop-preview-toggle-button" style={{ zIndex: 9999, top: '10px' }} onClick={() => setForceMobilePreview(false)}>
+        💻 Desktop View
       </button>
-      {showMobileView ? (
-        <div className="tab-view-fadein">
+
+      {/* Dynamic Active Tab View Render */}
+      {activeMobileTab === 'home' && (
+        <div className="tab-view-fadein" style={{ paddingBottom: '80px', overflowY: 'auto', flex: 1 }}>
+          <MobileHomeTab
+            origin={origin}
+            setOrigin={setOrigin}
+            destination={destination}
+            setDestination={setDestination}
+            journeyDate={journeyDate}
+            setJourneyDate={setJourneyDate}
+            tripType={tripType}
+            setTripType={setTripType}
+            onSearch={() => {
+              setSelectedSeats([]);
+              setIsSearching(true);
+            }}
+            t={t}
+            TopRoutesSection={TopRoutesSection}
+            DestinationsSection={DestinationsSection}
+            GallerySection={GallerySection}
+            TestimonialsSection={TestimonialsSection}
+            TopRoutes={TopRoutes}
+            Destinations={Destinations}
+            GalleryImages={GalleryImages}
+            Testimonials={Testimonials}
+            heroImages={heroImages}
+            currentSlide={currentSlide}
+            setCurrentSlide={setCurrentSlide}
+            showMobileView={showMobileView}
+            isMenuOpen={isMenuOpen}
+            setIsMenuOpen={setIsMenuOpen}
+            theme={theme}
+            toggleTheme={toggleTheme}
+          />
+        </div>
+      )}
+
+      {activeMobileTab === 'tickets' && (
+        <div className="tab-view-container" style={{ paddingBottom: '80px', display: 'flex', flexDirection: 'column', flex: 1, overflowY: 'auto' }}>
           <MobileAppHeader
             theme={theme}
             toggleTheme={toggleTheme}
@@ -938,54 +785,152 @@ function App() {
             isUserLoggedIn={isUserLoggedIn}
             setShowLoginModal={setShowLoginModal}
           />
-          <div style={{ paddingTop: '64px' }}>
-            <MobileHomeTab
-              origin={origin}
-              setOrigin={setOrigin}
-              destination={destination}
-              setDestination={setDestination}
-              journeyDate={journeyDate}
-              setJourneyDate={setJourneyDate}
-              tripType={tripType}
-              setTripType={setTripType}
-              onSearch={() => {
-                setSelectedSeats([]);
-                setHasActivatedWebApp(true);
-                setIsSearching(true);
-              }}
+          <main className="mobile-webapp-content" style={{ flex: 1, paddingTop: '64px' }}>
+            <MobileTicketsTab
+              activeBookings={activeBookings}
+              expandedTicketId={expandedTicketId}
+              setExpandedTicketId={setExpandedTicketId}
+              handleCancelBooking={handleCancelBooking}
+              setActiveMobileTab={setActiveMobileTab}
+              setIsSearching={setIsSearching}
               t={t}
-              TopRoutesSection={TopRoutesSection}
-              DestinationsSection={DestinationsSection}
-              GallerySection={GallerySection}
-              TestimonialsSection={TestimonialsSection}
-              TopRoutes={TopRoutes}
-              Destinations={Destinations}
-              GalleryImages={GalleryImages}
-              Testimonials={Testimonials}
-              heroImages={heroImages}
-              currentSlide={currentSlide}
-              setCurrentSlide={setCurrentSlide}
-              showMobileView={showMobileView}
-              isMenuOpen={isMenuOpen}
-              setIsMenuOpen={setIsMenuOpen}
+            />
+          </main>
+        </div>
+      )}
+
+      {activeMobileTab === 'profile' && (
+        <div className="tab-view-container" style={{ paddingBottom: '80px', display: 'flex', flexDirection: 'column', flex: 1, overflowY: 'auto' }}>
+          <MobileAppHeader
+            theme={theme}
+            toggleTheme={toggleTheme}
+            showNotifications={showNotifications}
+            setShowNotifications={setShowNotifications}
+            setActiveMobileTab={setActiveMobileTab}
+            isUserLoggedIn={isUserLoggedIn}
+            setShowLoginModal={setShowLoginModal}
+          />
+          <main className="mobile-webapp-content" style={{ flex: 1, paddingTop: '64px' }}>
+            <MobileProfileTab
               theme={theme}
               toggleTheme={toggleTheme}
+              language={language}
+              setLanguage={setLanguage}
+              hasActivatedWebApp={hasActivatedWebApp}
+              setHasActivatedWebApp={setHasActivatedWebApp}
+              faqExpanded={faqExpanded}
+              setFaqExpanded={setFaqExpanded}
+              onLogout={() => {
+                setIsUserLoggedIn(false);
+                setActiveMobileTab('home');
+              }}
+              t={t}
             />
-          </div>
-          <MobileLoginModal
-            showLoginModal={showLoginModal}
-            setShowLoginModal={setShowLoginModal}
-            onLoginSuccess={() => {
-              setIsUserLoggedIn(true);
-              setHasActivatedWebApp(true);
-              setActiveMobileTab('profile');
-            }}
-          />
+          </main>
         </div>
-      ) : (
-        renderWebsiteReplicaContent()
       )}
-    </>
+
+      {/* Dynamic Modals / Bottom Sheets */}
+      <MobileLiveTracking
+        showLiveTracking={showLiveTracking}
+        setShowLiveTracking={setShowLiveTracking}
+        trackingStep={trackingStep}
+        setTrackingStep={setTrackingStep}
+        t={t}
+      />
+      <MobileTimings
+        showTimingsModal={showTimingsModal}
+        setShowTimingsModal={setShowTimingsModal}
+        t={t}
+      />
+      <MobileSearchResults
+        isSearching={isSearching}
+        setIsSearching={setIsSearching}
+        origin={origin}
+        destination={destination}
+        journeyDate={journeyDate}
+        selectedBus={selectedBus}
+        setSelectedBus={setSelectedBus}
+        selectedSeats={selectedSeats}
+        setSelectedSeats={setSelectedSeats}
+        isBookingSuccess={isBookingSuccess}
+        setIsBookingSuccess={setIsBookingSuccess}
+        handleCheckout={handleCheckout}
+        setHasActivatedWebApp={setHasActivatedWebApp}
+        setActiveMobileTab={setActiveMobileTab}
+        t={t}
+      />
+      <MobileLoginModal
+        showLoginModal={showLoginModal}
+        setShowLoginModal={setShowLoginModal}
+        onLoginSuccess={() => {
+          setIsUserLoggedIn(true);
+          setActiveMobileTab('profile');
+        }}
+      />
+
+      {/* Sticky Persistent Mobile Bottom Navbar */}
+      <nav className="mobile-bottom-navbar">
+        <button
+          className={`navbar-tab-item ${activeMobileTab === 'home' ? 'active' : ''}`}
+          onClick={() => {
+            setActiveMobileTab('home');
+            setIsSearching(false);
+            setSelectedBus(null);
+          }}
+        >
+          <Search size={22} />
+          <span>Home</span>
+        </button>
+        <button
+          className="navbar-tab-item"
+          onClick={() => {
+            setActiveMobileTab('home');
+            setIsSearching(false);
+            setSelectedBus(null);
+            setTimeout(() => {
+              document.getElementById('mobile-routes-section')?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }}
+        >
+          <Compass size={22} />
+          <span>Routes</span>
+        </button>
+        <button
+          className="navbar-tab-item"
+          onClick={() => {
+            setActiveMobileTab('home');
+            setIsSearching(false);
+            setSelectedBus(null);
+            setTimeout(() => {
+              document.getElementById('mobile-gallery-section')?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }}
+        >
+          <Compass size={22} style={{ transform: 'rotate(45deg)' }} />
+          <span>Gallery</span>
+        </button>
+
+        {isUserLoggedIn && (
+          <button
+            className={`navbar-tab-item ${activeMobileTab === 'tickets' ? 'active' : ''}`}
+            onClick={() => setActiveMobileTab('tickets')}
+          >
+            <Ticket size={22} />
+            <span>Tickets</span>
+          </button>
+        )}
+        {isUserLoggedIn && (
+          <button
+            className={`navbar-tab-item ${activeMobileTab === 'profile' ? 'active' : ''}`}
+            onClick={() => setActiveMobileTab('profile')}
+          >
+            <User size={22} />
+            <span>Profile</span>
+          </button>
+        )}
+      </nav>
+    </div>
   );
 }
 
