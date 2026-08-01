@@ -55,41 +55,11 @@ const MobileLoginModal = ({
             </div>
 
             <form onSubmit={handleSubmit} className="auth-form">
-              <div className="auth-input-group">
-                <Mail size={18} className="auth-icon" />
-                <input 
-                  type="email" 
-                  placeholder="Email Address" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+              <div style={{ textAlign: 'center', padding: '20px 0', color: 'var(--text-light)' }}>
+                For security reasons in this academic project, login forms have been disabled.
               </div>
-              <div className="auth-input-group">
-                <Lock size={18} className="auth-icon" />
-                <input 
-                  type="password" 
-                  placeholder="Password" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              {authMode === 'signup' && (
-                <div className="auth-input-group">
-                  <User size={18} className="auth-icon" />
-                  <input 
-                    type="text" 
-                    placeholder="Full Name" 
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    required 
-                  />
-                </div>
-              )}
-
               <button type="submit" className="btn-primary-modern auth-btn">
-                {authMode === 'login' ? 'LOG IN' : 'CREATE ACCOUNT'}
+                CONTINUE AS GUEST
               </button>
             </form>
 
