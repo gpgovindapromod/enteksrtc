@@ -54,6 +54,10 @@ const GalleryImages = [
   { id: "4", img: "https://images.unsplash.com/photo-1590766940554-634a7ed41450?q=60&w=400&auto=format&fit=crop", url: "#", height: 350 },
   { id: "5", img: "https://upload.wikimedia.org/wikipedia/commons/2/2b/K.S.R.T.C.Bus.jpg?_=20110514164313", url: "#", height: 300 },
   { id: "6", img: "https://vadakkus.com/wp-content/uploads/2024/10/KSRTC-Fast-Passenger-UPI-payment-scaled.jpg", url: "#", height: 500 },
+  { id: "7", img: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=60&w=400&auto=format&fit=crop", url: "#", height: 450 },
+  { id: "8", img: "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=60&w=400&auto=format&fit=crop", url: "#", height: 300 },
+  { id: "9", img: "https://www.tickettogetlost.com/wp-content/uploads/2023/04/Kerala-KSRTC-SWIFT-Super-Fast-Bus-Timings-from-Thiruvananthapuram-Parassala-and-Neyyattinkara.jpg", url: "#", height: 380 },
+  { id: "10", img: "https://i.pinimg.com/736x/84/da/68/84da6820c103d0dd0457d54cd8209d24.jpg", url: "#", height: 320 },
 ];
 
 const TopRoutes = [
@@ -270,12 +274,14 @@ const TRANSLATIONS = {
 
 
 
+import { useTheme } from './context/ThemeContext';
+
 function App() {
+  const { theme, toggleTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [tripType, setTripType] = useState('one-way');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
 
   // Mobile WebApp States
   const [isMobile, setIsMobile] = useState(false);
@@ -318,6 +324,7 @@ function App() {
   const [trackingStep, setTrackingStep] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showTimingsModal, setShowTimingsModal] = useState(false);
+  const [showDesktopTicketsModal, setShowDesktopTicketsModal] = useState(false);
 
   // Profile accordion state
   const [faqExpanded, setFaqExpanded] = useState({ 0: false, 1: false, 2: false });
@@ -340,15 +347,6 @@ function App() {
 
   const t = TRANSLATIONS[language] || TRANSLATIONS.en;
 
-  useEffect(() => {
-    localStorage.setItem('theme', theme);
-    if (theme === 'dark') {
-      document.body.setAttribute('data-theme', 'dark');
-    } else {
-      document.body.removeAttribute('data-theme');
-    }
-  }, [theme]);
-
   // Screen size resize handler
   useEffect(() => {
     const handleResize = () => {
@@ -358,8 +356,6 @@ function App() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  const toggleTheme = () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
 
   const heroImages = [
     'https://upload.wikimedia.org/wikipedia/commons/2/2b/K.S.R.T.C.Bus.jpg?_=20110514164313',
@@ -448,7 +444,7 @@ function App() {
       busType: selectedBus.name,
       seats: selectedSeats,
       price: `₹${(selectedSeats.length * selectedBus.fare).toLocaleString()}`,
-      qrCode: `KSRTC-${Math.floor(1000000 + Math.random() * 9000000)}-${origin.substring(0,3).toUpperCase()}-${destination.substring(0,3).toUpperCase()}-${journeyDate.replace(/-/g, '')}`
+      qrCode: `KSRTC-${Math.floor(1000000 + Math.random() * 9000000)}-${origin.substring(0, 3).toUpperCase()}-${destination.substring(0, 3).toUpperCase()}-${journeyDate.replace(/-/g, '')}`
     };
     setActiveBookings([newBooking, ...activeBookings]);
     setIsBookingSuccess(true);
@@ -493,7 +489,7 @@ function App() {
               <button className="btn-secondary-modern" onClick={() => setShowDesktopSearch(false)}>Back to Home</button>
             </div>
           </nav>
-          <DesktopSearchResults 
+          <DesktopSearchResults
             onBack={() => setShowDesktopSearch(false)}
             origin={origin}
             setOrigin={setOrigin}
@@ -501,6 +497,15 @@ function App() {
             setDestination={setDestination}
             journeyDate={journeyDate}
             setJourneyDate={setJourneyDate}
+            selectedBus={selectedBus}
+            setSelectedBus={setSelectedBus}
+            selectedSeats={selectedSeats}
+            setSelectedSeats={setSelectedSeats}
+            isBookingSuccess={isBookingSuccess}
+            setIsBookingSuccess={setIsBookingSuccess}
+            handleCheckout={handleCheckout}
+            setShowDesktopTicketsModal={setShowDesktopTicketsModal}
+            t={t}
           />
         </>
       );
@@ -510,247 +515,252 @@ function App() {
       <>
         {/* Navbar */}
         <nav className="modern-navbar">
-        <div className="navbar-container">
-          <div className="nav-brand">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-small" width="40" height="40" />
-            <div className="brand-text-minimal">
-              <span className="brand-title">Ente KSRTC</span>
-              <span className="brand-tag">Premium Journey</span>
+          <div className="navbar-container">
+            <div className="nav-brand">
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-small" width="40" height="40" />
+              <div className="brand-text-minimal">
+                <span className="brand-title">Ente KSRTC</span>
+                <span className="brand-tag">Premium Journey</span>
+              </div>
             </div>
+
+            <div className={`nav-menu-modern ${isMenuOpen ? 'active' : ''}`}>
+              <div className="nav-links-modern">
+                <a href="#" className="nav-item" onClick={(e) => { e.preventDefault(); document.getElementById('mobile-routes-section')?.scrollIntoView({ behavior: 'smooth' }); }}>Routes</a>
+                <a href="#" className="nav-item" onClick={(e) => { e.preventDefault(); document.getElementById('mobile-destinations-section')?.scrollIntoView({ behavior: 'smooth' }); }}>Destinations</a>
+                <a href="#" className="nav-item" onClick={(e) => { e.preventDefault(); document.getElementById('mobile-gallery-section')?.scrollIntoView({ behavior: 'smooth' }); }}>Gallery</a>
+                <a href="#" className="nav-item" onClick={(e) => { e.preventDefault(); setShowLiveTracking(true); }}>Track Bus</a>
+                <a href="#" className="nav-item" onClick={(e) => { e.preventDefault(); setShowTimingsModal(true); }}>Timings</a>
+                {isUserLoggedIn && (
+                  <a href="#" className="nav-item" onClick={(e) => { e.preventDefault(); setShowDesktopTicketsModal(true); }}>My Tickets</a>
+                )}
+              </div>
+
+              <div className="nav-actions">
+                <button
+                  onClick={toggleTheme}
+                  style={{ background: 'transparent', border: 'none', color: 'var(--dark)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                >
+                  {theme === 'dark' ? <Sun size={22} /> : <Moon size={22} />}
+                </button>
+                <div className="nav-divider"></div>
+                <img src="https://banner2.cleanpng.com/20181120/jiq/kisspng-kerala-logo-gods-own-country-vector-graphics-clip-1713920244732.webp" alt="Kerala Tourism" className="tourism-logo-small" width="80" height="40" />
+                <div className="nav-divider"></div>
+                <button className="btn-secondary-modern">Manage</button>
+                {isUserLoggedIn ? (
+                  <button className="btn-primary-modern" onClick={() => setIsUserLoggedIn(false)}>Logout</button>
+                ) : (
+                  <button className="btn-primary-modern" onClick={() => setShowLoginModal(true)}>Login</button>
+                )}
+              </div>
+            </div>
+
+            <button className="mobile-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu">
+              {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
           </div>
+        </nav>
 
-          <div className={`nav-menu-modern ${isMenuOpen ? 'active' : ''}`}>
-            <div className="nav-links-modern">
-              <a href="#" className="nav-item">Routes</a>
-              <a href="#" className="nav-item">Destinations</a>
-              <a href="#" className="nav-item">Gallery</a>
-              <a href="#" className="nav-item">Support</a>
-            </div>
-
-            <div className="nav-actions">
-              <button
-                onClick={toggleTheme}
-                style={{ background: 'transparent', border: 'none', color: 'var(--dark)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-              >
-                {theme === 'dark' ? <Sun size={22} /> : <Moon size={22} />}
-              </button>
-              <div className="nav-divider"></div>
-              <img src="https://banner2.cleanpng.com/20181120/jiq/kisspng-kerala-logo-gods-own-country-vector-graphics-clip-1713920244732.webp" alt="Kerala Tourism" className="tourism-logo-small" width="80" height="40" />
-              <div className="nav-divider"></div>
-              <button className="btn-secondary-modern">Manage</button>
-              {isUserLoggedIn ? (
-                <button className="btn-primary-modern" onClick={() => setIsUserLoggedIn(false)}>Logout</button>
-              ) : (
-                <button className="btn-primary-modern" onClick={() => setShowLoginModal(true)}>Login</button>
-              )}
-            </div>
-          </div>
-
-          <button className="mobile-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu">
-            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <header className="hero">
-        {heroImages.map((img, index) => (
-          <div
-            key={index}
-            className={`hero-bg ${index === currentSlide ? 'active' : ''}`}
-            style={{ backgroundImage: `url(${img})` }}
-          />
-        ))}
-        <div className="hero-overlay"></div>
-
-        {/* Modern Slider Controls */}
-        <div className="slider-controls">
-          {heroImages.map((_, index) => (
+        {/* Hero Section */}
+        <header className="hero">
+          {heroImages.map((img, index) => (
             <div
               key={index}
-              className={`slider-dot ${index === currentSlide ? 'active' : ''}`}
-              onMouseEnter={() => setCurrentSlide(index)}
-              onClick={() => setCurrentSlide(index)}
-            >
-              <div className="dot-progress"></div>
-            </div>
+              className={`hero-bg ${index === currentSlide ? 'active' : ''}`}
+              style={{ backgroundImage: `url(${img})` }}
+            />
           ))}
-        </div>
+          <div className="hero-overlay"></div>
 
-        <div className="container hero-content center-content">
-          <div className="hero-title-area">
-            <h1 className="hero-title">Experience the Journey</h1>
-            <p className="hero-subtitle">Safe, Reliable, and Comfortable travel across Kerala and beyond.</p>
+          {/* Modern Slider Controls */}
+          <div className="slider-controls">
+            {heroImages.map((_, index) => (
+              <div
+                key={index}
+                className={`slider-dot ${index === currentSlide ? 'active' : ''}`}
+                onMouseEnter={() => setCurrentSlide(index)}
+                onClick={() => setCurrentSlide(index)}
+              >
+                <div className="dot-progress"></div>
+              </div>
+            ))}
           </div>
 
-          {showMobileView ? (
-            renderMobileBookingWidget()
-          ) : (
-            <BorderGlow
-              className="booking-widget glass-widget"
-              glowColor="25 90 55"
-              backgroundColor="transparent"
-              borderRadius={24}
-              glowIntensity={0.8}
-              colors={['#ea580c', '#308342', '#fbbf24']}
-            >
-              <div className="widget-tabs">
-                <button className="widget-tab active">
-                  <Bus size={20} />
-                  Book Bus Ticket
-                </button>
-                <button className="widget-tab" style={{ color: 'var(--gray)' }}>
-                  Link Ticket Booking
-                </button>
-              </div>
+          <div className="container hero-content center-content">
+            <div className="hero-title-area">
+              <h1 className="hero-title">Experience the Journey</h1>
+              <p className="hero-subtitle">Safe, Reliable, and Comfortable travel across Kerala and beyond.</p>
+            </div>
 
-              <div className="trip-type">
-                <button
-                  className={`badge-btn ${tripType === 'one-way' ? 'active' : ''}`}
-                  onClick={() => setTripType('one-way')}
-                >
-                  ONE WAY
-                </button>
-                <button
-                  className={`badge-btn ${tripType === 'round' ? 'active' : ''}`}
-                  onClick={() => setTripType('round')}
-                >
-                  ROUND TRIP
-                </button>
-              </div>
-
-              <div className="form-grid">
-                <div className="input-group">
-                  <label htmlFor="origin-input">Travelling From</label>
-                  <input id="origin-input" list="origin-options" className="input-field" placeholder="Select Origin" defaultValue="Bangalore" />
-                  <datalist id="origin-options">
-                    <option value="Bangalore">Bangalore</option>
-                    <option value="Trivandrum">Trivandrum</option>
-                    <option value="Kochi">Kochi</option>
-                    <option value="Kozhikode">Kozhikode</option>
-                    <option value="Thrissur">Thrissur</option>
-                    <option value="Chennai">Chennai</option>
-                    <option value="Mysore">Mysore</option>
-                  </datalist>
-                  <MapPin className="input-icon" size={20} />
+            {showMobileView ? (
+              renderMobileBookingWidget()
+            ) : (
+              <BorderGlow
+                className="booking-widget glass-widget"
+                glowColor="25 90 55"
+                backgroundColor="transparent"
+                borderRadius={24}
+                glowIntensity={0.8}
+                colors={['#ea580c', '#308342', '#fbbf24']}
+              >
+                <div className="widget-tabs">
+                  <button className="widget-tab active">
+                    <Bus size={20} />
+                    Book Bus Ticket
+                  </button>
+                  <button className="widget-tab" style={{ color: 'var(--gray)' }}>
+                    Link Ticket Booking
+                  </button>
                 </div>
 
-                <button className="swap-btn" aria-label="Swap Origin and Destination">
-                  <ArrowRightLeft size={18} />
-                </button>
+                <div className="trip-type">
+                  <button
+                    className={`badge-btn ${tripType === 'one-way' ? 'active' : ''}`}
+                    onClick={() => setTripType('one-way')}
+                  >
+                    ONE WAY
+                  </button>
+                  <button
+                    className={`badge-btn ${tripType === 'round' ? 'active' : ''}`}
+                    onClick={() => setTripType('round')}
+                  >
+                    ROUND TRIP
+                  </button>
+                </div>
 
-                <div className="input-group">
-                  <label htmlFor="destination-input">Going To</label>
-                  <input id="destination-input" list="destination-options" className="input-field" placeholder="Select Destination" defaultValue="Tirunelveli" />
-                  <datalist id="destination-options">
-                    <option value="Bangalore">Bangalore</option>
-                    <option value="Trivandrum">Trivandrum</option>
-                    <option value="Kochi">Kochi</option>
-                    <option value="Kozhikode">Kozhikode</option>
-                    <option value="Thrissur">Thrissur</option>
-                    <option value="Chennai">Chennai</option>
-                    <option value="Mysore">Mysore</option>
-                    <option value="Tirunelveli">Tirunelveli</option>
-                  </datalist>
-                  <MapPin className="input-icon" size={20} />
+                <div className="form-grid">
+                  <div className="input-group">
+                    <label htmlFor="origin-input">Travelling From</label>
+                    <input
+                      id="origin-input"
+                      type="text"
+                      className="input-field"
+                      placeholder="Select Origin"
+                      value={origin}
+                      onChange={(e) => setOrigin(e.target.value)}
+                    />
+                    <MapPin className="input-icon" size={20} />
+                  </div>
+
+                  <button className="swap-btn" aria-label="Swap Origin and Destination" onClick={() => { const temp = origin; setOrigin(destination); setDestination(temp); }}>
+                    <ArrowRightLeft size={18} />
+                  </button>
+
+                  <div className="input-group">
+                    <label htmlFor="destination-input">Going To</label>
+                    <input
+                      id="destination-input"
+                      type="text"
+                      className="input-field"
+                      placeholder="Select Destination"
+                      value={destination}
+                      onChange={(e) => setDestination(e.target.value)}
+                    />
+                    <MapPin className="input-icon" size={20} />
+                  </div>
+                </div>
+
+                <div className="form-grid">
+                  <div className="input-group">
+                    <label htmlFor="journey-date-input">Journey Date</label>
+                    <input
+                      id="journey-date-input"
+                      type="date"
+                      className="input-field"
+                      value={journeyDate}
+                      onChange={(e) => setJourneyDate(e.target.value)}
+                    />
+                  </div>
+                  <div className="input-group">
+                    <label htmlFor="return-date-input">Return Date (Optional)</label>
+                    <input id="return-date-input" type="date" className="input-field" disabled={tripType === 'one-way'} />
+                  </div>
+                </div>
+
+                <button className="btn-primary" onClick={() => { setSelectedBus(null); setSelectedSeats([]); setIsBookingSuccess(false); setShowDesktopSearch(true); }}>SEARCH BUSES</button>
+              </BorderGlow>
+            )}
+          </div>
+          <GradualBlur
+            target="parent"
+            position="bottom"
+            height="12rem"
+            strength={4}
+            divCount={6}
+            curve="bezier"
+            zIndex={3}
+          />
+        </header>
+
+        {/* Sections */}
+        <LazyLoad minHeight="500px">
+          <TopRoutesSection routes={TopRoutes} />
+        </LazyLoad>
+
+        <LazyLoad minHeight="400px">
+          <DestinationsSection destinations={Destinations} />
+        </LazyLoad>
+
+        <LazyLoad minHeight="800px">
+          <GallerySection images={GalleryImages} />
+        </LazyLoad>
+
+        <LazyLoad minHeight="400px">
+          <TestimonialsSection testimonials={Testimonials} />
+        </LazyLoad>
+
+        {/* Footer */}
+        <footer className="footer">
+          <div className="container">
+            <div className="footer-grid">
+              <div className="footer-column">
+                <h3 className="footer-title">Quick Links</h3>
+                <div className="footer-links-grid">
+                  <ul className="footer-links">
+                    <li><a href="#" className="footer-link">Home</a></li>
+                    <li><a href="#" className="footer-link">About us</a></li>
+                    <li><a href="#" className="footer-link">View Booking</a></li>
+                    <li><a href="#" className="footer-link">Cancellation</a></li>
+                    <li><a href="#" className="footer-link">Feedback</a></li>
+                  </ul>
+                  <ul className="footer-links">
+                    <li><a href="#" className="footer-link">Contact Us</a></li>
+                    <li><a href="#" className="footer-link">Gallery</a></li>
+                    <li><a href="#" className="footer-link">Privacy Policy</a></li>
+                    <li><a href="#" className="footer-link">Terms & Conditions</a></li>
+                  </ul>
                 </div>
               </div>
-
-              <div className="form-grid">
-                <div className="input-group">
-                  <label htmlFor="journey-date-input">Journey Date</label>
-                  <input id="journey-date-input" type="date" className="input-field" defaultValue="2026-07-28" />
-                </div>
-                <div className="input-group">
-                  <label htmlFor="return-date-input">Return Date (Optional)</label>
-                  <input id="return-date-input" type="date" className="input-field" disabled={tripType === 'one-way'} />
+              <div className="footer-column">
+                <h3 className="footer-title">Contact Us</h3>
+                <div className="contact-info">
+                  <p><strong>Route Related Enquiry</strong><br />
+                    0471-2463799<br />
+                    9447071021<br />
+                    18005994011(Toll Free)<br />
+                    We Social 9497722205<br />
+                    <a href="mailto:rsnksrtc@kerala.gov.in" className="footer-link">rsnksrtc@kerala.gov.in</a></p>
+                  <p className="mt-4"><strong>Technical Enquiry</strong><br />
+                    <a href="mailto:rsnksrtc@kerala.gov.in" className="footer-link">rsnksrtc@kerala.gov.in</a></p>
                 </div>
               </div>
-
-              <button className="btn-primary" onClick={() => setShowDesktopSearch(true)}>SEARCH BUSES</button>
-            </BorderGlow>
-          )}
-        </div>
-        <GradualBlur
-          target="parent"
-          position="bottom"
-          height="12rem"
-          strength={4}
-          divCount={6}
-          curve="bezier"
-          zIndex={3}
-        />
-      </header>
-
-      {/* Sections */}
-      <LazyLoad minHeight="500px">
-        <TopRoutesSection routes={TopRoutes} />
-      </LazyLoad>
-
-      <LazyLoad minHeight="400px">
-        <DestinationsSection destinations={Destinations} />
-      </LazyLoad>
-
-      <LazyLoad minHeight="800px">
-        <GallerySection images={GalleryImages} />
-      </LazyLoad>
-
-      <LazyLoad minHeight="400px">
-        <TestimonialsSection testimonials={Testimonials} />
-      </LazyLoad>
-
-      {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <div className="footer-grid">
-            <div className="footer-column">
-              <h3 className="footer-title">Quick Links</h3>
-              <div className="footer-links-grid">
-                <ul className="footer-links">
-                  <li><a href="#" className="footer-link">Home</a></li>
-                  <li><a href="#" className="footer-link">About us</a></li>
-                  <li><a href="#" className="footer-link">View Booking</a></li>
-                  <li><a href="#" className="footer-link">Cancellation</a></li>
-                  <li><a href="#" className="footer-link">Feedback</a></li>
-                </ul>
-                <ul className="footer-links">
-                  <li><a href="#" className="footer-link">Contact Us</a></li>
-                  <li><a href="#" className="footer-link">Gallery</a></li>
-                  <li><a href="#" className="footer-link">Privacy Policy</a></li>
-                  <li><a href="#" className="footer-link">Terms & Conditions</a></li>
-                </ul>
+              <div className="footer-column">
+                <h3 className="footer-title">Corporate Office</h3>
+                <div className="contact-info">
+                  <p>Kerala, Office of Managing Director,<br />
+                    TRANSPORT BHAVAN, Fort, Trivandrum,<br />
+                    Kerala, India, Pin 695023</p>
+                </div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="app-store-badge mt-4" style={{ height: '40px', cursor: 'pointer' }} width="119" height="40" />
               </div>
             </div>
-            <div className="footer-column">
-              <h3 className="footer-title">Contact Us</h3>
-              <div className="contact-info">
-                <p><strong>Route Related Enquiry</strong><br />
-                  0471-2463799<br />
-                  9447071021<br />
-                  18005994011(Toll Free)<br />
-                  We Social 9497722205<br />
-                  <a href="mailto:rsnksrtc@kerala.gov.in" className="footer-link">rsnksrtc@kerala.gov.in</a></p>
-                <p className="mt-4"><strong>Technical Enquiry</strong><br />
-                  <a href="mailto:rsnksrtc@kerala.gov.in" className="footer-link">rsnksrtc@kerala.gov.in</a></p>
-              </div>
-            </div>
-            <div className="footer-column">
-              <h3 className="footer-title">Corporate Office</h3>
-              <div className="contact-info">
-                <p>Kerala, Office of Managing Director,<br />
-                  TRANSPORT BHAVAN, Fort, Trivandrum,<br />
-                  Kerala, India, Pin 695023</p>
-              </div>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="app-store-badge mt-4" style={{ height: '40px', cursor: 'pointer' }} width="119" height="40" />
+            <div className="footer-bottom">
+              <p>&copy; 2026, All Rights Reserved, Kerala State Road Transport Corporation - KSRTC</p>
             </div>
           </div>
-          <div className="footer-bottom">
-            <p>&copy; 2026, All Rights Reserved, Kerala State Road Transport Corporation - KSRTC</p>
-          </div>
-        </div>
-      </footer>
-    </>
-  );
+        </footer>
+      </>
+    );
   };
 
   // Main Render Strategy
@@ -767,10 +777,16 @@ function App() {
 
         {renderWebsiteReplicaContent()}
 
-        <DesktopAuthModal 
-          show={showLoginModal} 
-          onClose={() => setShowLoginModal(false)} 
-          onLoginSuccess={() => setIsUserLoggedIn(true)} 
+        <DesktopAuthModal
+          show={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+          onLoginSuccess={() => setIsUserLoggedIn(true)}
+        />
+        <DesktopTicketsModal
+          show={showDesktopTicketsModal}
+          onClose={() => setShowDesktopTicketsModal(false)}
+          activeBookings={activeBookings}
+          handleCancelBooking={handleCancelBooking}
         />
       </>
     );
@@ -817,6 +833,9 @@ function App() {
             toggleTheme={toggleTheme}
             isUserLoggedIn={isUserLoggedIn}
             setShowLoginModal={setShowLoginModal}
+            setShowLiveTracking={setShowLiveTracking}
+            setShowTimingsModal={setShowTimingsModal}
+            setActiveMobileTab={setActiveMobileTab}
           />
         </div>
       )}
@@ -894,8 +913,11 @@ function App() {
         isSearching={isSearching}
         setIsSearching={setIsSearching}
         origin={origin}
+        setOrigin={setOrigin}
         destination={destination}
+        setDestination={setDestination}
         journeyDate={journeyDate}
+        setJourneyDate={setJourneyDate}
         selectedBus={selectedBus}
         setSelectedBus={setSelectedBus}
         selectedSeats={selectedSeats}
@@ -980,6 +1002,90 @@ function App() {
     </div>
   );
 }
+
+const DesktopTicketsModal = ({ show, onClose, activeBookings, handleCancelBooking }) => {
+  if (!show) return null;
+  return (
+    <div className="desktop-modal-overlay" style={{
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+      backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 10000,
+      display: 'flex', justifyContent: 'center', alignItems: 'center',
+      backdropFilter: 'blur(4px)'
+    }}>
+      <div className="desktop-modal-content" style={{
+        backgroundColor: 'var(--white)',
+        color: 'var(--dark)',
+        borderRadius: '16px',
+        padding: '24px',
+        width: '100%',
+        maxWidth: '650px',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+        maxHeight: '85vh',
+        overflowY: 'auto'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>My Boarding Passes</h2>
+          <button onClick={onClose} style={{ background: 'transparent', border: 'none', color: 'var(--gray)', cursor: 'pointer', fontSize: '1.2rem' }}>✕</button>
+        </div>
+
+        {activeBookings.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--gray)' }}>
+            <p style={{ fontSize: '1.1rem', marginBottom: '8px' }}>No Active Tickets Found</p>
+            <p style={{ fontSize: '0.9rem' }}>You can book new tickets from the home screen.</p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {activeBookings.map((ticket) => (
+              <div key={ticket.id} style={{
+                border: '1px solid var(--gray-light)',
+                borderRadius: '12px',
+                padding: '16px',
+                backgroundColor: 'var(--light)'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                  <div>
+                    <div style={{ fontWeight: 'bold', fontSize: '1.1rem', color: 'var(--dark)' }}>{ticket.from} → {ticket.to}</div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--gray)' }}>{ticket.date} • {ticket.time}</div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--gray)' }}>{ticket.busType}</div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--primary)' }}>{ticket.price}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--gray)' }}>Seats: {ticket.seats.join(', ')}</div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed var(--gray-light)', paddingTop: '12px', marginTop: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10b981' }}></div>
+                    <span style={{ fontSize: '0.85rem', color: '#10b981', fontWeight: 'bold' }}>Ready for Boarding</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (window.confirm('Are you sure you want to cancel this ticket?')) {
+                        handleCancelBooking(ticket.id);
+                      }
+                    }}
+                    style={{
+                      background: 'transparent',
+                      border: '1px solid #ef4444',
+                      color: '#ef4444',
+                      padding: '4px 12px',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    Cancel Ticket
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default App;
 

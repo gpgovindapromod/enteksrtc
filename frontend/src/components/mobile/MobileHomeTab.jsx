@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Bus, MapPin, ArrowRightLeft, Menu, X, Sun, Moon } from 'lucide-react';
+import { Bus, MapPin, ArrowRightLeft, Menu, X, Sun, Moon, Navigation, Clock, CalendarDays } from 'lucide-react';
 import BorderGlow from '../BorderGlow';
 import GradualBlur from '../GradualBlur';
 import MobileBookingWidget from './MobileBookingWidget';
@@ -35,7 +35,10 @@ const MobileHomeTab = ({
   theme,
   toggleTheme,
   isUserLoggedIn,
-  setShowLoginModal
+  setShowLoginModal,
+  setShowLiveTracking,
+  setShowTimingsModal,
+  setActiveMobileTab
 }) => {
 
   useEffect(() => {
@@ -58,33 +61,7 @@ const MobileHomeTab = ({
             </div>
           </div>
 
-          <div className={`nav-menu-modern ${isMenuOpen ? 'active' : ''}`}>
-            <div className="nav-links-modern">
-              <span className="nav-item" onClick={() => {
-                setIsMenuOpen(false);
-                document.getElementById('mobile-routes-section')?.scrollIntoView({ behavior: 'smooth' });
-              }}>Routes</span>
-              <span className="nav-item" onClick={() => {
-                setIsMenuOpen(false);
-                document.getElementById('mobile-destinations-section')?.scrollIntoView({ behavior: 'smooth' });
-              }}>Destinations</span>
-              <span className="nav-item" onClick={() => {
-                setIsMenuOpen(false);
-                document.getElementById('mobile-gallery-section')?.scrollIntoView({ behavior: 'smooth' });
-              }}>Gallery</span>
-            </div>
-
-            <div className="nav-actions" style={{ display: 'none' }}>
-              <button
-                onClick={toggleTheme}
-                style={{ background: 'transparent', border: 'none', color: 'var(--dark)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-              >
-                {theme === 'dark' ? <Sun size={22} /> : <Moon size={22} />}
-              </button>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             {!isUserLoggedIn && (
               <button
                 className="btn-login-app"
@@ -93,8 +70,11 @@ const MobileHomeTab = ({
                 Login
               </button>
             )}
-            <button className="mobile-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            <button
+              onClick={toggleTheme}
+              style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+            >
+              {theme === 'dark' ? <Sun size={24} /> : <Moon size={24} />}
             </button>
           </div>
         </div>
@@ -153,6 +133,72 @@ const MobileHomeTab = ({
           zIndex={3}
         />
       </header>
+
+      {/* Quick Services Grid */}
+      <div style={{ padding: '20px 16px 8px 16px' }}>
+        <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '12px', color: 'var(--dark)' }}>Quick Services</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+          <button 
+            onClick={() => setShowLiveTracking(true)}
+            style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              gap: '8px', 
+              padding: '12px 8px', 
+              background: 'var(--white)', 
+              border: '1px solid var(--gray-light)', 
+              borderRadius: '12px',
+              cursor: 'pointer'
+            }}
+          >
+            <Navigation size={22} color="var(--primary)" />
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--dark)' }}>Track Bus</span>
+          </button>
+          
+          <button 
+            onClick={() => setShowTimingsModal(true)}
+            style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              gap: '8px', 
+              padding: '12px 8px', 
+              background: 'var(--white)', 
+              border: '1px solid var(--gray-light)', 
+              borderRadius: '12px',
+              cursor: 'pointer'
+            }}
+          >
+            <Clock size={22} color="var(--secondary)" />
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--dark)' }}>Bus Timings</span>
+          </button>
+
+          <button 
+            onClick={() => {
+              if (isUserLoggedIn) {
+                setActiveMobileTab('tickets');
+              } else {
+                setShowLoginModal(true);
+              }
+            }}
+            style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              gap: '8px', 
+              padding: '12px 8px', 
+              background: 'var(--white)', 
+              border: '1px solid var(--gray-light)', 
+              borderRadius: '12px',
+              cursor: 'pointer'
+            }}
+          >
+            <CalendarDays size={22} color="#8b5cf6" />
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--dark)' }}>My Bookings</span>
+          </button>
+        </div>
+      </div>
 
       {/* Sections */}
       <div id="mobile-routes-section">

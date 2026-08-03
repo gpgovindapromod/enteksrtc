@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, RotateCcw, CheckCircle2, Info, SlidersHorizontal, ArrowDownWideNarrow, X } from 'lucide-react';
-
-const MOCK_BUSES = [
-  { id: 1, name: 'K-Swift Premium AC Sleeper (2+1)', brand: 'K-SWIFT', type: 'AC Sleeper', departure: '18:30', arrival: '08:45', duration: '14h 15m', fare: 1450, rating: 4.8 },
-  { id: 2, name: 'Swift Deluxe Air Bus (2+2)', brand: 'K-SWIFT', type: 'AC Semi-Sleeper', departure: '06:00', arrival: '20:30', duration: '14h 30m', fare: 950, rating: 4.5 },
-  { id: 3, name: 'Minnal Express (Non-AC Sleeper)', brand: 'KSRTC MINNAL', type: 'Non-AC Sleeper', departure: '20:00', arrival: '09:15', duration: '13h 15m', fare: 880, rating: 4.2 },
-  { id: 4, name: 'KSRTC Super Fast (2+3)', brand: 'KSRTC', type: 'Non-AC Semi-Sleeper', departure: '22:15', arrival: '13:00', duration: '14h 45m', fare: 720, rating: 3.9 }
-];
+import { ArrowLeft, RotateCcw, CheckCircle2, Info, SlidersHorizontal, ArrowDownWideNarrow, X, ChevronDown, ChevronUp } from 'lucide-react';
+import MobileBookingWidget from './MobileBookingWidget';
+import { getFilteredAndSortedBuses } from '../../services/busService';
 
 const MobileSearchResults = ({
   isSearching,
   setIsSearching,
   origin,
+  setOrigin,
   destination,
+  setDestination,
   journeyDate,
+  setJourneyDate,
   selectedBus,
   setSelectedBus,
   selectedSeats,
@@ -33,6 +31,8 @@ const MobileSearchResults = ({
   const [sortBy, setSortBy] = useState('Relevance');
   const [showFilterSheet, setShowFilterSheet] = useState(false);
   const [showSortSheet, setShowSortSheet] = useState(false);
+  const [isModifyOpen, setIsModifyOpen] = useState(false);
+  const [tripType, setTripType] = useState('one-way');
 
   // Filter Logic
   const handleCheckboxChange = (setter, stateList, value) => {
@@ -43,42 +43,7 @@ const MobileSearchResults = ({
     }
   };
 
-  const getFilteredAndSortedBuses = () => {
-    let result = [...MOCK_BUSES];
-
-    if (selectedBusTypes.length > 0) {
-      result = result.filter(bus => {
-        if (selectedBusTypes.includes('AC Sleeper') && bus.type === 'AC Sleeper') return true;
-        if (selectedBusTypes.includes('Non-AC Sleeper') && bus.type === 'Non-AC Sleeper') return true;
-        if (selectedBusTypes.includes('AC Semi-Sleeper') && bus.type === 'AC Semi-Sleeper') return true;
-        if (selectedBusTypes.includes('Seater') && bus.type === 'Non-AC Semi-Sleeper') return true;
-        return false;
-      });
-    }
-
-    if (selectedDepTimes.length > 0) {
-      result = result.filter(bus => {
-        const hour = parseInt(bus.departure.split(':')[0], 10);
-        if (selectedDepTimes.includes('Before 6 AM') && hour < 6) return true;
-        if (selectedDepTimes.includes('6 AM to 12 PM') && hour >= 6 && hour < 12) return true;
-        if (selectedDepTimes.includes('12 PM to 6 PM') && hour >= 12 && hour < 18) return true;
-        if (selectedDepTimes.includes('After 6 PM') && hour >= 18) return true;
-        return false;
-      });
-    }
-
-    if (sortBy === 'Price: Low to High') {
-      result.sort((a, b) => a.fare - b.fare);
-    } else if (sortBy === 'Departure: Earliest First') {
-      result.sort((a, b) => a.departure.localeCompare(b.departure));
-    } else if (sortBy === 'Rating: High to Low') {
-      result.sort((a, b) => b.rating - a.rating);
-    }
-
-    return result;
-  };
-
-  const filteredBuses = getFilteredAndSortedBuses();
+  const filteredBuses = getFilteredAndSortedBuses({ selectedBusTypes, selectedDepTimes, sortBy });
   useEffect(() => {
     if (isSearching) {
       setIsLoading(true);
@@ -138,15 +103,59 @@ const MobileSearchResults = ({
   return (
     <div className="mobile-search-results-overlay">
       <div className="mobile-results-container">
-        <header className="mobile-results-header">
-          <button className="back-arrow-btn" onClick={() => { setIsSearching(false); setSelectedBus(null); }}>
-            <ArrowLeft size={24} />
-          </button>
-          <div className="results-header-info">
-            <h3>{origin} to {destination}</h3>
-            <span>{journeyDate} • {selectedSeats.length > 0 ? `${selectedSeats.length} seats` : 'Select Bus'}</span>
+        <header 
+          className="mobile-results-header" 
+          style={{ cursor: 'pointer', justifyContent: 'space-between' }}
+          onClick={() => setIsModifyOpen(!isModifyOpen)}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <button 
+              className="back-arrow-btn" 
+              onClick={(e) => { 
+                e.stopPropagation(); 
+                setIsSearching(false); 
+                setSelectedBus(null); 
+              }}
+              style={{ border: 'none', background: 'transparent' }}
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <div className="results-header-info">
+              <h3>{origin} to {destination}</h3>
+              <span>{journeyDate} • {selectedSeats.length > 0 ? `${selectedSeats.length} seats` : 'Select Bus'}</span>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 'bold' }}>
+            <span>Modify</span>
+            {isModifyOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
           </div>
         </header>
+
+        {isModifyOpen && (
+          <div style={{ 
+            background: 'var(--white)', 
+            borderBottom: '1px solid var(--gray-light)',
+            padding: '16px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+          }}>
+            <MobileBookingWidget
+              origin={origin}
+              setOrigin={setOrigin}
+              destination={destination}
+              setDestination={setDestination}
+              journeyDate={journeyDate}
+              setJourneyDate={setJourneyDate}
+              tripType={tripType}
+              setTripType={setTripType}
+              onSearch={() => {
+                setIsModifyOpen(false);
+                setIsLoading(true);
+                setTimeout(() => setIsLoading(false), 800);
+              }}
+              t={t}
+            />
+          </div>
+        )}
 
         <div className="results-body">
           {!selectedBus ? (

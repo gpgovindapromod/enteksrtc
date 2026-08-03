@@ -2069,9 +2069,30 @@ button:active,
   background-color: var(--white);
   border: 1px solid var(--gray-light);
   border-radius: 20px;
-  padding: 16px;
-  box-shadow: var(--shadow-sm);
+  padding: 18px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
   cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.mobile-bus-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  border-color: var(--primary);
+}
+
+.desktop-bus-card {
+  background-color: var(--white);
+  border: 1px solid var(--gray-light);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  margin-bottom: 16px;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.desktop-bus-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  border-color: var(--primary);
 }
 .bus-card-row1 {
   display: flex;
@@ -2172,9 +2193,17 @@ button:active,
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 8px 14px;
   font-size: 0.75rem;
   font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(234, 88, 12, 0.25);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.btn-select-seats:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 16px rgba(234, 88, 12, 0.4);
+  background-color: var(--secondary-hover);
 }
 
 /* Seat Selection Layout */
@@ -2429,7 +2458,7 @@ button:active,
 .modify-search-bar {
   display: flex;
   align-items: center;
-  background: white;
+  background: var(--white);
   margin: 16px 24px;
   border-radius: 16px;
   padding: 6px;
@@ -2447,7 +2476,7 @@ button:active,
 }
 
 .modify-input-group:hover {
-  background: #f8f9fa;
+  background: var(--light);
 }
 
 .modify-input-group:last-of-type {
@@ -2590,7 +2619,7 @@ button:active,
 
 .modify-trip-pill-bar {
   padding: 12px 24px;
-  background: #f5f7f9;
+  background: var(--light);
 }
 
 .trip-pill {
@@ -4094,9 +4123,11 @@ button:active,
 .mobile-filter-bar {
   display: flex;
   gap: 8px;
-  padding: 12px 16px 4px 16px;
+  padding: 12px 16px;
   overflow-x: auto;
+  overflow-y: visible !important;
   scrollbar-width: none;
+  min-height: 50px;
 }
 .mobile-filter-bar::-webkit-scrollbar {
   display: none;
@@ -4104,21 +4135,24 @@ button:active,
 .mobile-filter-pill {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 14px;
+  padding: 6px 14px !important;
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
-  background: var(--surface);
-  border: 1px solid var(--gray-light);
-  color: var(--text-color);
+  background: var(--white) !important;
+  border: 1px solid var(--gray-light) !important;
+  color: var(--dark) !important;
   cursor: pointer;
+  height: 34px !important;
+  box-sizing: border-box;
 }
 .mobile-filter-pill.active {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
+  background: var(--primary) !important;
+  color: white !important;
+  border-color: var(--primary) !important;
 }
 
 .mobile-bottom-sheet-overlay {
@@ -4130,13 +4164,42 @@ button:active,
   align-items: flex-end;
 }
 .mobile-bottom-sheet-content {
-  background: var(--bg-color);
-  color: var(--text-color);
+  background: var(--white);
+  color: var(--dark);
   width: 100%;
   border-radius: 20px 20px 0 0;
   display: flex;
   flex-direction: column;
   max-height: 80vh;
+}
+
+.inline-city-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--gray-light);
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 1000;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 4px;
+}
+.inline-city-option {
+  padding: 12px 16px;
+  font-size: 1rem;
+  color: var(--dark);
+  cursor: pointer;
+  border-bottom: 1px solid var(--gray-light);
+}
+.inline-city-option:last-child {
+  border-bottom: none;
+}
+.inline-city-option.active {
+  background: var(--primary);
+  color: white;
 }
 .sheet-header {
   display: flex;

@@ -1,5 +1,6 @@
-import React from 'react';
-import { Bus, Ticket, MapPin, ArrowRightLeft, Calendar } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bus, Ticket, MapPin, ArrowRightLeft, Calendar, X, Search } from 'lucide-react';
+import { filterCities } from '../../services/busService';
 
 const MobileBookingWidget = ({
   origin,
@@ -13,6 +14,12 @@ const MobileBookingWidget = ({
   onSearch,
   t
 }) => {
+  const [isOriginFocused, setIsOriginFocused] = useState(false);
+  const [isDestFocused, setIsDestFocused] = useState(false);
+
+  const filteredOriginCities = filterCities(origin);
+  const filteredDestCities = filterCities(destination);
+
   const getQuickDates = () => {
     const dates = [];
     const baseDate = new Date();
@@ -69,26 +76,57 @@ const MobileBookingWidget = ({
       </div>
 
       <div className="bwm-route-wrapper">
-        <div className="bwm-input-box">
+        <div className="bwm-input-box" style={{ position: 'relative' }}>
           <MapPin size={22} className="bwm-input-icon" />
           <div className="bwm-input-details">
             <span className="bwm-input-label">Travelling From</span>
             <input
-              list="mobile-origin-options"
+              type="text"
               value={origin}
-              onChange={(e) => setOrigin(e.target.value)}
-              className="bwm-input-field"
+              onChange={e => setOrigin(e.target.value)}
+              onFocus={() => setIsOriginFocused(true)}
+              onBlur={() => setTimeout(() => setIsOriginFocused(false), 200)}
               placeholder="Select Origin"
-              aria-label="Travelling From"
+              style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--dark)', width: '100%', padding: 0 }}
             />
-            <datalist id="mobile-origin-options">
-              <option value="Bangalore">Bangalore</option>
-              <option value="Trivandrum">Trivandrum</option>
-              <option value="Kochi">Kochi</option>
-              <option value="Calicut">Calicut</option>
-              <option value="Thrissur">Thrissur</option>
-            </datalist>
           </div>
+          {isOriginFocused && origin && filteredOriginCities.length > 0 && (
+            <div 
+              className="inline-city-dropdown"
+              style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                right: 0,
+                backgroundColor: 'var(--white)',
+                border: '1px solid var(--gray-light)',
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                zIndex: 9999,
+                maxHeight: '220px',
+                overflowY: 'auto',
+                marginTop: '4px'
+              }}
+            >
+              {filteredOriginCities.map(city => (
+                <div 
+                  key={city} 
+                  className="inline-city-option"
+                  style={{
+                    padding: '12px 16px',
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    borderBottom: '1px solid var(--gray-light)',
+                    backgroundColor: 'var(--white)',
+                    color: 'var(--dark)'
+                  }}
+                  onClick={() => { setOrigin(city); setIsOriginFocused(false); }}
+                >
+                  {city}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <button
@@ -103,27 +141,57 @@ const MobileBookingWidget = ({
           <ArrowRightLeft size={18} style={{ transform: 'rotate(90deg)' }} />
         </button>
 
-        <div className="bwm-input-box">
+        <div className="bwm-input-box" style={{ position: 'relative' }}>
           <MapPin size={22} className="bwm-input-icon" />
           <div className="bwm-input-details">
             <span className="bwm-input-label">Going To</span>
             <input
-              list="mobile-dest-options"
+              type="text"
               value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-              className="bwm-input-field"
+              onChange={e => setDestination(e.target.value)}
+              onFocus={() => setIsDestFocused(true)}
+              onBlur={() => setTimeout(() => setIsDestFocused(false), 200)}
               placeholder="Select Destination"
-              aria-label="Going To"
+              style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--dark)', width: '100%', padding: 0 }}
             />
-            <datalist id="mobile-dest-options">
-              <option value="Bangalore">Bangalore</option>
-              <option value="Trivandrum">Trivandrum</option>
-              <option value="Kochi">Kochi</option>
-              <option value="Calicut">Calicut</option>
-              <option value="Thrissur">Thrissur</option>
-              <option value="Tirunelveli">Tirunelveli</option>
-            </datalist>
           </div>
+          {isDestFocused && destination && filteredDestCities.length > 0 && (
+            <div 
+              className="inline-city-dropdown"
+              style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                right: 0,
+                backgroundColor: 'var(--white)',
+                border: '1px solid var(--gray-light)',
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                zIndex: 9999,
+                maxHeight: '220px',
+                overflowY: 'auto',
+                marginTop: '4px'
+              }}
+            >
+              {filteredDestCities.map(city => (
+                <div 
+                  key={city} 
+                  className="inline-city-option"
+                  style={{
+                    padding: '12px 16px',
+                    fontSize: '1rem',
+                    cursor: 'pointer',
+                    borderBottom: '1px solid var(--gray-light)',
+                    backgroundColor: 'var(--white)',
+                    color: 'var(--dark)'
+                  }}
+                  onClick={() => { setDestination(city); setIsDestFocused(false); }}
+                >
+                  {city}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

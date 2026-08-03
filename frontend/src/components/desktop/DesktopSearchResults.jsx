@@ -1,14 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Clock, Bus, MapPin, Filter, X, ArrowLeftRight, Calendar, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, ArrowDownWideNarrow } from 'lucide-react';
+import { ArrowLeft, Clock, Bus, MapPin, Filter, X, ArrowLeftRight, Calendar, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, ArrowDownWideNarrow, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { getFilteredAndSortedBuses, generateSeatLayoutData } from '../../services/busService';
 
-const MOCK_BUSES = [
-  { id: 1, name: 'K-Swift Premium AC Sleeper (2+1)', brand: 'K-SWIFT', type: 'AC Sleeper', departure: '18:30', arrival: '08:45', duration: '14h 15m', fare: 1450, rating: 4.8 },
-  { id: 2, name: 'Swift Deluxe Air Bus (2+2)', brand: 'K-SWIFT', type: 'AC Semi-Sleeper', departure: '06:00', arrival: '20:30', duration: '14h 30m', fare: 950, rating: 4.5 },
-  { id: 3, name: 'Minnal Express (Non-AC Sleeper)', brand: 'KSRTC MINNAL', type: 'Non-AC Sleeper', departure: '20:00', arrival: '09:15', duration: '13h 15m', fare: 880, rating: 4.2 },
-  { id: 4, name: 'KSRTC Super Fast (2+3)', brand: 'KSRTC', type: 'Non-AC Semi-Sleeper', departure: '22:15', arrival: '13:00', duration: '14h 45m', fare: 720, rating: 3.9 }
-];
-
-const DesktopSearchResults = ({ onBack, origin, setOrigin, destination, setDestination, journeyDate, setJourneyDate }) => {
+const DesktopSearchResults = ({ 
+  onBack, 
+  origin, 
+  setOrigin, 
+  destination, 
+  setDestination, 
+  journeyDate, 
+  setJourneyDate,
+  selectedBus,
+  setSelectedBus,
+  selectedSeats,
+  setSelectedSeats,
+  isBookingSuccess,
+  setIsBookingSuccess,
+  handleCheckout,
+  setShowDesktopTicketsModal,
+  t = {}
+}) => {
   const [isLoading, setIsLoading] = useState(true);
   
   // Filter States
@@ -44,43 +55,64 @@ const DesktopSearchResults = ({ onBack, origin, setOrigin, destination, setDesti
     setSortBy('Relevance');
   };
 
-  // Filter and Sort Logic
-  const getFilteredAndSortedBuses = () => {
-    let result = [...MOCK_BUSES];
+  const seatGridData = generateSeatLayoutData();
 
-    if (selectedBusTypes.length > 0) {
-      result = result.filter(bus => {
-        if (selectedBusTypes.includes('AC Sleeper') && bus.type === 'AC Sleeper') return true;
-        if (selectedBusTypes.includes('Non-AC Sleeper') && bus.type === 'Non-AC Sleeper') return true;
-        if (selectedBusTypes.includes('AC Semi-Sleeper') && bus.type === 'AC Semi-Sleeper') return true;
-        if (selectedBusTypes.includes('Seater') && bus.type === 'Non-AC Semi-Sleeper') return true; // Mapping Seater to Non-AC Semi-Sleeper for mock
-        return false;
-      });
-    }
+  const renderSeatGrid = () => {
+    return seatGridData.map((row) => (
+      <div key={row.rowId} className="seat-row" style={{ display: 'flex', gap: '8px', marginBottom: '8px', justifyContent: 'center' }}>
+        {row.seats.map((seat, idx) => {
+          if (seat.isAisle) {
+            return <div key={seat.key} className="seat-aisle" style={{ width: '20px' }}></div>;
+          }
+          const isSelected = selectedSeats.includes(seat.seatLabel);
+          let seatBg = 'var(--white)';
+          let seatColor = 'var(--dark)';
+          let seatBorder = '1px solid var(--gray-light)';
+          
+          if (seat.isBooked) {
+            seatBg = 'var(--gray-light)';
+            seatColor = 'var(--gray)';
+          } else if (isSelected) {
+            seatBg = 'var(--primary)';
+            seatColor = 'white';
+            seatBorder = '1px solid var(--primary)';
+          }
 
-    if (selectedDepTimes.length > 0) {
-      result = result.filter(bus => {
-        const hour = parseInt(bus.departure.split(':')[0], 10);
-        if (selectedDepTimes.includes('Before 6 AM') && hour < 6) return true;
-        if (selectedDepTimes.includes('6 AM to 12 PM') && hour >= 6 && hour < 12) return true;
-        if (selectedDepTimes.includes('12 PM to 6 PM') && hour >= 12 && hour < 18) return true;
-        if (selectedDepTimes.includes('After 6 PM') && hour >= 18) return true;
-        return false;
-      });
-    }
-
-    if (sortBy === 'Price: Low to High') {
-      result.sort((a, b) => a.fare - b.fare);
-    } else if (sortBy === 'Departure: Earliest First') {
-      result.sort((a, b) => a.departure.localeCompare(b.departure));
-    } else if (sortBy === 'Rating: High to Low') {
-      result.sort((a, b) => b.rating - a.rating);
-    }
-
-    return result;
+          return (
+            <button
+              key={seat.seatId}
+              disabled={seat.isBooked}
+              onClick={() => {
+                if (isSelected) {
+                  setSelectedSeats(selectedSeats.filter(s => s !== seat.seatLabel));
+                } else {
+                  setSelectedSeats([...selectedSeats, seat.seatLabel]);
+                }
+              }}
+              style={{
+                width: '38px',
+                height: '38px',
+                borderRadius: '8px',
+                border: seatBorder,
+                background: seatBg,
+                color: seatColor,
+                fontWeight: 'bold',
+                fontSize: '0.85rem',
+                cursor: seat.isBooked ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              {seat.seatLabel}
+            </button>
+          );
+        })}
+      </div>
+    ));
   };
 
-  const filteredBuses = getFilteredAndSortedBuses();
+  const filteredBuses = getFilteredAndSortedBuses({ selectedBusTypes, selectedDepTimes, sortBy });
 
   return (
     <div className="desktop-search-results-page">
@@ -241,11 +273,120 @@ const DesktopSearchResults = ({ onBack, origin, setOrigin, destination, setDesti
                     </div>
                   </div>
                 ))
+              ) : selectedBus ? (
+                !isBookingSuccess ? (
+                  /* Seat Selection & Checkout Layout */
+                  <div style={{ background: 'var(--white)', padding: '24px', borderRadius: '16px', border: '1px solid var(--gray-light)', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid var(--gray-light)', paddingBottom: '16px' }}>
+                      <div>
+                        <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{selectedBus.name}</h3>
+                        <span style={{ fontSize: '0.9rem', color: 'var(--gray)' }}>{selectedSeats.length} Seats Selected: {selectedSeats.join(', ') || 'None'}</span>
+                      </div>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <button onClick={() => setSelectedSeats([])} style={{ background: 'transparent', border: '1px solid var(--gray-light)', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem' }}>
+                          <RotateCcw size={14} /> Reset
+                        </button>
+                        <button onClick={() => setSelectedBus(null)} style={{ background: 'transparent', border: 'none', color: 'var(--gray)', cursor: 'pointer', fontSize: '1rem', fontWeight: 'bold' }}>
+                          ✕ Back to Buses
+                        </button>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
+                      {/* Left Column: Seat Grid */}
+                      <div style={{ flex: 1, minWidth: '280px', background: 'var(--light)', padding: '20px', borderRadius: '12px', border: '1px solid var(--gray-light)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginBottom: '16px', fontSize: '0.85rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '16px', height: '16px', background: 'var(--white)', border: '1px solid var(--gray-light)', borderRadius: '4px' }}></div> Available</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '16px', height: '16px', background: 'var(--primary)', borderRadius: '4px' }}></div> Selected</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '16px', height: '16px', background: 'var(--gray-light)', borderRadius: '4px' }}></div> Booked</div>
+                        </div>
+
+                        <div style={{ border: '2px solid var(--gray-light)', borderRadius: '16px', padding: '20px 12px', background: 'var(--white)', position: 'relative' }}>
+                          <div style={{ textAlign: 'right', marginBottom: '12px', fontSize: '0.75rem', color: 'var(--gray)', fontWeight: 'bold' }}>STEERING ☸</div>
+                          {renderSeatGrid()}
+                        </div>
+                      </div>
+
+                      {/* Right Column: Order Summary & Action */}
+                      <div style={{ flex: 1, minWidth: '280px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                        <div>
+                          <h4 style={{ fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '12px' }}>Fare Breakdown</h4>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-light)' }}>
+                            <span>Base Fare per Seat</span>
+                            <strong>₹{selectedBus.fare}</strong>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-light)' }}>
+                            <span>Selected Seats ({selectedSeats.length})</span>
+                            <strong>{selectedSeats.join(', ') || '-'}</strong>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--primary)' }}>
+                            <span>Total Price</span>
+                            <span>₹{(selectedSeats.length * selectedBus.fare).toLocaleString()}</span>
+                          </div>
+                        </div>
+
+                        <button
+                          disabled={selectedSeats.length === 0}
+                          onClick={() => handleCheckout(selectedBus)}
+                          style={{
+                            width: '100%',
+                            padding: '14px',
+                            background: selectedSeats.length === 0 ? 'var(--gray-light)' : 'var(--primary)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '12px',
+                            fontWeight: 'bold',
+                            fontSize: '1rem',
+                            cursor: selectedSeats.length === 0 ? 'not-allowed' : 'pointer',
+                            marginTop: '24px'
+                          }}
+                        >
+                          Confirm & Pay ₹{(selectedSeats.length * selectedBus.fare).toLocaleString()}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 ) : (
-                  // Actual Buses
-                  filteredBuses.length > 0 ? filteredBuses.map((bus) => (
-                    <div key={bus.id} className="desktop-bus-card">
-                      <div className="bus-card-main-info">
+                  /* Booking Confirmation Screen */
+                  <div style={{ background: 'var(--white)', padding: '32px', borderRadius: '16px', border: '1px solid var(--gray-light)', textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}>
+                    <CheckCircle2 size={72} color="var(--primary)" style={{ margin: '0 auto 16px auto' }} />
+                    <h2 style={{ fontSize: '1.6rem', fontWeight: 'bold', marginBottom: '8px' }}>Booking Confirmed!</h2>
+                    <p style={{ color: 'var(--gray)', marginBottom: '24px' }}>Your ticket has been booked successfully and added to <strong>My Tickets</strong>.</p>
+                    
+                    <div style={{ maxWidth: '400px', margin: '0 auto 24px auto', padding: '16px', background: 'var(--light)', borderRadius: '12px', textAlign: 'left', border: '1px solid var(--gray-light)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}><span>Bus</span><strong>{selectedBus.name}</strong></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}><span>Route</span><strong>{origin} → {destination}</strong></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}><span>Seats</span><strong>{selectedSeats.join(', ')}</strong></div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--gray-light)', paddingTop: '8px' }}><span>Total Paid</span><strong style={{ color: 'var(--primary)' }}>₹{(selectedSeats.length * selectedBus.fare).toLocaleString()}</strong></div>
+                    </div>
+
+                    <button 
+                      onClick={() => {
+                        setIsBookingSuccess(false);
+                        setSelectedBus(null);
+                        setSelectedSeats([]);
+                        setShowDesktopTicketsModal(true);
+                      }}
+                      style={{
+                        padding: '12px 28px',
+                        background: 'var(--primary)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '12px',
+                        fontWeight: 'bold',
+                        fontSize: '1rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      View My Boarding Passes
+                    </button>
+                  </div>
+                )
+              ) : (
+                // Actual Buses List
+                filteredBuses.length > 0 ? filteredBuses.map((bus) => (
+                  <div key={bus.id} className="desktop-bus-card">
+                    <div className="bus-card-main-info">
                       <div className="bus-details">
                         <span className="bus-brand-tag">{bus.brand}</span>
                         <h4 className="bus-card-title">{bus.name}</h4>
@@ -270,19 +411,19 @@ const DesktopSearchResults = ({ onBack, origin, setOrigin, destination, setDesti
                       <div className="bus-action-col">
                         <div className="bus-rating">★ {bus.rating}</div>
                         <span className="price">₹{bus.fare}</span>
-                        <button className="btn-select-seats">Book Tickets</button>
+                        <button className="btn-select-seats" onClick={() => setSelectedBus(bus)}>Book Tickets</button>
                       </div>
                     </div>
                   </div>
-                  )) : (
-                    <div className="no-buses-found" style={{ padding: '40px', textAlign: 'center', background: 'white', borderRadius: '8px' }}>
-                      <Bus size={48} color="var(--gray)" style={{ margin: '0 auto 16px auto', display: 'block' }} />
-                      <h3>No buses found</h3>
-                      <p style={{ color: 'var(--gray)', marginTop: '8px' }}>Try adjusting your filters to see more results.</p>
-                      <button className="btn-primary" style={{ marginTop: '16px' }} onClick={clearAllFilters}>Clear All Filters</button>
-                    </div>
-                  )
-                )}
+                )) : (
+                  <div className="no-buses-found" style={{ padding: '40px', textAlign: 'center', background: 'white', borderRadius: '8px' }}>
+                    <Bus size={48} color="var(--gray)" style={{ margin: '0 auto 16px auto', display: 'block' }} />
+                    <h3>No buses found</h3>
+                    <p style={{ color: 'var(--gray)', marginTop: '8px' }}>Try adjusting your filters to see more results.</p>
+                    <button className="btn-primary" style={{ marginTop: '16px' }} onClick={clearAllFilters}>Clear All Filters</button>
+                  </div>
+                )
+              )}
             </div>
           </main>
         </div>
