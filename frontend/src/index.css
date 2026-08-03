@@ -4110,9 +4110,9 @@ button:active,
   font-size: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
-  background: white;
+  background: var(--surface);
   border: 1px solid var(--gray-light);
-  color: var(--dark);
+  color: var(--text-color);
   cursor: pointer;
 }
 .mobile-filter-pill.active {
@@ -4130,7 +4130,8 @@ button:active,
   align-items: flex-end;
 }
 .mobile-bottom-sheet-content {
-  background: white;
+  background: var(--bg-color);
+  color: var(--text-color);
   width: 100%;
   border-radius: 20px 20px 0 0;
   display: flex;
