@@ -37,6 +37,7 @@ Navigate to the frontend directory, install dependencies, and start the Vite dev
 ```bash
 cd frontend
 npm install
+npm install axios
 npm run dev
 ```
 

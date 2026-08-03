@@ -19,8 +19,20 @@ export const MOCK_BUSES = [
   { id: 4, name: 'KSRTC Super Fast (2+3)', brand: 'KSRTC', type: 'Non-AC Semi-Sleeper', departure: '22:15', arrival: '13:00', duration: '14h 45m', fare: 720, rating: 3.9 }
 ];
 
-export const getFilteredAndSortedBuses = ({ selectedBusTypes = [], selectedDepTimes = [], sortBy = 'Relevance' }) => {
-  let result = [...MOCK_BUSES];
+import axios from 'axios';
+
+export const getFilteredAndSortedBuses = async ({ selectedBusTypes = [], selectedDepTimes = [], sortBy = 'Relevance', origin = '', destination = '', date = '' }) => {
+  let result = [];
+  try {
+    // Attempt to fetch from backend
+    const response = await axios.get('http://localhost:5000/api/buses', {
+      params: { origin, destination, date }
+    });
+    result = response.data.buses || response.data;
+  } catch (error) {
+    console.error("Backend not reachable, falling back to mock data.", error);
+    result = [...MOCK_BUSES];
+  }
 
   if (selectedBusTypes.length > 0) {
     result = result.filter(bus => {

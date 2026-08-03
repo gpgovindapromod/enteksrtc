@@ -34,6 +34,8 @@ const MobileSearchResults = ({
   const [isModifyOpen, setIsModifyOpen] = useState(false);
   const [tripType, setTripType] = useState('one-way');
 
+  const [filteredBuses, setFilteredBuses] = useState([]);
+
   // Filter Logic
   const handleCheckboxChange = (setter, stateList, value) => {
     if (stateList.includes(value)) {
@@ -43,16 +45,31 @@ const MobileSearchResults = ({
     }
   };
 
-  const filteredBuses = getFilteredAndSortedBuses({ selectedBusTypes, selectedDepTimes, sortBy });
   useEffect(() => {
-    if (isSearching) {
-      setIsLoading(true);
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [isSearching]);
+    const fetchBuses = async () => {
+      if (isSearching) {
+        setIsLoading(true);
+        try {
+          const buses = await getFilteredAndSortedBuses({
+            selectedBusTypes,
+            selectedDepTimes,
+            sortBy,
+            origin,
+            destination,
+            date: journeyDate
+          });
+          setFilteredBuses(buses);
+        } catch (error) {
+          console.error("Failed to fetch buses in mobile", error);
+          setFilteredBuses([]);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+    
+    fetchBuses();
+  }, [isSearching, selectedBusTypes, selectedDepTimes, sortBy, origin, destination, journeyDate]);
 
   if (!isSearching) return null;
 

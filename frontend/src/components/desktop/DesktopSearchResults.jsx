@@ -21,19 +21,37 @@ const DesktopSearchResults = ({
   t = {}
 }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [filteredBuses, setFilteredBuses] = useState([]);
   
   // Filter States
   const [selectedBusTypes, setSelectedBusTypes] = useState([]);
   const [selectedDepTimes, setSelectedDepTimes] = useState([]);
   const [sortBy, setSortBy] = useState('Relevance');
 
-  // Simulate network request for the skeleton loader effect
+  // Fetch buses asynchronously
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000); // Wait for 2 seconds to show skeletons
-    return () => clearTimeout(timer);
-  }, []);
+    const fetchBuses = async () => {
+      setIsLoading(true);
+      try {
+        const buses = await getFilteredAndSortedBuses({
+          selectedBusTypes,
+          selectedDepTimes,
+          sortBy,
+          origin,
+          destination,
+          date: journeyDate
+        });
+        setFilteredBuses(buses);
+      } catch (error) {
+        console.error("Failed to fetch buses", error);
+        setFilteredBuses([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBuses();
+  }, [selectedBusTypes, selectedDepTimes, sortBy, origin, destination, journeyDate]);
 
   const handleSwap = () => {
     const temp = origin;
@@ -111,8 +129,6 @@ const DesktopSearchResults = ({
       </div>
     ));
   };
-
-  const filteredBuses = getFilteredAndSortedBuses({ selectedBusTypes, selectedDepTimes, sortBy });
 
   return (
     <div className="desktop-search-results-page">
