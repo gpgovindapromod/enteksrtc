@@ -2,6 +2,13 @@
 
 Welcome to the **Ente KSRTC** Bus Reservation System clone. This project is structured as an enterprise-level MERN (MongoDB, Express, React, Node.js) monorepo.
 
+## Key Features
+
+- **Premium Responsive UI**: Stunning user interface tailored for both desktop and mobile devices featuring glassmorphism, smooth micro-animations, and elevated hover states.
+- **Universal-First Architecture**: Business logic (such as bus filtering, sorting, seat generation, and mock data) is centralized in shared services, ensuring identical behavior across different platform views without code duplication.
+- **Global Theme Management**: Seamless Light/Dark mode switching managed globally via React Context, syncing dynamically with `localStorage`.
+- **Interactive Booking Flow**: Complete simulation of seat selection, total fare calculation, and a seamless checkout process with boarding pass generation.
+
 ## Project Structure
 
 - `/backend`: The Express.js API server, models, controllers, and services.
