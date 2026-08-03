@@ -43,6 +43,8 @@ import MobileTicketsTab from './components/mobile/MobileTicketsTab';
 import MobileProfileTab from './components/mobile/MobileProfileTab';
 import MobileHomeTab from './components/mobile/MobileHomeTab';
 import MobileLoginModal from './components/mobile/MobileLoginModal';
+import DesktopSearchResults from './components/desktop/DesktopSearchResults';
+import DesktopAuthModal from './components/desktop/DesktopAuthModal';
 
 
 const GalleryImages = [
@@ -308,6 +310,7 @@ function App() {
   const [destination, setDestination] = useState('Tirunelveli');
   const [journeyDate, setJourneyDate] = useState('2026-07-28');
   const [isSearching, setIsSearching] = useState(false);
+  const [showDesktopSearch, setShowDesktopSearch] = useState(false);
   const [selectedBus, setSelectedBus] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [isBookingSuccess, setIsBookingSuccess] = useState(false);
@@ -474,10 +477,39 @@ function App() {
 
 
   // Local helper: Entire Website Replica Layout content (reused in desktop and mobile active home tab)
-  const renderWebsiteReplicaContent = () => (
-    <>
-      {/* Navbar */}
-      <nav className="modern-navbar">
+  const renderWebsiteReplicaContent = () => {
+    if (showDesktopSearch && !showMobileView) {
+      return (
+        <>
+          <nav className="modern-navbar" style={{ background: 'var(--white)', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+            <div className="navbar-container">
+              <div className="nav-brand">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-small" width="40" height="40" />
+                <div className="brand-text-minimal">
+                  <span className="brand-title">Ente KSRTC</span>
+                  <span className="brand-tag">Premium Journey</span>
+                </div>
+              </div>
+              <button className="btn-secondary-modern" onClick={() => setShowDesktopSearch(false)}>Back to Home</button>
+            </div>
+          </nav>
+          <DesktopSearchResults 
+            onBack={() => setShowDesktopSearch(false)}
+            origin={origin}
+            setOrigin={setOrigin}
+            destination={destination}
+            setDestination={setDestination}
+            journeyDate={journeyDate}
+            setJourneyDate={setJourneyDate}
+          />
+        </>
+      );
+    }
+
+    return (
+      <>
+        {/* Navbar */}
+        <nav className="modern-navbar">
         <div className="navbar-container">
           <div className="nav-brand">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-small" width="40" height="40" />
@@ -506,7 +538,11 @@ function App() {
               <img src="https://banner2.cleanpng.com/20181120/jiq/kisspng-kerala-logo-gods-own-country-vector-graphics-clip-1713920244732.webp" alt="Kerala Tourism" className="tourism-logo-small" width="80" height="40" />
               <div className="nav-divider"></div>
               <button className="btn-secondary-modern">Manage</button>
-              <button className="btn-primary-modern">Login</button>
+              {isUserLoggedIn ? (
+                <button className="btn-primary-modern" onClick={() => setIsUserLoggedIn(false)}>Logout</button>
+              ) : (
+                <button className="btn-primary-modern" onClick={() => setShowLoginModal(true)}>Login</button>
+              )}
             </div>
           </div>
 
@@ -631,7 +667,7 @@ function App() {
                 </div>
               </div>
 
-              <button className="btn-primary">SEARCH BUSES</button>
+              <button className="btn-primary" onClick={() => setShowDesktopSearch(true)}>SEARCH BUSES</button>
             </BorderGlow>
           )}
         </div>
@@ -715,6 +751,7 @@ function App() {
       </footer>
     </>
   );
+  };
 
   // Main Render Strategy
   const AcademicDisclaimer = () => (
@@ -729,6 +766,12 @@ function App() {
         <AcademicDisclaimer />
 
         {renderWebsiteReplicaContent()}
+
+        <DesktopAuthModal 
+          show={showLoginModal} 
+          onClose={() => setShowLoginModal(false)} 
+          onLoginSuccess={() => setIsUserLoggedIn(true)} 
+        />
       </>
     );
   }

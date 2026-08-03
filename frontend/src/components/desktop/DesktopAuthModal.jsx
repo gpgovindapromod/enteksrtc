@@ -1,44 +1,43 @@
 import React, { useState } from 'react';
 import { X, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 
-const MobileLoginModal = ({
-  showLoginModal,
-  setShowLoginModal,
-  onLoginSuccess
-}) => {
+const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup'
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [signupTab, setSignupTab] = useState('mandatory');
-
-  if (!showLoginModal) return null;
+  const [signupTab, setSignupTab] = useState('mandatory'); // 'mandatory' | 'optional'
+  
+  if (!show) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email || !password || (authMode === 'signup' && !fullName)) {
-      alert('Please fill out all required fields.');
-      return;
-    }
-    // Perform mock login
     onLoginSuccess();
-    setShowLoginModal(false);
+    onClose();
   };
 
   return (
-    <div className="mobile-sheet-overlay" onClick={() => setShowLoginModal(false)}>
-      <div className="mobile-bottom-sheet" onClick={(e) => e.stopPropagation()} style={{ paddingBottom: '30px' }}>
-        <div className="sheet-handle"></div>
-        <div className="sheet-header">
-          <h3>Ente KSRTC Account</h3>
-          <button className="sheet-close" aria-label="Close Login Modal" onClick={() => setShowLoginModal(false)}>
-            <X size={20} />
-          </button>
-        </div>
-        <div className="sheet-body">
+    <div className="desktop-auth-overlay" onClick={onClose}>
+      <div className="desktop-auth-modal" onClick={e => e.stopPropagation()}>
+        <button className="auth-close-btn" onClick={onClose}>
+          <X size={24} />
+        </button>
 
-          <div className="mobile-auth-card" style={{ boxShadow: 'none', border: 'none', padding: 0, marginBottom: 0 }}>
+        <div className={`auth-modal-content ${authMode}`}>
+          {/* Left Side: Image/Branding */}
+          <div className="auth-banner">
+            <div className="banner-overlay"></div>
+            <div className="banner-content">
+              <h2>Ente KSRTC</h2>
+              <p>Your premium journey begins here.</p>
+            </div>
+          </div>
+
+          {/* Right Side: Form */}
+          <div className="auth-form-container">
+            <div className="auth-header">
+              <h2>{authMode === 'login' ? 'Welcome Back' : 'Create Account'}</h2>
+              <p>{authMode === 'login' ? 'Please sign in to your account' : 'Join us for a seamless travel experience'}</p>
+            </div>
+
             <div className="auth-tabs">
               <button 
                 className={`auth-tab ${authMode === 'login' ? 'active' : ''}`}
@@ -54,7 +53,7 @@ const MobileLoginModal = ({
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="modern-auth-form mobile-form">
+            <form onSubmit={handleSubmit} className="modern-auth-form">
               {authMode === 'signup' && (
                 <>
                   <div className="signup-sub-tabs">
@@ -135,7 +134,7 @@ const MobileLoginModal = ({
                 <>
                   <div className="input-group">
                     <Mail className="input-icon" size={20} />
-                    <input type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required />
+                    <input type="email" placeholder="Email Address" required />
                   </div>
 
                   <div className="input-group">
@@ -143,8 +142,6 @@ const MobileLoginModal = ({
                     <input 
                       type={showPassword ? "text" : "password"} 
                       placeholder="Password" 
-                      value={password} 
-                      onChange={e => setPassword(e.target.value)} 
                       required 
                     />
                     <button 
@@ -155,8 +152,11 @@ const MobileLoginModal = ({
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-
+                  
                   <div className="form-options">
+                    <label className="remember-me">
+                      <input type="checkbox" /> Remember me
+                    </label>
                     <a href="#" className="forgot-password">Forgot Password?</a>
                   </div>
                 </>
@@ -165,15 +165,18 @@ const MobileLoginModal = ({
               <button type="submit" className="btn-primary auth-submit-btn">
                 {authMode === 'login' ? 'Sign In' : 'Create Account'}
               </button>
-            </form>
 
-            <p className="auth-footer-text">
-              {authMode === 'login' ? (
-                <>Don't have an account? <span onClick={() => setAuthMode('signup')}>Sign Up</span></>
-              ) : (
-                <>Already have an account? <span onClick={() => setAuthMode('login')}>Sign In</span></>
-              )}
-            </p>
+              <div className="auth-divider">
+                <span>or continue with</span>
+              </div>
+
+              <div className="social-auth">
+                <button type="button" className="btn-social google">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" width="18" />
+                  Google
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -181,4 +184,4 @@ const MobileLoginModal = ({
   );
 };
 
-export default MobileLoginModal;
+export default DesktopAuthModal;

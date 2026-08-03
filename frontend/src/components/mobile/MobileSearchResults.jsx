@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, RotateCcw, CheckCircle2, Info } from 'lucide-react';
 
 const MOCK_BUSES = [
@@ -25,6 +25,19 @@ const MobileSearchResults = ({
   setActiveMobileTab,
   t
 }) => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate network request for the skeleton loader effect
+  useEffect(() => {
+    if (isSearching) {
+      setIsLoading(true);
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isSearching]);
+
   if (!isSearching) return null;
 
   const renderSeatGrid = () => {
@@ -91,36 +104,61 @@ const MobileSearchResults = ({
                 <Info size={16} /> 4 Services found for your route.
               </div>
               <div className="buses-list">
-                {MOCK_BUSES.map((bus) => (
-                  <div key={bus.id} className="mobile-bus-card" onClick={() => setSelectedBus(bus)}>
-                    <div className="bus-card-row1">
-                      <span className="bus-brand-tag">{bus.brand}</span>
-                      <div className="bus-rating">★ {bus.rating}</div>
-                    </div>
-                    <h4 className="bus-card-title">{bus.name}</h4>
-                    <div className="bus-card-times">
-                      <div className="time-group">
-                        <span className="time">{bus.departure}</span>
-                        <span className="station">{origin}</span>
+                {isLoading ? (
+                  // Skeleton Loaders
+                  [1, 2, 3, 4].map((item) => (
+                    <div key={item} className="mobile-bus-card skeleton-card">
+                      <div className="skeleton-row top-row">
+                        <div className="skeleton-box tag"></div>
+                        <div className="skeleton-box rating"></div>
                       </div>
-                      <div className="duration-arrow">
-                        <span>{bus.duration}</span>
-                        <div className="arrow-line"></div>
+                      <div className="skeleton-row title">
+                        <div className="skeleton-box text-large"></div>
                       </div>
-                      <div className="time-group">
-                        <span className="time">{bus.arrival}</span>
-                        <span className="station">{destination}</span>
+                      <div className="skeleton-row times">
+                        <div className="skeleton-box time"></div>
+                        <div className="skeleton-box time-line"></div>
+                        <div className="skeleton-box time"></div>
                       </div>
-                    </div>
-                    <div className="bus-card-footer">
-                      <span className="bus-seat-type">{bus.type}</span>
-                      <div className="bus-price-action">
-                        <span className="price">₹{bus.fare}</span>
-                        <button className="btn-select-seats">Select Seats</button>
+                      <div className="skeleton-row footer">
+                        <div className="skeleton-box text-medium"></div>
+                        <div className="skeleton-box button"></div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  // Actual Buses
+                  MOCK_BUSES.map((bus) => (
+                    <div key={bus.id} className="mobile-bus-card" onClick={() => setSelectedBus(bus)}>
+                      <div className="bus-card-row1">
+                        <span className="bus-brand-tag">{bus.brand}</span>
+                        <div className="bus-rating">★ {bus.rating}</div>
+                      </div>
+                      <h4 className="bus-card-title">{bus.name}</h4>
+                      <div className="bus-card-times">
+                        <div className="time-group">
+                          <span className="time">{bus.departure}</span>
+                          <span className="station">{origin}</span>
+                        </div>
+                        <div className="duration-arrow">
+                          <span>{bus.duration}</span>
+                          <div className="arrow-line"></div>
+                        </div>
+                        <div className="time-group">
+                          <span className="time">{bus.arrival}</span>
+                          <span className="station">{destination}</span>
+                        </div>
+                      </div>
+                      <div className="bus-card-footer">
+                        <span className="bus-seat-type">{bus.type}</span>
+                        <div className="bus-price-action">
+                          <span className="price">₹{bus.fare}</span>
+                          <button className="btn-select-seats">Book Tickets</button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </>
           ) : !isBookingSuccess ? (
