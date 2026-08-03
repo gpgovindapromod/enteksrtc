@@ -130,7 +130,7 @@ const MobileSearchResults = ({
                   <h4>{selectedBus.name}</h4>
                   <span className="seat-summary">{selectedSeats.length} Seats Selected: {selectedSeats.join(', ') || 'None'}</span>
                 </div>
-                <button className="btn-reset-seats" onClick={() => setSelectedSeats([])}><RotateCcw size={16} /></button>
+                <button className="btn-reset-seats" aria-label="Reset Seats" onClick={() => setSelectedSeats([])}><RotateCcw size={16} /></button>
               </div>
 
               <div className="seat-legend">

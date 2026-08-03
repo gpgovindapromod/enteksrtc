@@ -13,7 +13,7 @@ const MobileTimings = ({
         <div className="sheet-handle"></div>
         <div className="sheet-header">
           <h3>Today's Timetable</h3>
-          <button className="sheet-close" onClick={() => setShowTimingsModal(false)}><X size={20} /></button>
+          <button className="sheet-close" aria-label="Close Timings" onClick={() => setShowTimingsModal(false)}><X size={20} /></button>
         </div>
         <div className="sheet-body" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
           <div className="compact-timings-list">

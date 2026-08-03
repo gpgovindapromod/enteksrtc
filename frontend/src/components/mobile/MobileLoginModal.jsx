@@ -30,7 +30,7 @@ const MobileLoginModal = ({
         <div className="sheet-handle"></div>
         <div className="sheet-header">
           <h3>Ente KSRTC Account</h3>
-          <button className="sheet-close" onClick={() => setShowLoginModal(false)}>
+          <button className="sheet-close" aria-label="Close Login Modal" onClick={() => setShowLoginModal(false)}>
             <X size={20} />
           </button>
         </div>

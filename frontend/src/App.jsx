@@ -46,30 +46,30 @@ import MobileLoginModal from './components/mobile/MobileLoginModal';
 
 
 const GalleryImages = [
-  { id: "1", img: "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=600&auto=format&fit=crop", url: "#", height: 400 },
-  { id: "2", img: "https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?q=80&w=600&auto=format&fit=crop", url: "#", height: 250 },
-  { id: "3", img: "https://images.unsplash.com/photo-1464219789935-c2d9d9aba644?q=80&w=600&auto=format&fit=crop", url: "#", height: 600 },
-  { id: "4", img: "https://images.unsplash.com/photo-1590766940554-634a7ed41450?q=80&w=600&auto=format&fit=crop", url: "#", height: 350 },
+  { id: "1", img: "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=60&w=400&auto=format&fit=crop", url: "#", height: 400 },
+  { id: "2", img: "https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?q=60&w=400&auto=format&fit=crop", url: "#", height: 250 },
+  { id: "3", img: "https://images.unsplash.com/photo-1464219789935-c2d9d9aba644?q=60&w=400&auto=format&fit=crop", url: "#", height: 600 },
+  { id: "4", img: "https://images.unsplash.com/photo-1590766940554-634a7ed41450?q=60&w=400&auto=format&fit=crop", url: "#", height: 350 },
   { id: "5", img: "https://upload.wikimedia.org/wikipedia/commons/2/2b/K.S.R.T.C.Bus.jpg?_=20110514164313", url: "#", height: 300 },
   { id: "6", img: "https://vadakkus.com/wp-content/uploads/2024/10/KSRTC-Fast-Passenger-UPI-payment-scaled.jpg", url: "#", height: 500 },
 ];
 
 const TopRoutes = [
-  { from: 'Trivandrum', to: 'Kanyakumari', img: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?q=80&w=600&auto=format&fit=crop', duration: '2h 30m', price: '₹150' },
-  { from: 'Trivandrum', to: 'Palakkad', img: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=600&auto=format&fit=crop', duration: '8h 15m', price: '₹450' },
-  { from: 'Trivandrum', to: 'Palani', img: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=80&w=600&auto=format&fit=crop', duration: '7h 00m', price: '₹380' },
-  { from: 'Trivandrum', to: 'Bangalore', img: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=80&w=600&auto=format&fit=crop', duration: '14h 30m', price: '₹1200' },
-  { from: 'Trivandrum', to: 'Coimbatore', img: 'https://images.unsplash.com/photo-1621217734151-51203794bfa2?q=80&w=600&auto=format&fit=crop', duration: '9h 00m', price: '₹480' },
-  { from: 'Trivandrum', to: 'Kannur', img: 'https://images.unsplash.com/photo-1634055979927-46328a6f3bdf?q=80&w=600&auto=format&fit=crop', duration: '12h 45m', price: '₹650' },
-  { from: 'Trivandrum', to: 'Munnar', img: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=80&w=600&auto=format&fit=crop', duration: '8h 30m', price: '₹420' },
-  { from: 'Trivandrum', to: 'Mangalore', img: 'https://images.unsplash.com/photo-1555530752-6bf6a524a10e?q=80&w=600&auto=format&fit=crop', duration: '15h 00m', price: '₹1400' },
+  { from: 'Trivandrum', to: 'Kanyakumari', img: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?q=60&w=400&auto=format&fit=crop', duration: '2h 30m', price: '₹150' },
+  { from: 'Trivandrum', to: 'Palakkad', img: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=60&w=400&auto=format&fit=crop', duration: '8h 15m', price: '₹450' },
+  { from: 'Trivandrum', to: 'Palani', img: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=60&w=400&auto=format&fit=crop', duration: '7h 00m', price: '₹380' },
+  { from: 'Trivandrum', to: 'Bangalore', img: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=60&w=400&auto=format&fit=crop', duration: '14h 30m', price: '₹1200' },
+  { from: 'Trivandrum', to: 'Coimbatore', img: 'https://images.unsplash.com/photo-1621217734151-51203794bfa2?q=60&w=400&auto=format&fit=crop', duration: '9h 00m', price: '₹480' },
+  { from: 'Trivandrum', to: 'Kannur', img: 'https://images.unsplash.com/photo-1634055979927-46328a6f3bdf?q=60&w=400&auto=format&fit=crop', duration: '12h 45m', price: '₹650' },
+  { from: 'Trivandrum', to: 'Munnar', img: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=60&w=400&auto=format&fit=crop', duration: '8h 30m', price: '₹420' },
+  { from: 'Trivandrum', to: 'Mangalore', img: 'https://images.unsplash.com/photo-1555530752-6bf6a524a10e?q=60&w=400&auto=format&fit=crop', duration: '15h 00m', price: '₹1400' },
 ];
 
 const Destinations = [
-  { name: 'Munnar', img: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=80&w=800&auto=format&fit=crop' },
-  { name: 'Alleppey', img: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=800&auto=format&fit=crop' },
-  { name: 'Kochi', img: 'https://images.unsplash.com/photo-1555530752-6bf6a524a10e?q=80&w=800&auto=format&fit=crop' },
-  { name: 'Kovalam', img: 'https://images.unsplash.com/photo-1574044566347-1dd7788be4a3?q=80&w=800&auto=format&fit=crop' }
+  { name: 'Munnar', img: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=60&w=400&auto=format&fit=crop' },
+  { name: 'Alleppey', img: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=60&w=400&auto=format&fit=crop' },
+  { name: 'Kochi', img: 'https://images.unsplash.com/photo-1555530752-6bf6a524a10e?q=60&w=400&auto=format&fit=crop' },
+  { name: 'Kovalam', img: 'https://images.unsplash.com/photo-1574044566347-1dd7788be4a3?q=60&w=400&auto=format&fit=crop' }
 ];
 
 const Testimonials = [
@@ -107,7 +107,7 @@ const TopRoutesSection = React.memo(({ routes }) => (
       <div className="routes-grid">
         {routes.map((route, idx) => (
           <div key={idx} className="route-card">
-            <img src={route.img} alt={`${route.from} to ${route.to}`} className="route-img" loading="lazy" decoding="async" />
+            <img src={route.img} alt={`${route.from} to ${route.to}`} className="route-img" loading="lazy" decoding="async" width="400" height="250" />
             <div className="route-info">
               <div className="route-points">
                 <div className="point">
@@ -142,7 +142,7 @@ const DestinationsSection = React.memo(({ destinations }) => (
       <div className="destinations-grid">
         {destinations.map((dest, idx) => (
           <div key={idx} className="dest-card">
-            <img src={dest.img} alt={dest.name} className="dest-img" loading="lazy" decoding="async" />
+            <img src={dest.img} alt={dest.name} className="dest-img" loading="lazy" decoding="async" width="300" height="200" />
             <div className="dest-overlay"></div>
             <div className="dest-name">{dest.name}</div>
           </div>
@@ -480,7 +480,7 @@ function App() {
       <nav className="modern-navbar">
         <div className="navbar-container">
           <div className="nav-brand">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-small" />
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-small" width="40" height="40" />
             <div className="brand-text-minimal">
               <span className="brand-title">Ente KSRTC</span>
               <span className="brand-tag">Premium Journey</span>
@@ -503,14 +503,14 @@ function App() {
                 {theme === 'dark' ? <Sun size={22} /> : <Moon size={22} />}
               </button>
               <div className="nav-divider"></div>
-              <img src="https://banner2.cleanpng.com/20181120/jiq/kisspng-kerala-logo-gods-own-country-vector-graphics-clip-1713920244732.webp" alt="Kerala Tourism" className="tourism-logo-small" />
+              <img src="https://banner2.cleanpng.com/20181120/jiq/kisspng-kerala-logo-gods-own-country-vector-graphics-clip-1713920244732.webp" alt="Kerala Tourism" className="tourism-logo-small" width="80" height="40" />
               <div className="nav-divider"></div>
               <button className="btn-secondary-modern">Manage</button>
               <button className="btn-primary-modern">Login</button>
             </div>
           </div>
 
-          <button className="mobile-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button className="mobile-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu">
             {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
@@ -585,8 +585,8 @@ function App() {
 
               <div className="form-grid">
                 <div className="input-group">
-                  <label>Travelling From</label>
-                  <input list="origin-options" className="input-field" placeholder="Select Origin" defaultValue="Bangalore" />
+                  <label htmlFor="origin-input">Travelling From</label>
+                  <input id="origin-input" list="origin-options" className="input-field" placeholder="Select Origin" defaultValue="Bangalore" />
                   <datalist id="origin-options">
                     <option value="Bangalore">Bangalore</option>
                     <option value="Trivandrum">Trivandrum</option>
@@ -599,13 +599,13 @@ function App() {
                   <MapPin className="input-icon" size={20} />
                 </div>
 
-                <button className="swap-btn">
+                <button className="swap-btn" aria-label="Swap Origin and Destination">
                   <ArrowRightLeft size={18} />
                 </button>
 
                 <div className="input-group">
-                  <label>Going To</label>
-                  <input list="destination-options" className="input-field" placeholder="Select Destination" defaultValue="Tirunelveli" />
+                  <label htmlFor="destination-input">Going To</label>
+                  <input id="destination-input" list="destination-options" className="input-field" placeholder="Select Destination" defaultValue="Tirunelveli" />
                   <datalist id="destination-options">
                     <option value="Bangalore">Bangalore</option>
                     <option value="Trivandrum">Trivandrum</option>
@@ -622,12 +622,12 @@ function App() {
 
               <div className="form-grid">
                 <div className="input-group">
-                  <label>Journey Date</label>
-                  <input type="date" className="input-field" defaultValue="2026-07-28" />
+                  <label htmlFor="journey-date-input">Journey Date</label>
+                  <input id="journey-date-input" type="date" className="input-field" defaultValue="2026-07-28" />
                 </div>
                 <div className="input-group">
-                  <label>Return Date (Optional)</label>
-                  <input type="date" className="input-field" disabled={tripType === 'one-way'} />
+                  <label htmlFor="return-date-input">Return Date (Optional)</label>
+                  <input id="return-date-input" type="date" className="input-field" disabled={tripType === 'one-way'} />
                 </div>
               </div>
 
@@ -705,7 +705,7 @@ function App() {
                   TRANSPORT BHAVAN, Fort, Trivandrum,<br />
                   Kerala, India, Pin 695023</p>
               </div>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="app-store-badge mt-4" style={{ height: '40px', cursor: 'pointer' }} />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="app-store-badge mt-4" style={{ height: '40px', cursor: 'pointer' }} width="119" height="40" />
             </div>
           </div>
           <div className="footer-bottom">
@@ -727,10 +727,7 @@ function App() {
     return (
       <>
         <AcademicDisclaimer />
-        {/* Desktop Preview Enable Switch */}
-        <button className="desktop-preview-toggle-button" onClick={() => setForceMobilePreview(true)}>
-          📱 Mobile WebApp View
-        </button>
+
         {renderWebsiteReplicaContent()}
       </>
     );
@@ -740,9 +737,7 @@ function App() {
   return (
     <div className="mobile-app-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
       <AcademicDisclaimer />
-      <button className="desktop-preview-toggle-button" style={{ zIndex: 9999, top: '50px' }} onClick={() => setForceMobilePreview(false)}>
-        💻 Desktop View
-      </button>
+
 
       {/* Dynamic Active Tab View Render */}
       {activeMobileTab === 'home' && (
@@ -941,4 +936,6 @@ function App() {
   );
 }
 
-export default App;
+export default App;
+
+// End of App.jsx

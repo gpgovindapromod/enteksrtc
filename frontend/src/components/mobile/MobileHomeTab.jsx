@@ -49,7 +49,7 @@ const MobileHomeTab = ({
       <nav className="modern-navbar">
         <div className="navbar-container">
           <div className="nav-brand">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-small" />
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-small" width="40" height="40" />
             <div className="brand-text-minimal">
               <span className="brand-title">Ente KSRTC</span>
               <span className="brand-tag">Premium Journey</span>
@@ -201,7 +201,7 @@ const MobileHomeTab = ({
                   TRANSPORT BHAVAN, Fort, Trivandrum,<br />
                   Kerala, India, Pin 695023</p>
               </div>
-              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="app-store-badge mt-4" style={{ height: '40px', cursor: 'pointer' }} />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="app-store-badge mt-4" style={{ height: '40px', cursor: 'pointer' }} width="119" height="40" />
             </div>
           </div>
           <div className="footer-bottom">

@@ -632,7 +632,8 @@ button {
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
   border: 1px solid rgba(0,0,0,0.03);
-  height: 140px;
+  height: auto;
+  min-height: 190px;
 }
 
 .route-card:hover {
@@ -648,11 +649,30 @@ button {
 }
 
 .route-info {
-  padding: 20px;
+  padding: 16px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
+}
+
+.route-actions-right {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+}
+
+.route-price {
+  font-weight: bold;
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.route-duration {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 8px;
 }
 
 .route-points {

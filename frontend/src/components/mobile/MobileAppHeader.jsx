@@ -12,7 +12,7 @@ const MobileAppHeader = ({
   return (
     <header className="mobile-app-header">
       <div className="app-header-left">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-app" />
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-app" width="40" height="40" />
         <div className="app-brand-text">
           <span className="app-title">Ente KSRTC</span>
           <span className="app-subtitle">Premium Journey</span>
@@ -29,10 +29,10 @@ const MobileAppHeader = ({
           </button>
         )}
 
-        <button className="app-header-icon" onClick={toggleTheme}>
+        <button className="app-header-icon" aria-label="Toggle Theme" onClick={toggleTheme}>
           {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
         </button>
-        <button className="app-header-icon relative" onClick={() => setShowNotifications(!showNotifications)}>
+        <button className="app-header-icon relative" aria-label="Notifications" onClick={() => setShowNotifications(!showNotifications)}>
           <Bell size={20} />
           <span className="bell-badge"></span>
         </button>

@@ -79,6 +79,7 @@ const MobileBookingWidget = ({
               onChange={(e) => setOrigin(e.target.value)}
               className="bwm-input-field"
               placeholder="Select Origin"
+              aria-label="Travelling From"
             />
             <datalist id="mobile-origin-options">
               <option value="Bangalore">Bangalore</option>
@@ -97,6 +98,7 @@ const MobileBookingWidget = ({
             setOrigin(destination);
             setDestination(temp);
           }}
+          aria-label="Swap Origin and Destination"
         >
           <ArrowRightLeft size={18} style={{ transform: 'rotate(90deg)' }} />
         </button>
@@ -111,6 +113,7 @@ const MobileBookingWidget = ({
               onChange={(e) => setDestination(e.target.value)}
               className="bwm-input-field"
               placeholder="Select Destination"
+              aria-label="Going To"
             />
             <datalist id="mobile-dest-options">
               <option value="Bangalore">Bangalore</option>
@@ -136,6 +139,7 @@ const MobileBookingWidget = ({
           value={journeyDate}
           onChange={(e) => setJourneyDate(e.target.value)}
           className="bwm-hidden-date-picker"
+          aria-label="Journey Date"
         />
       </div>
 

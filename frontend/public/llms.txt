@@ -1,0 +1,19 @@
+# Ente KSRTC - Online Bus Booking Platform
+
+> Ente KSRTC is a web application for booking Kerala State Road Transport Corporation (KSRTC) bus tickets online.
+
+This application provides a modern and responsive user interface for booking bus tickets. It includes features for searching buses, selecting seats, and viewing live bus tracking.
+
+## Pages and Components
+- **Home:** Search for buses, view quick booking options.
+- **Search Results:** View available buses, select seats.
+- **Live Tracking:** Track bus locations in real-time.
+- **Profile:** Manage account settings, view booking history.
+
+## Development Stack
+- React
+- Vite
+- Custom CSS with modern glassmorphism UI
+
+## Structure
+The application has a mobile-first responsive design (`mobile/` components) and a desktop preview mode for the website version.
