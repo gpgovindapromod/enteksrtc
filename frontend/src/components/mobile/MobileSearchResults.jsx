@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, RotateCcw, CheckCircle2, Info } from 'lucide-react';
+import { ArrowLeft, RotateCcw, CheckCircle2, Info, SlidersHorizontal, ArrowDownWideNarrow, X } from 'lucide-react';
 
 const MOCK_BUSES = [
   { id: 1, name: 'K-Swift Premium AC Sleeper (2+1)', brand: 'K-SWIFT', type: 'AC Sleeper', departure: '18:30', arrival: '08:45', duration: '14h 15m', fare: 1450, rating: 4.8 },
@@ -26,8 +26,59 @@ const MobileSearchResults = ({
   t
 }) => {
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Filter States
+  const [selectedBusTypes, setSelectedBusTypes] = useState([]);
+  const [selectedDepTimes, setSelectedDepTimes] = useState([]);
+  const [sortBy, setSortBy] = useState('Relevance');
+  const [showFilterSheet, setShowFilterSheet] = useState(false);
+  const [showSortSheet, setShowSortSheet] = useState(false);
 
-  // Simulate network request for the skeleton loader effect
+  // Filter Logic
+  const handleCheckboxChange = (setter, stateList, value) => {
+    if (stateList.includes(value)) {
+      setter(stateList.filter(item => item !== value));
+    } else {
+      setter([...stateList, value]);
+    }
+  };
+
+  const getFilteredAndSortedBuses = () => {
+    let result = [...MOCK_BUSES];
+
+    if (selectedBusTypes.length > 0) {
+      result = result.filter(bus => {
+        if (selectedBusTypes.includes('AC Sleeper') && bus.type === 'AC Sleeper') return true;
+        if (selectedBusTypes.includes('Non-AC Sleeper') && bus.type === 'Non-AC Sleeper') return true;
+        if (selectedBusTypes.includes('AC Semi-Sleeper') && bus.type === 'AC Semi-Sleeper') return true;
+        if (selectedBusTypes.includes('Seater') && bus.type === 'Non-AC Semi-Sleeper') return true;
+        return false;
+      });
+    }
+
+    if (selectedDepTimes.length > 0) {
+      result = result.filter(bus => {
+        const hour = parseInt(bus.departure.split(':')[0], 10);
+        if (selectedDepTimes.includes('Before 6 AM') && hour < 6) return true;
+        if (selectedDepTimes.includes('6 AM to 12 PM') && hour >= 6 && hour < 12) return true;
+        if (selectedDepTimes.includes('12 PM to 6 PM') && hour >= 12 && hour < 18) return true;
+        if (selectedDepTimes.includes('After 6 PM') && hour >= 18) return true;
+        return false;
+      });
+    }
+
+    if (sortBy === 'Price: Low to High') {
+      result.sort((a, b) => a.fare - b.fare);
+    } else if (sortBy === 'Departure: Earliest First') {
+      result.sort((a, b) => a.departure.localeCompare(b.departure));
+    } else if (sortBy === 'Rating: High to Low') {
+      result.sort((a, b) => b.rating - a.rating);
+    }
+
+    return result;
+  };
+
+  const filteredBuses = getFilteredAndSortedBuses();
   useEffect(() => {
     if (isSearching) {
       setIsLoading(true);
@@ -100,8 +151,21 @@ const MobileSearchResults = ({
         <div className="results-body">
           {!selectedBus ? (
             <>
-              <div className="results-info-banner">
-                <Info size={16} /> 4 Services found for your route.
+              <div className="mobile-filter-bar">
+                <button className="mobile-filter-pill outline" onClick={() => setShowSortSheet(true)}>
+                  <ArrowDownWideNarrow size={14} /> Sort By
+                </button>
+                <button className="mobile-filter-pill outline" onClick={() => setShowFilterSheet(true)}>
+                  <SlidersHorizontal size={14} /> Filters
+                </button>
+                {(selectedBusTypes.length > 0 || selectedDepTimes.length > 0) && (
+                  <button className="mobile-filter-pill active" onClick={() => { setSelectedBusTypes([]); setSelectedDepTimes([]); }}>
+                    <X size={14} /> Clear {selectedBusTypes.length + selectedDepTimes.length}
+                  </button>
+                )}
+              </div>
+              <div className="results-info-banner" style={{ marginTop: '12px' }}>
+                <Info size={16} /> {filteredBuses.length} Services found for your route.
               </div>
               <div className="buses-list">
                 {isLoading ? (
@@ -128,7 +192,7 @@ const MobileSearchResults = ({
                   ))
                 ) : (
                   // Actual Buses
-                  MOCK_BUSES.map((bus) => (
+                  filteredBuses.map((bus) => (
                     <div key={bus.id} className="mobile-bus-card" onClick={() => setSelectedBus(bus)}>
                       <div className="bus-card-row1">
                         <span className="bus-brand-tag">{bus.brand}</span>
@@ -241,6 +305,60 @@ const MobileSearchResults = ({
           )}
         </div>
       </div>
+
+      {/* Mobile Sort Bottom Sheet */}
+      {showSortSheet && (
+        <div className="mobile-bottom-sheet-overlay" onClick={() => setShowSortSheet(false)}>
+          <div className="mobile-bottom-sheet-content fade-up" onClick={e => e.stopPropagation()}>
+            <div className="sheet-header">
+              <h3>Sort By</h3>
+              <button className="sheet-close" onClick={() => setShowSortSheet(false)}><X size={20} /></button>
+            </div>
+            <div className="sheet-body">
+              {['Relevance', 'Price: Low to High', 'Departure: Earliest First', 'Rating: High to Low'].map(opt => (
+                <div key={opt} className="sheet-radio-row" onClick={() => { setSortBy(opt); setShowSortSheet(false); }}>
+                  <span className={sortBy === opt ? 'active-text' : ''}>{opt}</span>
+                  <div className={`radio-circle ${sortBy === opt ? 'selected' : ''}`}></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Filters Bottom Sheet */}
+      {showFilterSheet && (
+        <div className="mobile-bottom-sheet-overlay" onClick={() => setShowFilterSheet(false)}>
+          <div className="mobile-bottom-sheet-content fade-up" onClick={e => e.stopPropagation()}>
+            <div className="sheet-header">
+              <h3>Filters</h3>
+              <button className="sheet-close" onClick={() => setShowFilterSheet(false)}><X size={20} /></button>
+            </div>
+            <div className="sheet-body">
+              <div className="sheet-filter-group">
+                <h4>Departure Time</h4>
+                {['Before 6 AM', '6 AM to 12 PM', '12 PM to 6 PM', 'After 6 PM'].map(time => (
+                  <label key={time} className="checkbox-label" style={{ padding: '12px 0', borderBottom: '1px solid #eee' }}>
+                    <input type="checkbox" checked={selectedDepTimes.includes(time)} onChange={() => handleCheckboxChange(setSelectedDepTimes, selectedDepTimes, time)} /> {time}
+                  </label>
+                ))}
+              </div>
+              <div className="sheet-filter-group" style={{ marginTop: '16px' }}>
+                <h4>Bus Type</h4>
+                {['AC Sleeper', 'Non-AC Sleeper', 'AC Semi-Sleeper', 'Seater'].map(type => (
+                  <label key={type} className="checkbox-label" style={{ padding: '12px 0', borderBottom: '1px solid #eee' }}>
+                    <input type="checkbox" checked={selectedBusTypes.includes(type)} onChange={() => handleCheckboxChange(setSelectedBusTypes, selectedBusTypes, type)} /> {type}
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="sheet-footer">
+              <button className="btn-secondary" style={{ flex: 1 }} onClick={() => { setSelectedBusTypes([]); setSelectedDepTimes([]); }}>Clear All</button>
+              <button className="btn-primary-modern" style={{ flex: 2 }} onClick={() => setShowFilterSheet(false)}>Apply Filters</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

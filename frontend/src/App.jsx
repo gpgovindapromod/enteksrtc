@@ -815,6 +815,8 @@ function App() {
             setIsMenuOpen={setIsMenuOpen}
             theme={theme}
             toggleTheme={toggleTheme}
+            isUserLoggedIn={isUserLoggedIn}
+            setShowLoginModal={setShowLoginModal}
           />
         </div>
       )}

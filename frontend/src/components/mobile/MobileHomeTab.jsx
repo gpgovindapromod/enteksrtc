@@ -33,7 +33,9 @@ const MobileHomeTab = ({
   isMenuOpen,
   setIsMenuOpen,
   theme,
-  toggleTheme
+  toggleTheme,
+  isUserLoggedIn,
+  setShowLoginModal
 }) => {
 
   useEffect(() => {
@@ -73,6 +75,15 @@ const MobileHomeTab = ({
             </div>
 
             <div className="nav-actions">
+              {!isUserLoggedIn && (
+                <button
+                  className="btn-login-app"
+                  onClick={() => setShowLoginModal(true)}
+                  style={{ marginRight: '8px' }}
+                >
+                  Login
+                </button>
+              )}
               <button
                 onClick={toggleTheme}
                 style={{ background: 'transparent', border: 'none', color: 'var(--dark)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
