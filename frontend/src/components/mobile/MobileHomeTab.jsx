@@ -74,16 +74,7 @@ const MobileHomeTab = ({
               }}>Gallery</span>
             </div>
 
-            <div className="nav-actions">
-              {!isUserLoggedIn && (
-                <button
-                  className="btn-login-app"
-                  onClick={() => setShowLoginModal(true)}
-                  style={{ marginRight: '8px' }}
-                >
-                  Login
-                </button>
-              )}
+            <div className="nav-actions" style={{ display: 'none' }}>
               <button
                 onClick={toggleTheme}
                 style={{ background: 'transparent', border: 'none', color: 'var(--dark)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
@@ -93,9 +84,19 @@ const MobileHomeTab = ({
             </div>
           </div>
 
-          <button className="mobile-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {!isUserLoggedIn && (
+              <button
+                className="btn-login-app"
+                onClick={() => setShowLoginModal(true)}
+              >
+                Login
+              </button>
+            )}
+            <button className="mobile-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
         </div>
       </nav>
 
