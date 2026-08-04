@@ -30,7 +30,7 @@ export const getFilteredAndSortedBuses = async ({ selectedBusTypes = [], selecte
     });
     result = response.data.buses || response.data;
   } catch (error) {
-    console.error("Backend not reachable, falling back to mock data.", error);
+    console.warn("Backend not reachable, falling back to mock data.");
     result = [...MOCK_BUSES];
   }
 

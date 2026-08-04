@@ -800,7 +800,7 @@ function App() {
 
       {/* Dynamic Active Tab View Render */}
       {activeMobileTab === 'home' && (
-        <div className="tab-view-fadein" style={{ paddingBottom: '80px', overflowY: 'auto', flex: 1 }}>
+        <div className="tab-view-fadein" style={{ paddingBottom: '120px', overflowY: 'auto', flex: 1 }}>
           <MobileHomeTab
             origin={origin}
             setOrigin={setOrigin}

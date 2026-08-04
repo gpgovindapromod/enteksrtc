@@ -106,7 +106,10 @@ const Masonry = ({
   }, [items]);
 
   const { grid, maxHeight } = useMemo(() => {
-    if (!width) return { grid: [], maxHeight: 0 };
+    if (!width) {
+      const estimatedTotalHeight = items.reduce((sum, item) => sum + (item.height / 2), 0);
+      return { grid: [], maxHeight: (estimatedTotalHeight / columns) || 1000 };
+    }
 
     const colHeights = new Array(columns).fill(0);
     const columnWidth = width / columns;
