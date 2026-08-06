@@ -21,11 +21,13 @@ export const MOCK_BUSES = [
 
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5011';
+
 export const getFilteredAndSortedBuses = async ({ selectedBusTypes = [], selectedDepTimes = [], sortBy = 'Relevance', origin = '', destination = '', date = '' }) => {
   let result = [];
   try {
     // Attempt to fetch from backend
-    const response = await axios.get('http://localhost:5000/api/buses', {
+    const response = await axios.get(`${API_BASE_URL}/api/buses`, {
       params: { origin, destination, date }
     });
     result = response.data.buses || response.data;
