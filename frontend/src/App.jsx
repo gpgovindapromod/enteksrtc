@@ -61,26 +61,38 @@ const GalleryImages = [
 ];
 
 const TopRoutes = [
-  { from: 'Trivandrum', to: 'Kanyakumari', img: 'https://images.unsplash.com/photo-1590766940554-634a7ed41450?q=60&w=400&auto=format&fit=crop', duration: '2h 30m', price: '₹150' },
-  { from: 'Trivandrum', to: 'Palakkad', img: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=60&w=400&auto=format&fit=crop', duration: '8h 15m', price: '₹450' },
-  { from: 'Trivandrum', to: 'Palani', img: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?q=60&w=400&auto=format&fit=crop', duration: '7h 00m', price: '₹380' },
-  { from: 'Trivandrum', to: 'Bangalore', img: 'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?q=60&w=400&auto=format&fit=crop', duration: '14h 30m', price: '₹1200' },
-  { from: 'Trivandrum', to: 'Coimbatore', img: 'https://images.unsplash.com/photo-1621217734151-51203794bfa2?q=60&w=400&auto=format&fit=crop', duration: '9h 00m', price: '₹480' },
-  { from: 'Trivandrum', to: 'Kannur', img: 'https://images.unsplash.com/photo-1634055979927-46328a6f3bdf?q=60&w=400&auto=format&fit=crop', duration: '12h 45m', price: '₹650' },
-  { from: 'Trivandrum', to: 'Munnar', img: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=60&w=400&auto=format&fit=crop', duration: '8h 30m', price: '₹420' },
-  { from: 'Trivandrum', to: 'Mangalore', img: 'https://images.unsplash.com/photo-1555530752-6bf6a524a10e?q=60&w=400&auto=format&fit=crop', duration: '15h 00m', price: '₹1400' },
+  { from: 'Trivandrum', to: 'Kanyakumari', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-iwwYU0S8HeV3fxaQoFhyVbMXlnsZCM3e17kLqjVHIUjEnZT_T54woKQ&s=10&q=60&w=400&auto=format&fit=crop', duration: '2h 30m', price: '₹150' },
+  { from: 'Trivandrum', to: 'Palakkad', img: 'https://www.holidify.com/images/bgImages/PALAKKAD.jpg?q=60&w=400&auto=format&fit=crop', duration: '8h 15m', price: '₹450' },
+  { from: 'Trivandrum', to: 'Palani', img: 'https://c9admin.cottage9.com/uploads/5704/palani-murugan-temple.jpg?q=60&w=400&auto=format&fit=crop', duration: '7h 00m', price: '₹380' },
+  { from: 'Trivandrum', to: 'Bangalore', img: 'https://static.toiimg.com/photo/54559212.cms?q=60&w=400&auto=format&fit=crop', duration: '14h 30m', price: '₹1200' },
+  { from: 'Trivandrum', to: 'Coimbatore', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1AEn2xeDFITPhGG09_u1X70naWQlouSnnHv653OTmqw&s=10&q=60&w=400&auto=format&fit=crop', duration: '9h 00m', price: '₹480' },
+  { from: 'Trivandrum', to: 'Kannur', img: 'https://client-websites.blr1.cdn.digitaloceanspaces.com/frenzyholidays/wp-content/uploads/2025/07/01040344/Hidden-Places-in-Kannur-4.jpg?q=60&w=400&auto=format&fit=crop', duration: '12h 45m', price: '₹650' },
+  { from: 'Trivandrum', to: 'Munnar', img: 'https://assets.onlineksrtcswift.com/img/theme64/top-destination/munnar.jpg?q=60&w=400&auto=format&fit=crop', duration: '8h 30m', price: '₹420' },
+  { from: 'Trivandrum', to: 'Mangalore', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJQagrNXvzzfYN0YF803hMfCsgQWNwSk62vmfMxilRJQ&s=10&q=60&w=400&auto=format&fit=crop', duration: '15h 00m', price: '₹1400' },
 ];
 
 const Destinations = [
-  { name: 'Munnar', img: 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=60&w=400&auto=format&fit=crop' },
-  { name: 'Alleppey', img: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=60&w=400&auto=format&fit=crop' },
-  { name: 'Kochi', img: 'https://images.unsplash.com/photo-1555530752-6bf6a524a10e?q=60&w=400&auto=format&fit=crop' },
-  { name: 'Kovalam', img: 'https://images.unsplash.com/photo-1574044566347-1dd7788be4a3?q=60&w=400&auto=format&fit=crop' }
+  { name: 'Munnar', img: 'https://assets.onlineksrtcswift.com/img/theme64/top-destination/munnar.jpg?q=60&w=400&auto=format&fit=crop' },
+  { name: 'Alleppey', img: 'https://hblimg.mmtcdn.com/content/hubble/img/desttvimg/mmt/destination/m_Alleppey_tv_destination_img_1_l_645_859.jpg?im=Resize=(412,412)&q=60&w=400&auto=format&fit=crop' },
+  { name: 'Kochi', img: 'https://assets.cntraveller.in/photos/6780d2480354c3ddddbf9994/master/w_1600%2Cc_limit/GettyImages-2171350077.jpg?q=60&w=400&auto=format&fit=crop' },
+  { name: 'Kottarakkara', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHr7ZQSELvk-I21KZmAw46mnzb4KCVEr2dYYeMLCuIdbw3ceSfTZU4qoY&s=10&q=60&w=400&auto=format&fit=crop' },
+  { name: 'Gavi', img: 'https://www.keralatourism.org/images/destination/mobile/gavi20131127164933_355_1.jpg?q=60&w=400&auto=format&fit=crop' },
+  { name: 'Kovalam', img: 'https://hblimg.mmtcdn.com/content/hubble/img/kovalam/mmt/destination/m_Kovalam_activity_beach_l_383_614.jpg?q=60&w=400&auto=format&fit=crop' },
+  { name: 'Kozhikode', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdJS_hkbzYE9e9fEGgWn8ca-AuZax0KvhYSpM6ucxJmA&s=10&q=60&w=400&auto=format&fit=crop' },
+  { name: 'Wayanad', img: 'https://assets.cntraveller.in/photos/666d21d4b9bacccca58f2f7b/2:3/w_2176,h_3264,c_limit/wayanad.jpg?q=60&w=400&auto=format&fit=crop' },
+  { name: 'Vagamon', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ8ebwmUpnQ33zJ1BHnc72v88grw_UTGLh9-2wlGmazg&s=10&q=60&w=400&auto=format&fit=crop' },
+  { name: 'Varkala', img: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/832651196.jpg?k=ea4095c0b933b0ca23a5d14a99d5839adb5f21976f1eeaa8643107617689b536&o=&q=60&w=400&auto=format&fit=crop' },
+  { name: 'Alappuzha', img: 'https://hblimg.mmtcdn.com/content/hubble/img/desttvimg/mmt/destination/m_Alleppey_tv_destination_img_1_l_645_859.jpg?im=Resize=(412,412)&q=60&w=400&auto=format&fit=crop' },
 ];
 
 const Testimonials = [
+  { name: 'Rahul Nambiar', text: 'The new K-Swift buses are incredibly comfortable for long journeys. Reached Bangalore right on time!' },
   { name: 'Sreya from Kochi', text: 'KSRTC is the worst transportation service in Kerala. i like city life and uber.' },
   { name: 'Saniya jose ayyapan', text: 'A great Kerala Government Bus Booking App, for those in Kerala and those in other states who can easily book bus tickets online.' },
+  { name: 'Mohammed Shafi', text: 'Very impressed with the cleanliness and the professional behavior of the staff. Highly recommended.' },
+  { name: 'Anjali Menon', text: 'Booking tickets has never been easier. The live tracking feature is a lifesaver during night travels.' },
+  { name: 'Thomas Varghese', text: 'The Minnal service from Trivandrum to Palakkad is the fastest way to travel across the state. Great experience!' },
+  { name: 'Sneha Ramesh', text: 'Love the new AC Sleeper buses. Very comfortable bedding and smooth driving throughout the trip.' },
   { name: 'Krishna Kumar', text: 'I Liked: Punctuality, Staff behavior, Cleanliness, Seat comfort. Nice experience with KSRTC Buses.' },
 ];
 
@@ -105,7 +117,7 @@ const LazyLoad = ({ children, minHeight = '400px' }) => {
   return <div ref={ref} style={{ minHeight: isVisible ? 'auto' : minHeight }}>{isVisible ? children : null}</div>;
 };
 
-const TopRoutesSection = React.memo(({ routes }) => (
+const TopRoutesSection = React.memo(({ routes, onBookRoute }) => (
   <section className="section bg-white">
     <div className="container">
       <div className="section-subtitle">Routes</div>
@@ -113,7 +125,9 @@ const TopRoutesSection = React.memo(({ routes }) => (
       <div className="routes-grid">
         {routes.map((route, idx) => (
           <div key={idx} className="route-card">
-            <img src={route.img} alt={`${route.from} to ${route.to}`} className="route-img" loading="lazy" decoding="async" width="400" height="250" />
+            <div className="route-img-wrapper">
+              <img src={route.img} alt={`${route.from} to ${route.to}`} className="route-img" loading="lazy" decoding="async" width="400" height="250" />
+            </div>
             <div className="route-info">
               <div className="route-points">
                 <div className="point">
@@ -128,7 +142,7 @@ const TopRoutesSection = React.memo(({ routes }) => (
               <div className="route-actions-right">
                 <div className="route-price">{route.price}</div>
                 <div className="route-duration">{route.duration}</div>
-                <a href="#" className="book-now-link">
+                <a href="#" className="book-now-link" onClick={(e) => { e.preventDefault(); onBookRoute && onBookRoute(route.from, route.to); }}>
                   <CalendarDays size={16} /> Book Now
                 </a>
               </div>
@@ -180,31 +194,85 @@ const GallerySection = React.memo(({ images }) => (
   </section>
 ));
 
-const TestimonialsSection = React.memo(({ testimonials }) => (
-  <section className="section testimonials-bg">
-    <div className="container">
-      <div className="section-subtitle">Testimonial</div>
-      <h2 className="section-title">Client Feedback</h2>
-      <div className="testimonials-grid">
-        {testimonials.map((testimonial, idx) => (
-          <div key={idx} className="testimonial-card">
-            <Quote className="quote-mark" size={32} />
-            <p className="testimonial-text">"{testimonial.text}"</p>
-            <div className="testimonial-author">
-              <div className="author-avatar">
-                <User size={28} />
+const TestimonialsSection = React.memo(({ testimonials }) => {
+  const [currentIdx, setCurrentIdx] = React.useState(0);
+  const maxIdx = Math.max(0, testimonials.length - 3);
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIdx((prev) => (prev >= maxIdx ? 0 : prev + 1));
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [maxIdx]);
+
+  return (
+    <section className="section testimonials-bg">
+      <div className="container" style={{ position: 'relative' }}>
+        <div className="section-subtitle">Testimonial</div>
+        <h2 className="section-title">Client Feedback</h2>
+        
+        {/* Navigation Buttons */}
+        <button 
+          onClick={() => setCurrentIdx(prev => Math.max(0, prev - 1))}
+          style={{
+            position: 'absolute', left: '-20px', top: '55%', transform: 'translateY(-50%)',
+            background: 'white', border: '1px solid #eee', borderRadius: '50%', width: '44px', height: '44px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+            zIndex: 10, cursor: 'pointer', opacity: currentIdx === 0 ? 0.5 : 1, transition: 'all 0.3s'
+          }}
+          disabled={currentIdx === 0}
+          aria-label="Previous testimonials"
+        >
+          <ArrowLeft size={24} color="var(--primary, #e11d48)" />
+        </button>
+
+        <button 
+          onClick={() => setCurrentIdx(prev => Math.min(maxIdx, prev + 1))}
+          style={{
+            position: 'absolute', right: '-20px', top: '55%', transform: 'translateY(-50%)',
+            background: 'white', border: '1px solid #eee', borderRadius: '50%', width: '44px', height: '44px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+            zIndex: 10, cursor: 'pointer', opacity: currentIdx === maxIdx ? 0.5 : 1, transition: 'all 0.3s'
+          }}
+          disabled={currentIdx === maxIdx}
+          aria-label="Next testimonials"
+        >
+          <ChevronRight size={24} color="var(--primary, #e11d48)" />
+        </button>
+
+        <div style={{ overflow: 'hidden', padding: '10px 0' }}>
+          <div 
+            className="testimonials-slider-track" 
+            style={{ 
+              display: 'flex', 
+              transition: 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)', 
+              transform: `translateX(calc(-${currentIdx} * (100% / ${testimonials.length})))`,
+              width: `calc(${testimonials.length} * 33.333%)`
+            }}
+          >
+            {testimonials.map((testimonial, idx) => (
+              <div key={idx} style={{ flex: `0 0 calc(100% / ${testimonials.length})`, padding: '0 12px', boxSizing: 'border-box' }}>
+                <div className="testimonial-card" style={{ height: '100%', margin: 0 }}>
+                  <Quote className="quote-mark" size={32} />
+                  <p className="testimonial-text">"{testimonial.text}"</p>
+                  <div className="testimonial-author">
+                    <div className="author-avatar">
+                      <User size={28} />
+                    </div>
+                    <div className="author-info">
+                      <h4>{testimonial.name}</h4>
+                      <span>Traveller</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="author-info">
-                <h4>{testimonial.name}</h4>
-                <span>Traveller</span>
-              </div>
-            </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
-    </div>
-  </section>
-));
+    </section>
+  );
+});
 
 const MOCK_BUSES = [
   { id: 'B1', name: 'K-Swift Premium AC Sleeper', departure: '19:30', arrival: '08:45', duration: '13h 15m', fare: 1450, rating: '4.8', type: 'Sleeper (2+1)', brand: 'K-Swift' },
@@ -714,44 +782,56 @@ function App() {
           <div className="container">
             <div className="footer-grid">
               <div className="footer-column">
-                <h3 className="footer-title">Quick Links</h3>
-                <div className="footer-links-grid">
-                  <ul className="footer-links">
-                    <li><a href="#" className="footer-link">Home</a></li>
-                    <li><a href="#" className="footer-link">About us</a></li>
-                    <li><a href="#" className="footer-link">View Booking</a></li>
-                    <li><a href="#" className="footer-link">Cancellation</a></li>
-                    <li><a href="#" className="footer-link">Feedback</a></li>
-                  </ul>
-                  <ul className="footer-links">
-                    <li><a href="#" className="footer-link">Contact Us</a></li>
-                    <li><a href="#" className="footer-link">Gallery</a></li>
-                    <li><a href="#" className="footer-link">Privacy Policy</a></li>
-                    <li><a href="#" className="footer-link">Terms & Conditions</a></li>
-                  </ul>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                  <div style={{ background: 'white', padding: '6px', borderRadius: '8px', display: 'flex' }}>
+                    <Bus size={24} color="var(--primary)" />
+                  </div>
+                  <h3 className="footer-title" style={{ marginBottom: 0, fontSize: '1.4rem' }}>Ente KSRTC</h3>
+                </div>
+                <p style={{ color: 'var(--gray-400)', lineHeight: '1.7', fontSize: '0.95rem', marginBottom: '24px' }}>
+                  The official bus ticket booking application for Kerala State Road Transport Corporation. We provide safe, comfortable, and reliable travel across Kerala and neighboring states.
+                </p>
+                <div style={{ display: 'flex', gap: '16px' }}>
+                  <a href="#" className="footer-link"><Facebook size={22} /></a>
+                  <a href="#" className="footer-link"><Twitter size={22} /></a>
+                  <a href="#" className="footer-link"><Instagram size={22} /></a>
+                  <a href="#" className="footer-link"><Youtube size={22} /></a>
                 </div>
               </div>
               <div className="footer-column">
-                <h3 className="footer-title">Contact Us</h3>
-                <div className="contact-info">
-                  <p><strong>Route Related Enquiry</strong><br />
-                    0471-2463799<br />
-                    9447071021<br />
-                    18005994011(Toll Free)<br />
-                    We Social 9497722205<br />
-                    <a href="mailto:rsnksrtc@kerala.gov.in" className="footer-link">rsnksrtc@kerala.gov.in</a></p>
-                  <p className="mt-4"><strong>Technical Enquiry</strong><br />
-                    <a href="mailto:rsnksrtc@kerala.gov.in" className="footer-link">rsnksrtc@kerala.gov.in</a></p>
-                </div>
+                <h3 className="footer-title">Quick Links</h3>
+                <ul className="footer-links">
+                  <li><a href="#" className="footer-link">Home</a></li>
+                  <li><a href="#" className="footer-link">About Us</a></li>
+                  <li><a href="#" className="footer-link">View Booking</a></li>
+                  <li><a href="#" className="footer-link">Gallery</a></li>
+                  <li><a href="#" className="footer-link">Terms & Conditions</a></li>
+                </ul>
+              </div>
+              <div className="footer-column">
+                <h3 className="footer-title">Support</h3>
+                <ul className="footer-links">
+                  <li><a href="#" className="footer-link">Contact Us</a></li>
+                  <li><a href="#" className="footer-link">Cancellation</a></li>
+                  <li><a href="#" className="footer-link">Feedback</a></li>
+                  <li><a href="#" className="footer-link">Privacy Policy</a></li>
+                </ul>
               </div>
               <div className="footer-column">
                 <h3 className="footer-title">Corporate Office</h3>
                 <div className="contact-info">
-                  <p>Kerala, Office of Managing Director,<br />
-                    TRANSPORT BHAVAN, Fort, Trivandrum,<br />
-                    Kerala, India, Pin 695023</p>
+                  <p style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                    <MapPin size={18} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: '4px' }} />
+                    <span>Office of Managing Director,<br />
+                    TRANSPORT BHAVAN, Fort,<br />
+                    Trivandrum, Pin 695023</span>
+                  </p>
+                  <p style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '16px' }}>
+                    <Phone size={18} style={{ color: 'var(--primary)' }} />
+                    <span>0471-2463799 / 18005994011</span>
+                  </p>
                 </div>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="app-store-badge mt-4" style={{ height: '40px', cursor: 'pointer' }} width="119" height="40" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="app-store-badge mt-4" style={{ height: '40px', cursor: 'pointer', transition: 'transform 0.2s', marginTop: '24px' }} onMouseOver={(e) => e.currentTarget.style.transform='scale(1.05)'} onMouseOut={(e) => e.currentTarget.style.transform='scale(1)'} width="119" height="40" />
               </div>
             </div>
             <div className="footer-bottom">
