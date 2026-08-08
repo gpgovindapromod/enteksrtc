@@ -397,6 +397,26 @@ function App() {
   const [selectedBus, setSelectedBus] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [isBookingSuccess, setIsBookingSuccess] = useState(false);
+  const [searchError, setSearchError] = useState('');
+
+  const handleSearchClick = () => {
+    if (!origin || !origin.trim()) { setSearchError("Please enter a departure city."); return; }
+    if (!destination || !destination.trim()) { setSearchError("Please enter a destination city."); return; }
+    if (origin.trim().toLowerCase() === destination.trim().toLowerCase()) { setSearchError("Origin and destination cannot be the same."); return; }
+    if (!journeyDate) { setSearchError("Please select a journey date."); return; }
+    
+    const selectedDate = new Date(journeyDate);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    if (selectedDate < today) { setSearchError("Journey date cannot be in the past."); return; }
+
+    setSearchError('');
+    setSelectedBus(null); 
+    setSelectedSeats([]); 
+    setIsBookingSuccess(false); 
+    setShowDesktopSearch(true); 
+  };
+
   const [showLiveTracking, setShowLiveTracking] = useState(false);
   const [trackingStep, setTrackingStep] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -638,7 +658,7 @@ function App() {
 <p className="font-body-lg text-body-lg text-white/80 mt-6 max-w-2xl mx-auto drop-shadow-lg">Premium mobility across Kerala and beyond. Seamless, comfortable, and cinematic travel.</p>
 </div>
 {/*  Floating Booking Widget (Horizontal Desktop)  */}
-<div className="absolute -bottom-24 w-full max-w-6xl px-edge-margin-mobile md:px-0 z-20 left-1/2 -translate-x-1/2">
+<div className="absolute bottom-8 w-full max-w-6xl px-edge-margin-mobile md:px-0 z-20 left-1/2 -translate-x-1/2">
 <div className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-[24px] border border-gray-200 dark:border-white/10 rounded-xl p-6 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
 {/*  Tabs  */}
 <div className="flex gap-8 mb-6 border-b border-gray-200 dark:border-white/10 pb-2">
@@ -707,9 +727,10 @@ function App() {
   </div>
 
   {/* Search Button */}
-  <div className="md:pl-4 mt-4 md:mt-0 flex-shrink-0">
+  {/* Search Button */}
+  <div className="md:pl-4 mt-4 md:mt-0 flex-shrink-0 relative">
     <button
-      onClick={() => { setSelectedBus(null); setSelectedSeats([]); setIsBookingSuccess(false); setShowDesktopSearch(true); }}
+      onClick={handleSearchClick}
       className="bg-primary text-white h-12 md:h-14 px-8 rounded-xl font-bold text-base flex items-center justify-center gap-2 hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-primary/30 group w-full md:w-auto"
     >
       <span>Search</span>
@@ -718,6 +739,13 @@ function App() {
   </div>
 
 </div>
+
+{searchError && (
+  <div className="text-red-500 font-bold text-sm mt-3 animate-fade-in-up">
+    {searchError}
+  </div>
+)}
+
 </div>
 </div>
 </header>
