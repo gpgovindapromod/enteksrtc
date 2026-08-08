@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Clock, Bus, MapPin, Filter, X, ArrowLeftRight, Calendar, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, ArrowDownWideNarrow, RotateCcw, CheckCircle2, Moon, Sun } from 'lucide-react';
 import { getFilteredAndSortedBuses, generateSeatLayoutData } from '../../services/busService';
+import { useBusSearch } from '../../hooks/useBusSearch';
 
 const DesktopSearchResults = ({
   onBack,
@@ -22,81 +23,35 @@ const DesktopSearchResults = ({
   setShowDesktopTicketsModal,
   t = {}
 }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [filteredBuses, setFilteredBuses] = useState([]);
-
-  // Filter States
-  const [selectedBusTypes, setSelectedBusTypes] = useState([]);
-  const [selectedDepTimes, setSelectedDepTimes] = useState([]);
-  const [sortBy, setSortBy] = useState('Relevance');
-  const [localOrigin, setLocalOrigin] = useState(origin);
-  const [localDestination, setLocalDestination] = useState(destination);
-  const [localDate, setLocalDate] = useState(journeyDate);
-  const [errorMsg, setErrorMsg] = useState('');
-
-  // Fetch buses asynchronously
-  useEffect(() => {
-    const fetchBuses = async () => {
-      setIsLoading(true);
-      try {
-        const buses = await getFilteredAndSortedBuses({
-          selectedBusTypes,
-          selectedDepTimes,
-          sortBy,
-          origin,
-          destination,
-          date: journeyDate
-        });
-        setFilteredBuses(buses);
-      } catch (error) {
-        console.error("Failed to fetch buses", error);
-        setFilteredBuses([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchBuses();
-  }, [selectedBusTypes, selectedDepTimes, sortBy, origin, destination, journeyDate]);
-
-  const handleSwap = () => {
-    const temp = localOrigin;
-    setLocalOrigin(localDestination);
-    setLocalDestination(temp);
-  };
-
-  const handleModify = () => {
-    if (!localOrigin.trim()) { setErrorMsg("Please enter a departure city."); return; }
-    if (!localDestination.trim()) { setErrorMsg("Please enter a destination city."); return; }
-    if (localOrigin.trim().toLowerCase() === localDestination.trim().toLowerCase()) { setErrorMsg("Origin and destination cannot be the same."); return; }
-    if (!localDate) { setErrorMsg("Please select a journey date."); return; }
-
-    const selectedDate = new Date(localDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (selectedDate < today) { setErrorMsg("Journey date cannot be in the past."); return; }
-
-    setErrorMsg('');
-    setOrigin(localOrigin);
-    setDestination(localDestination);
-    setJourneyDate(localDate);
-  };
-
-  const handleCheckboxChange = (setter, stateList, value) => {
-    if (stateList.includes(value)) {
-      setter(stateList.filter(item => item !== value));
-    } else {
-      setter([...stateList, value]);
-    }
-  };
-
-  const clearAllFilters = () => {
-    setSelectedBusTypes([]);
-    setSelectedDepTimes([]);
-    setSortBy('Relevance');
-  };
-
-  const seatGridData = generateSeatLayoutData();
+  const {
+    isLoading,
+    filteredBuses,
+    selectedBusTypes,
+    setSelectedBusTypes,
+    selectedDepTimes,
+    setSelectedDepTimes,
+    sortBy,
+    setSortBy,
+    localOrigin,
+    setLocalOrigin,
+    localDestination,
+    setLocalDestination,
+    localDate,
+    setLocalDate,
+    errorMsg,
+    handleSwap,
+    handleModify,
+    handleCheckboxChange,
+    clearAllFilters,
+    seatGridData
+  } = useBusSearch({
+    initialOrigin: origin,
+    initialDestination: destination,
+    initialJourneyDate: journeyDate,
+    setOrigin,
+    setDestination,
+    setJourneyDate
+  });
 
   const renderSeatGrid = () => {
     return seatGridData.map((row) => (

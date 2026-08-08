@@ -119,33 +119,37 @@ const LazyLoad = ({ children, minHeight = '400px' }) => {
 };
 
 const TopRoutesSection = React.memo(({ routes, onBookRoute }) => (
-  <section className="section bg-white">
-    <div className="container">
-      <div className="section-subtitle">Routes</div>
-      <h2 className="section-title">Top Routes</h2>
-      <div className="routes-grid">
+  <section className="py-16 bg-slate-50 dark:bg-slate-950 transition-colors">
+    <div className="max-w-7xl mx-auto px-6">
+      <div className="text-sm font-bold text-emerald-500 uppercase tracking-widest mb-2">Routes</div>
+      <h2 className="text-3xl font-black font-outfit text-slate-900 dark:text-white mb-8">Top Routes</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {routes.map((route, idx) => (
-          <div key={idx} className="route-card">
-            <div className="route-img-wrapper">
-              <img src={route.img} alt={`${route.from} to ${route.to}`} className="route-img" loading="lazy" decoding="async" width="400" height="250" />
-            </div>
-            <div className="route-info">
-              <div className="route-points">
-                <div className="point">
-                  <div className="point-dot start"></div>
-                  {route.from}
-                </div>
-                <div className="point">
-                  <div className="point-dot end"></div>
-                  {route.to}
-                </div>
+          <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden hover:-translate-y-1 hover:shadow-xl transition-all group flex flex-col shadow-sm cursor-pointer">
+            <div className="h-48 w-full overflow-hidden relative">
+              <img src={route.img} alt={`${route.from} to ${route.to}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" width="400" height="250" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+              <div className="absolute bottom-3 left-3 text-white text-xs font-bold px-3 py-1 bg-emerald-500/90 rounded-lg shadow-md backdrop-blur-sm">
+                {route.duration}
               </div>
-              <div className="route-actions-right">
-                <div className="route-price">{route.price}</div>
-                <div className="route-duration">{route.duration}</div>
-                <a href="#" className="book-now-link" onClick={(e) => { e.preventDefault(); onBookRoute && onBookRoute(route.from, route.to); }}>
-                  <CalendarDays size={16} /> Book Now
-                </a>
+            </div>
+            <div className="p-5 flex-1 flex flex-col justify-between">
+              <div className="flex justify-between items-center mb-6">
+                <span className="text-lg font-bold text-slate-900 dark:text-white">{route.from}</span>
+                <span className="text-emerald-500 group-hover:translate-x-1 transition-transform">→</span>
+                <span className="text-lg font-bold text-slate-900 dark:text-white text-right">{route.to}</span>
+              </div>
+              <div className="flex justify-between items-end pt-4 border-t border-slate-100 dark:border-white/5 mt-auto">
+                <div className="flex flex-col">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 font-bold">Starting from</span>
+                  <span className="text-xl text-emerald-500 font-bold">{route.price}</span>
+                </div>
+                <button 
+                  className="px-5 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all shadow-sm text-sm font-bold active:scale-95 flex items-center gap-2"
+                  onClick={(e) => { e.preventDefault(); onBookRoute && onBookRoute(route.from, route.to); }}
+                >
+                  <CalendarDays size={16} /> Book
+                </button>
               </div>
             </div>
           </div>
@@ -156,16 +160,18 @@ const TopRoutesSection = React.memo(({ routes, onBookRoute }) => (
 ));
 
 const DestinationsSection = React.memo(({ destinations }) => (
-  <section className="section">
-    <div className="container">
-      <div className="section-subtitle">Destinations</div>
-      <h2 className="section-title">Popular Destinations from <span style={{ color: 'var(--secondary)' }}>Trivandrum</span></h2>
-      <div className="destinations-grid">
+  <section className="py-16 bg-white dark:bg-slate-900 transition-colors">
+    <div className="max-w-7xl mx-auto px-6">
+      <div className="text-sm font-bold text-emerald-500 uppercase tracking-widest mb-2">Destinations</div>
+      <h2 className="text-3xl font-black font-outfit text-slate-900 dark:text-white mb-8">Popular Destinations from <span className="text-emerald-500">Trivandrum</span></h2>
+      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
         {destinations.map((dest, idx) => (
-          <div key={idx} className="dest-card">
-            <img src={dest.img} alt={dest.name} className="dest-img" loading="lazy" decoding="async" width="300" height="200" />
-            <div className="dest-overlay"></div>
-            <div className="dest-name">{dest.name}</div>
+          <div key={idx} className="relative w-48 h-64 shrink-0 rounded-2xl overflow-hidden group snap-start cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+            <img src={dest.img} alt={dest.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="300" height="200" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+            <div className="absolute bottom-4 left-4 right-4">
+              <h3 className="text-white font-bold text-lg drop-shadow-md">{dest.name}</h3>
+            </div>
           </div>
         ))}
       </div>
@@ -174,11 +180,11 @@ const DestinationsSection = React.memo(({ destinations }) => (
 ));
 
 const GallerySection = React.memo(({ images }) => (
-  <section className="section bg-white">
-    <div className="container">
-      <div className="section-subtitle">Gallery</div>
-      <h2 className="section-title">KSRTC Moments</h2>
-      <div className="gallery-container">
+  <section className="py-16 bg-slate-50 dark:bg-slate-950 transition-colors">
+    <div className="max-w-7xl mx-auto px-6">
+      <div className="text-sm font-bold text-emerald-500 uppercase tracking-widest mb-2">Gallery</div>
+      <h2 className="text-3xl font-black font-outfit text-slate-900 dark:text-white mb-8">KSRTC Moments</h2>
+      <div className="relative rounded-3xl overflow-hidden p-2 bg-white dark:bg-slate-900 shadow-xl border border-slate-200 dark:border-white/10">
         <Masonry
           items={images}
           ease="power3.out"
@@ -196,79 +202,68 @@ const GallerySection = React.memo(({ images }) => (
 ));
 
 const TestimonialsSection = React.memo(({ testimonials }) => {
-  const [currentIdx, setCurrentIdx] = React.useState(0);
-  const maxIdx = Math.max(0, testimonials.length - 3);
+  const scrollContainerRef = React.useRef(null);
 
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIdx((prev) => (prev >= maxIdx ? 0 : prev + 1));
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [maxIdx]);
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -320, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 320, behavior: 'smooth' });
+    }
+  };
 
   return (
-    <section className="section testimonials-bg">
-      <div className="container" style={{ position: 'relative' }}>
-        <div className="section-subtitle">Testimonial</div>
-        <h2 className="section-title">Client Feedback</h2>
+    <section className="py-16 bg-white dark:bg-slate-900 transition-colors relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="flex justify-between items-end mb-8">
+          <div>
+            <div className="text-sm font-bold text-emerald-500 uppercase tracking-widest mb-2">Testimonial</div>
+            <h2 className="text-3xl md:text-4xl font-black font-outfit text-slate-900 dark:text-white">Client Feedback</h2>
+          </div>
+          {/* Navigation Buttons for Desktop */}
+          <div className="hidden md:flex gap-3">
+            <button 
+              onClick={scrollLeft}
+              className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-full w-12 h-12 flex items-center justify-center shadow-sm text-emerald-500 hover:scale-105 active:scale-95 transition-all"
+              aria-label="Previous testimonials"
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <button 
+              onClick={scrollRight}
+              className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 rounded-full w-12 h-12 flex items-center justify-center shadow-sm text-emerald-500 hover:scale-105 active:scale-95 transition-all"
+              aria-label="Next testimonials"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+        </div>
         
-        {/* Navigation Buttons */}
-        <button 
-          onClick={() => setCurrentIdx(prev => Math.max(0, prev - 1))}
-          style={{
-            position: 'absolute', left: '-20px', top: '55%', transform: 'translateY(-50%)',
-            background: 'white', border: '1px solid #eee', borderRadius: '50%', width: '44px', height: '44px',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-            zIndex: 10, cursor: 'pointer', opacity: currentIdx === 0 ? 0.5 : 1, transition: 'all 0.3s'
-          }}
-          disabled={currentIdx === 0}
-          aria-label="Previous testimonials"
+        <div 
+          ref={scrollContainerRef}
+          className="flex gap-6 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide"
         >
-          <ArrowLeft size={24} color="var(--primary, #e11d48)" />
-        </button>
-
-        <button 
-          onClick={() => setCurrentIdx(prev => Math.min(maxIdx, prev + 1))}
-          style={{
-            position: 'absolute', right: '-20px', top: '55%', transform: 'translateY(-50%)',
-            background: 'white', border: '1px solid #eee', borderRadius: '50%', width: '44px', height: '44px',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-            zIndex: 10, cursor: 'pointer', opacity: currentIdx === maxIdx ? 0.5 : 1, transition: 'all 0.3s'
-          }}
-          disabled={currentIdx === maxIdx}
-          aria-label="Next testimonials"
-        >
-          <ChevronRight size={24} color="var(--primary, #e11d48)" />
-        </button>
-
-        <div style={{ overflow: 'hidden', padding: '10px 0' }}>
-          <div 
-            className="testimonials-slider-track" 
-            style={{ 
-              display: 'flex', 
-              transition: 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)', 
-              transform: `translateX(calc(-${currentIdx} * (100% / ${testimonials.length})))`,
-              width: `calc(${testimonials.length} * 33.333%)`
-            }}
-          >
-            {testimonials.map((testimonial, idx) => (
-              <div key={idx} style={{ flex: `0 0 calc(100% / ${testimonials.length})`, padding: '0 12px', boxSizing: 'border-box' }}>
-                <div className="testimonial-card" style={{ height: '100%', margin: 0 }}>
-                  <Quote className="quote-mark" size={32} />
-                  <p className="testimonial-text">"{testimonial.text}"</p>
-                  <div className="testimonial-author">
-                    <div className="author-avatar">
-                      <User size={28} />
-                    </div>
-                    <div className="author-info">
-                      <h4>{testimonial.name}</h4>
-                      <span>Traveller</span>
-                    </div>
+          {testimonials.map((testimonial, idx) => (
+            <div key={idx} className="w-[85vw] md:w-[400px] shrink-0 snap-center">
+              <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 rounded-3xl p-8 h-full shadow-sm relative group hover:shadow-xl transition-all flex flex-col">
+                <Quote className="absolute top-6 right-6 text-emerald-500/10 group-hover:text-emerald-500/20 transition-colors" size={64} />
+                <p className="text-slate-700 dark:text-slate-300 font-medium mb-8 relative z-10 text-base md:text-lg leading-relaxed flex-1">"{testimonial.text}"</p>
+                <div className="flex items-center gap-4 mt-auto relative z-10">
+                  <div className="w-12 h-12 bg-emerald-500/20 text-emerald-500 rounded-full flex items-center justify-center shrink-0">
+                    <User size={24} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-slate-900 dark:text-white font-outfit">{testimonial.name}</h4>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest">Traveller</span>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -483,10 +478,17 @@ function App() {
     if (showLiveTracking) {
       const interval = setInterval(() => {
         setTrackingStep((prev) => (prev + 1) % 6);
-      }, 3000);
+  }, 3000);
       return () => clearInterval(interval);
     }
   }, [showLiveTracking]);
+
+  const handleBookRoute = (from, to) => {
+    setOrigin(from);
+    setDestination(to);
+    alert("Please select a journey date and proceed with your search.");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Bus seat grid builder helper
   const renderSeatGrid = () => {
@@ -794,7 +796,12 @@ function App() {
               <span className="font-label-caps text-[10px] text-gray-500 dark:text-white/50 uppercase tracking-wider mb-1">Starting from</span>
               <span className="font-headline-md text-headline-md text-primary font-bold">{route.price}</span>
             </div>
-            <button className="px-5 py-2 bg-primary/10 border border-primary/20 rounded-lg text-primary hover:bg-primary hover:text-white transition-all shadow-sm text-sm font-bold active:scale-95">Book</button>
+            <button 
+              className="px-5 py-2 bg-primary/10 border border-primary/20 rounded-lg text-primary hover:bg-primary hover:text-white transition-all shadow-sm text-sm font-bold active:scale-95"
+              onClick={(e) => { e.preventDefault(); handleBookRoute(route.from, route.to); }}
+            >
+              Book
+            </button>
           </div>
         </div>
       </div>
@@ -966,6 +973,7 @@ function App() {
               setSelectedSeats([]);
               setIsSearching(true);
             }}
+            onBookRoute={handleBookRoute}
             t={t}
             TopRoutesSection={TopRoutesSection}
             DestinationsSection={DestinationsSection}
