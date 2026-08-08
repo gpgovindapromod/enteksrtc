@@ -669,7 +669,7 @@ function App() {
                 backgroundColor="transparent"
                 borderRadius={24}
                 glowIntensity={0.8}
-                colors={['#ea580c', '#308342', '#fbbf24']}
+                colors={['#10b981', '#059669', '#047857']}
               >
                 <div className="widget-tabs">
                   <button className="widget-tab active">
@@ -762,7 +762,17 @@ function App() {
 
         {/* Sections */}
         <LazyLoad minHeight="500px">
-          <TopRoutesSection routes={TopRoutes} />
+          <TopRoutesSection 
+            routes={TopRoutes} 
+            onBookRoute={(from, to) => {
+              setOrigin(from);
+              setDestination(to);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              setTimeout(() => {
+                alert(`Route ${from} to ${to} selected.\nPlease select your journey date to continue booking.`);
+              }, 500);
+            }}
+          />
         </LazyLoad>
 
         <LazyLoad minHeight="400px">

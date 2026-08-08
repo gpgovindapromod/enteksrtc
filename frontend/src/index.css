@@ -1,50 +1,64 @@
 /* src/index.css */
 :root {
-  /* Color Palette */
-  --primary: #047857; /* Rich Emerald Green */
-  --primary-hover: #065f46;
-  --secondary: #ea580c; /* Vibrant Orange for CTA */
-  --secondary-hover: #c2410c;
-  --dark: #0f172a;
-  --light: #f8fafc;
-  --gray: #64748b;
-  --gray-light: #e2e8f0;
+  /* Premium Color Palette */
+  --primary: #059669; /* Elegant Emerald */
+  --primary-hover: #047857;
+  --primary-light: #d1fae5;
+  --secondary: #f97316; /* Vibrant Premium Orange */
+  --secondary-hover: #ea580c;
+  --secondary-light: #fb923c;
+  --dark: #0a0a0a; /* Rich Black */
+  --light: #fcfcfc; /* Soft Off-white */
+  --gray: #71717a;
+  --gray-light: #f4f4f5;
+  --gray-border: #e4e4e7;
   --white: #ffffff;
   
   /* Typography */
   --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Outfit', 'Inter', system-ui, sans-serif;
   
-  /* Shadows & Effects */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  /* Premium Shadows & Effects */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 20px 40px -4px rgb(0 0 0 / 0.08), 0 8px 16px -6px rgb(0 0 0 / 0.04);
+  --shadow-float: 0 30px 60px -12px rgb(0 0 0 / 0.12);
+  
+  --glass-bg: rgba(255, 255, 255, 0.3);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
   
   /* Border Radius */
-  --radius-md: 8px;
-  --radius-lg: 16px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
   --radius-full: 9999px;
   
   /* Layout */
-  --max-width: 1200px;
+  --max-width: 1400px;
+  
+  /* Transitions */
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 [data-theme="dark"] {
   --primary: #10b981; 
   --primary-hover: #34d399;
-  --secondary: #f97316; 
-  --secondary-hover: #fb923c;
-  --dark: #f8fafc; 
-  --light: #0f172a; 
-  --gray: #94a3b8;
-  --gray-light: #334155;
-  --white: #1e293b; 
+  --primary-light: #064e3b;
+  --secondary: #fb923c; 
+  --secondary-hover: #fdba74;
+  --dark: #fcfcfc; 
+  --light: #09090b; 
+  --gray: #a1a1aa;
+  --gray-light: #18181b;
+  --gray-border: #27272a;
+  --white: #0a0a0a; 
   
-  --glass-bg: rgba(30, 41, 59, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  --glass-bg: rgba(9, 9, 11, 0.35);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -92,20 +106,20 @@ button {
 /* ================= Modern Navbar ================= */
 .modern-navbar {
   position: fixed;
-  top: 24px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
+  width: 95%;
   max-width: 1200px;
   background: var(--glass-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
   border: 1px solid var(--glass-border);
   border-radius: 100px;
   z-index: 1000;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  padding: 12px 32px;
-  transition: all 0.3s ease;
+  box-shadow: var(--glass-shadow), var(--shadow-sm);
+  padding: 12px 24px;
+  transition: all 0.4s var(--ease-premium);
 }
 
 .navbar-container {
@@ -220,36 +234,38 @@ button {
 
 .btn-secondary-modern {
   background: transparent;
-  border: 1px solid rgba(4, 120, 87, 0.3);
-  color: var(--primary);
-  padding: 8px 20px;
-  border-radius: 100px;
-  font-size: 0.9rem;
-  font-weight: 700;
+  border: 1px solid var(--gray-border);
+  color: var(--dark);
+  padding: 10px 24px;
+  border-radius: var(--radius-full);
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s var(--ease-premium);
 }
 
 .btn-secondary-modern:hover {
-  background: rgba(4, 120, 87, 0.1);
+  background: var(--gray-light);
+  border-color: var(--gray);
 }
 
 .btn-primary-modern {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  color: var(--white);
   border: none;
-  padding: 8px 24px;
-  border-radius: 100px;
-  font-size: 0.9rem;
-  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: var(--radius-full);
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(4, 120, 87, 0.3);
-  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s var(--ease-premium);
 }
 
 .btn-primary-modern:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(4, 120, 87, 0.4);
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
 }
 
 /* Hero Section */
@@ -267,11 +283,11 @@ button {
   position: absolute;
   inset: 0;
   background-size: cover;
-  background-position: center 60%; /* Adjusted to focus on the lower-middle (where the bus usually is) */
+  background-position: center 60%;
   background-repeat: no-repeat;
   opacity: 0;
-  transition: opacity 1s ease-in-out, transform 6s ease-out;
-  transform: scale(1.02); /* Reduced zoom to prevent cutting off the edges */
+  transition: opacity 1.2s var(--ease-premium), transform 8s ease-out;
+  transform: scale(1.05);
   z-index: 1;
 }
 
@@ -283,7 +299,8 @@ button {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(4, 120, 87, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(4, 120, 87, 0.5) 100%);
+  backdrop-filter: blur(2px);
   z-index: 2;
 }
 
@@ -348,34 +365,35 @@ button {
 
 .hero-title-area {
   text-align: center;
-  margin-bottom: 48px;
-  color: #f8fafc; /* Always light since overlay is dark */
-  max-width: 800px;
+  margin-bottom: 56px;
+  color: #f8fafc;
+  max-width: 900px;
 }
 
 .hero-title {
-  font-size: 3.5rem;
+  font-size: 4.5rem;
   font-weight: 800;
-  margin-bottom: 16px;
-  line-height: 1.2;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  margin-bottom: 24px;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
 
 .hero-subtitle {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 400;
-  opacity: 0.9;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  opacity: 0.95;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* Booking Widget */
 .booking-widget {
   background: var(--glass-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
   border-radius: var(--radius-lg);
   padding: 32px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3), inset 0 0 0 1px var(--glass-border);
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
   position: relative;
   z-index: 10;
   width: 100%;
@@ -487,25 +505,30 @@ button {
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--dark);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  margin-left: 4px;
 }
 
 .input-field {
   width: 100%;
-  padding: 14px 44px 14px 16px;
-  border: 2px solid var(--gray-light);
+  padding: 16px 48px 16px 20px;
+  border: 1px solid var(--gray-border);
   border-radius: var(--radius-md);
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 500;
   color: var(--dark);
   background: var(--white);
-  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.3s var(--ease-premium);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .input-field:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.1);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.15), inset 0 2px 4px rgba(0,0,0,0.01);
 }
 
 .input-field:disabled {
@@ -516,52 +539,62 @@ button {
 
 .input-icon {
   position: absolute;
-  right: 16px;
+  right: 18px;
   top: 50%;
-  transform: translateY(20%); /* slightly adjust for label */
+  transform: translateY(10%);
   color: var(--gray);
   pointer-events: none;
+  transition: color 0.3s ease;
+}
+
+.input-group:focus-within .input-icon {
+  color: var(--primary);
 }
 
 .swap-btn {
   position: absolute;
-  top: 36px;
+  top: 38px;
   left: 50%;
   transform: translateX(-50%);
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--white);
-  border: 2px solid var(--gray-light);
+  border: 1px solid var(--gray-border);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--primary);
   box-shadow: var(--shadow-sm);
   z-index: 12;
-  transition: all 0.3s ease;
+  transition: all 0.4s var(--ease-premium);
+  cursor: pointer;
 }
 
 .swap-btn:hover {
-  transform: translateX(-50%) rotate(180deg);
+  transform: translateX(-50%) rotate(180deg) scale(1.05);
   border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  background: var(--primary);
+  color: var(--white);
 }
 
 .btn-primary {
   width: 100%;
   padding: 16px;
   border: none;
-  background: linear-gradient(135deg, var(--secondary) 0%, #f97316 100%);
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-hover) 100%);
   color: var(--white);
   font-size: 1.1rem;
   font-weight: 700;
   border-radius: var(--radius-md);
-  box-shadow: 0 4px 14px 0 rgba(234, 88, 12, 0.4);
-  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px 0 rgba(234, 88, 12, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.4s var(--ease-premium);
   margin-top: 12px;
   letter-spacing: 0.5px;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .btn-primary::after {
@@ -573,7 +606,7 @@ button {
   height: 300%;
   background: rgba(255,255,255,0.15);
   transform: translate(-50%, -50%) rotate(35deg) translateY(100%);
-  transition: transform 0.6s ease;
+  transition: transform 0.6s var(--ease-premium);
 }
 
 .btn-primary:hover::after {
@@ -581,9 +614,9 @@ button {
 }
 
 .btn-primary:hover {
-  background-color: var(--secondary-hover);
+  background: linear-gradient(135deg, var(--secondary-light) 0%, var(--secondary) 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(234, 88, 12, 0.4);
+  box-shadow: 0 8px 25px rgba(234, 88, 12, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .btn-primary:active {
@@ -626,20 +659,20 @@ button {
 
 .route-card {
   background: var(--white);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: var(--shadow-sm), 0 0 0 1px var(--glass-border);
+  transition: all 0.5s var(--ease-premium);
   display: flex;
-  border: 1px solid rgba(0,0,0,0.03);
   height: auto;
   min-height: 190px;
 }
 
 .route-card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(4, 120, 87, 0.15);
-  border-color: rgba(4, 120, 87, 0.3);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(4, 120, 87, 0.3);
 }
 
 .route-img {
@@ -754,8 +787,14 @@ button {
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md), 0 0 0 1px var(--glass-border);
   cursor: pointer;
+  transition: all 0.5s var(--ease-premium);
+}
+
+.dest-card:hover {
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(4, 120, 87, 0.3);
+  transform: translateY(-8px);
 }
 
 .dest-card:nth-child(1) {
@@ -766,14 +805,14 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s var(--ease-premium);
 }
 
 .dest-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%);
-  transition: all 0.4s ease;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0) 60%);
+  transition: all 0.5s var(--ease-premium);
 }
 
 .dest-card:hover .dest-img {
@@ -781,7 +820,7 @@ button {
 }
 
 .dest-card:hover .dest-overlay {
-  background: linear-gradient(to top, rgba(4, 120, 87, 0.95) 0%, rgba(0,0,0,0.2) 60%);
+  background: linear-gradient(to top, rgba(4, 120, 87, 0.95) 0%, rgba(15, 23, 42, 0.2) 60%);
 }
 
 .dest-name {
