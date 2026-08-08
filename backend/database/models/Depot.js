@@ -1,26 +1,78 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const depotSchema = new mongoose.Schema(
   {
-    depotCode: { type: String, required: true, unique: true },
-    depotName: { type: String, required: true, index: true },
+    depotCode: {
+      type: String,
+      required: true,
+      unique: true,
+      uppercase: true,
+      trim: true
+    },
 
-    address: { type: String },
-    district: { type: String },
-    state: { type: String },
-    pincode: { type: String },
+    depotName: {
+      type: String,
+      required: true,
+      trim: true
+    },
 
-    latitude: { type: Number },
-    longitude: { type: Number },
+    address: {
+      type: String,
+      required: true,
+      trim: true
+    },
 
-    managerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    city: {
+      type: String,
+      required: true,
+      trim: true
+    },
 
-    phone: { type: String },
-    email: { type: String },
+    district: {
+      type: String,
+      required: true,
+      trim: true
+    },
 
-    isActive: { type: Boolean, default: true }
+    state: {
+      type: String,
+      required: true,
+      default: "Kerala"
+    },
+
+    pincode: {
+      type: String,
+      required: true
+    },
+
+    phone: {
+      type: String,
+      required: true
+    },
+
+    email: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true
+    },
+
+    totalPlatforms: {
+      type: Number,
+      required: true,
+      min: 1
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true
+    }
   },
-  { timestamps: true }
+  {
+    timestamps: true
+  }
 );
 
-export default mongoose.model('Depot', depotSchema);
+const Depot = mongoose.model("Depot", depotSchema);
+
+export default Depot;
