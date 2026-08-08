@@ -132,18 +132,20 @@ const DesktopSearchResults = ({
               <div className="flex items-center gap-2 px-4 py-2 border-r border-gray-300 dark:border-white/10">
                 <span className="text-xs opacity-50 block uppercase tracking-wide">From</span>
                 <input
+                  aria-label="Origin City"
                   value={localOrigin}
                   onChange={(e) => setLocalOrigin(e.target.value)}
                   placeholder="Origin"
                   className="bg-transparent border-none outline-none text-sm font-bold w-24 text-gray-900 dark:text-white"
                 />
               </div>
-              <button onClick={handleSwap} className="p-2 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full transition-colors text-emerald-500">
+              <button onClick={handleSwap} aria-label="Swap origin and destination" className="p-2 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full transition-colors text-emerald-500">
                 <ArrowLeftRight size={16} />
               </button>
               <div className="flex items-center gap-2 px-4 py-2 border-r border-gray-300 dark:border-white/10">
                 <span className="text-xs opacity-50 block uppercase tracking-wide">To</span>
                 <input
+                  aria-label="Destination City"
                   value={localDestination}
                   onChange={(e) => setLocalDestination(e.target.value)}
                   placeholder="Destination"
@@ -153,13 +155,14 @@ const DesktopSearchResults = ({
               <div className="flex items-center gap-2 px-4 py-2 border-r border-gray-300 dark:border-white/10">
                 <span className="text-xs opacity-50 block uppercase tracking-wide">Date</span>
                 <input
+                  aria-label="Journey Date"
                   type="date"
                   value={localDate}
                   onChange={(e) => setLocalDate(e.target.value)}
                   className="bg-transparent border-none outline-none text-sm font-bold w-32 text-gray-900 dark:text-white [&::-webkit-calendar-picker-indicator]:dark:invert cursor-pointer"
                 />
               </div>
-              <button onClick={handleModify} className="px-6 py-2 bg-emerald-500 text-white rounded-full text-sm font-bold hover:scale-105 transition-transform shadow-lg shadow-emerald-500/20">
+              <button onClick={handleModify} className="px-6 py-2 bg-emerald-700 text-white rounded-full text-sm font-bold hover:scale-105 transition-transform shadow-lg shadow-emerald-700/20">
                 Modify
               </button>
             </div>

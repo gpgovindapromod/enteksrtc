@@ -385,9 +385,9 @@ function App() {
   );
 
   // Search, Selection & Checkout States
-  const [origin, setOrigin] = useState('Bangalore');
-  const [destination, setDestination] = useState('Tirunelveli');
-  const [journeyDate, setJourneyDate] = useState('2026-07-28');
+  const [origin, setOrigin] = useState('');
+  const [destination, setDestination] = useState('');
+  const [journeyDate, setJourneyDate] = useState(new Date().toISOString().split('T')[0]);
   const [isSearching, setIsSearching] = useState(false);
   const [showDesktopSearch, setShowDesktopSearch] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
@@ -640,7 +640,7 @@ function App() {
     {isUserLoggedIn ? (
       <button className="text-sm font-medium text-primary border border-primary px-4 py-1.5 rounded-full hover:bg-primary/10" onClick={() => setIsUserLoggedIn(false)}>Logout</button>
     ) : (
-      <button className="text-sm font-medium bg-primary text-on-primary px-4 py-1.5 rounded-full shadow-lg shadow-primary/20 hover:brightness-110 active:scale-95 transition-all" onClick={() => setShowLoginModal(true)}>Login</button>
+      <button className="text-sm font-medium bg-emerald-700 text-white px-4 py-1.5 rounded-full shadow-lg shadow-emerald-700/20 hover:brightness-110 active:scale-95 transition-all" onClick={() => setShowLoginModal(true)}>Login</button>
     )}
     <div className={`cursor-pointer active:scale-95 hover:scale-105 transition-transform duration-300 hover:text-primary drop-shadow-md ${isScrolled ? 'text-gray-700 dark:text-white/80' : 'text-white/80'}`}>
   
@@ -751,7 +751,7 @@ function App() {
   <div className="md:pl-4 mt-4 md:mt-0 flex-shrink-0 relative">
     <button
       onClick={handleSearchClick}
-      className="bg-primary text-white h-12 md:h-14 px-8 rounded-xl font-bold text-base flex items-center justify-center gap-2 hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-primary/30 group w-full md:w-auto"
+      className="bg-emerald-700 text-white h-12 md:h-14 px-8 rounded-xl font-bold text-base flex items-center justify-center gap-2 hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-emerald-700/30 group w-full md:w-auto"
     >
       <span>Search</span>
       <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform" style={{ fontSize: '20px' }}>arrow_forward</span>
@@ -848,7 +848,6 @@ function App() {
 </section>
 </main>
 {/*  Footer  */}
-
 <footer className="bg-slate-900 text-white w-full relative z-10 pt-20 pb-10 mt-20 border-t border-white/10">
   <div className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop">
     <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
@@ -862,7 +861,7 @@ function App() {
             <span className="text-xs text-primary uppercase tracking-widest font-bold">Premium Journey</span>
           </div>
         </div>
-        <p className="text-white/60 font-body-md text-sm leading-relaxed mb-8">
+        <p className="text-white/80 font-body-md text-sm leading-relaxed mb-8">
           Experience the pinnacle of mobility across God's Own Country. We connect communities, empower travelers, and deliver cinematic journeys with unparalleled comfort and safety.
         </p>
         <div className="flex gap-4">
@@ -919,10 +918,10 @@ function App() {
     </div>
 
     <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-      <div className="text-xs text-white/40 font-medium">
+      <div className="text-xs text-white/70 font-medium">
         &copy; {new Date().getFullYear()} Kerala State Road Transport Corporation. All rights reserved.
       </div>
-      <div className="flex items-center gap-6 text-xs text-white/40 font-medium">
+      <div className="flex items-center gap-6 text-xs text-white/70 font-medium">
         <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
         <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
         <a href="#" className="hover:text-primary transition-colors">Accessibility</a>

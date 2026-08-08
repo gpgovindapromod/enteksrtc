@@ -159,7 +159,7 @@ const MobileBookingWidget = ({
         {/* Search Button */}
         <button
           onClick={onSearch}
-          className="bg-emerald-500 text-white h-14 px-8 rounded-xl font-bold text-base flex items-center justify-center gap-2 hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-emerald-500/30 group w-full mt-2"
+          className="bg-emerald-700 text-white h-14 px-8 rounded-xl font-bold text-base flex items-center justify-center gap-2 hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-emerald-700/30 group w-full mt-2"
         >
           <span>Search</span>
           <Search size={20} className="group-hover:translate-x-1 transition-transform" />
