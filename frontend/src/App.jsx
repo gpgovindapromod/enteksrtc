@@ -359,6 +359,15 @@ function App() {
   const [hasActivatedWebApp, setHasActivatedWebApp] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const renderMobileBookingWidget = () => (
     <MobileBookingWidget
@@ -444,7 +453,7 @@ function App() {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroImages.length);
     }, 5000);
-    return () => clearInterval(interval);
+    return () => clearTimeout(interval);
   }, [isLoading]);
 
   // Handle tracking step interval
@@ -582,7 +591,7 @@ function App() {
     return (
       <>
         {/* Navbar */}
-        <nav className="modern-navbar">
+        <nav className={`modern-navbar ${isScrolled ? 'scrolled' : 'transparent'}`}>
           <div className="navbar-container">
             <div className="nav-brand">
               <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-small" width="40" height="40" />
@@ -854,16 +863,10 @@ function App() {
   };
 
   // Main Render Strategy
-  const AcademicDisclaimer = () => (
-    <div style={{ backgroundColor: '#ff4444', color: 'white', textAlign: 'center', padding: '10px', fontSize: '14px', fontWeight: 'bold', zIndex: 10000, position: 'relative' }}>
-      ⚠️ ACADEMIC PROJECT ONLY: This is a student clone and is NOT the official KSRTC website. Do not enter real credentials.
-    </div>
-  );
 
   if (!showMobileView) {
     return (
       <>
-        <AcademicDisclaimer />
 
         {renderWebsiteReplicaContent()}
 
@@ -885,7 +888,6 @@ function App() {
   // Mobile WebApp Layout (showMobileView is true)
   return (
     <div className="mobile-app-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
-      <AcademicDisclaimer />
 
 
       {/* Dynamic Active Tab View Render */}
