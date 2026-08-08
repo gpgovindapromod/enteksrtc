@@ -45,6 +45,7 @@ import MobileHomeTab from './components/mobile/MobileHomeTab';
 import MobileLoginModal from './components/mobile/MobileLoginModal';
 import DesktopSearchResults from './components/desktop/DesktopSearchResults';
 import DesktopAuthModal from './components/desktop/DesktopAuthModal';
+import Dashboard from './components/dashboard/Dashboard';
 
 
 const GalleryImages = [
@@ -394,6 +395,7 @@ function App() {
   const [journeyDate, setJourneyDate] = useState('2026-07-28');
   const [isSearching, setIsSearching] = useState(false);
   const [showDesktopSearch, setShowDesktopSearch] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
   const [selectedBus, setSelectedBus] = useState(null);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [isBookingSuccess, setIsBookingSuccess] = useState(false);
@@ -571,6 +573,14 @@ function App() {
 
   // Local helper: Entire Website Replica Layout content (reused in desktop and mobile active home tab)
   const renderWebsiteReplicaContent = () => {
+    if (showDashboard) {
+      return (
+        <div style={{width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 99999, overflowY: 'auto', backgroundColor: 'var(--bg-color)'}}>
+           <button onClick={() => setShowDashboard(false)} className="fixed bottom-6 right-6 z-[60] bg-white text-emerald-500 px-4 py-2 rounded-xl font-bold shadow-xl border border-emerald-500 hover:scale-105 active:scale-95 transition-all">Back to App</button>
+           <Dashboard theme={theme} toggleTheme={toggleTheme} />
+        </div>
+      );
+    }
     if (showDesktopSearch && !showMobileView) {
       return (
         <>
@@ -618,6 +628,7 @@ function App() {
 <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Home</a>
 <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Routes</a>
 <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Contact</a>
+<button onClick={() => setShowDashboard(true)} className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`}>Experience Dashboard</button>
 </div>
 {/*  Right Actions  */}
 <div className="flex items-center justify-end gap-6 w-1/4">
@@ -751,7 +762,7 @@ function App() {
 </header>
 
 {/*  Main Content Area  */}
-<main className="mt-48 md:mt-40 bg-white dark:bg-slate-950 transition-colors duration-300">
+<main className="pt-16 bg-white dark:bg-slate-950 transition-colors duration-300">
 
 <section className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop py-stack-xl">
   <div className="flex justify-between items-end mb-stack-lg">

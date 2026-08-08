@@ -80,6 +80,12 @@ const DesktopSearchResults = ({
 
   const handleCheckboxChange = (setter, stateList, value) => {
     if (stateList.includes(value)) {
+      setter(stateList.filter(item => item !== value));
+    } else {
+      setter([...stateList, value]);
+    }
+  };
+
   const clearAllFilters = () => {
     setSelectedBusTypes([]);
     setSelectedDepTimes([]);
