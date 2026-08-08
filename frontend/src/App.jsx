@@ -683,11 +683,13 @@ function App() {
 
   {/* FROM Field */}
   <div className="flex-1 border-b-2 border-gray-200 dark:border-white/20 pb-3 focus-within:border-primary transition-colors px-0 md:pr-4">
-    <label className="block text-[10px] text-gray-500 dark:text-white/50 uppercase tracking-widest mb-2 font-bold">From</label>
+    <label htmlFor="origin-input" className="block text-[10px] text-gray-600 dark:text-gray-300 uppercase tracking-widest mb-2 font-bold">From</label>
     <div className="flex items-center gap-2">
-      <span className="material-symbols-outlined text-gray-400 dark:text-white/40" style={{ fontSize: '18px' }}>location_on</span>
+      <span className="material-symbols-outlined text-gray-500 dark:text-gray-400" style={{ fontSize: '18px' }}>location_on</span>
       <input
-        className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-400 dark:placeholder:text-white/30 p-0"
+        id="origin-input"
+        aria-label="Departure City"
+        className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
         placeholder="Departure City"
         type="text"
         value={origin}
@@ -702,6 +704,7 @@ function App() {
       onClick={() => { const temp = origin; setOrigin(destination); setDestination(temp); }}
       className="bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-white/20 rounded-full p-2 hover:bg-primary/10 dark:hover:bg-primary/20 hover:border-primary transition-all group flex-shrink-0"
       title="Swap origin and destination"
+      aria-label="Swap origin and destination"
     >
       <span className="material-symbols-outlined text-gray-500 dark:text-white/60 group-hover:text-primary transition-colors" style={{ fontSize: '18px' }}>swap_horiz</span>
     </button>
@@ -709,11 +712,13 @@ function App() {
 
   {/* TO Field */}
   <div className="flex-1 border-b-2 border-gray-200 dark:border-white/20 pb-3 focus-within:border-primary transition-colors px-0 md:px-4">
-    <label className="block text-[10px] text-gray-500 dark:text-white/50 uppercase tracking-widest mb-2 font-bold">To</label>
+    <label htmlFor="destination-input" className="block text-[10px] text-gray-600 dark:text-gray-300 uppercase tracking-widest mb-2 font-bold">To</label>
     <div className="flex items-center gap-2">
-      <span className="material-symbols-outlined text-gray-400 dark:text-white/40" style={{ fontSize: '18px' }}>flag</span>
+      <span className="material-symbols-outlined text-gray-500 dark:text-gray-400" style={{ fontSize: '18px' }}>flag</span>
       <input
-        className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-400 dark:placeholder:text-white/30 p-0"
+        id="destination-input"
+        aria-label="Destination City"
+        className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
         placeholder="Destination City"
         type="text"
         value={destination}
@@ -727,11 +732,13 @@ function App() {
 
   {/* DATE Field */}
   <div className="flex-1 border-b-2 border-gray-200 dark:border-white/20 pb-3 focus-within:border-primary transition-colors px-0 md:pl-4">
-    <label className="block text-[10px] text-gray-500 dark:text-white/50 uppercase tracking-widest mb-2 font-bold">Date</label>
+    <label htmlFor="date-input" className="block text-[10px] text-gray-600 dark:text-gray-300 uppercase tracking-widest mb-2 font-bold">Date</label>
     <div className="flex items-center gap-2">
-      <span className="material-symbols-outlined text-gray-400 dark:text-white/40" style={{ fontSize: '18px' }}>calendar_month</span>
+      <span className="material-symbols-outlined text-gray-500 dark:text-gray-400" style={{ fontSize: '18px' }}>calendar_month</span>
       <input
-        className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none p-0 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-40 [&::-webkit-calendar-picker-indicator]:dark:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+        id="date-input"
+        aria-label="Journey Date"
+        className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none p-0 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:dark:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer"
         type="date"
         value={journeyDate}
         onChange={(e) => setJourneyDate(e.target.value)}

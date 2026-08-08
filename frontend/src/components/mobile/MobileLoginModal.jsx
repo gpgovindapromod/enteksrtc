@@ -77,16 +77,16 @@ const MobileLoginModal = ({
                   {signupTab === 'mandatory' ? (
                     <div className="tab-pane fade-in">
                       <div className="input-group">
-                        <input type="text" placeholder="NAME" required />
+                        <input type="text" aria-label="Name" placeholder="NAME" required />
                       </div>
                       <div className="input-group">
-                        <input type="number" placeholder="Age" required />
+                        <input type="number" aria-label="Age" placeholder="Age" required />
                       </div>
                       <div className="input-group">
-                        <input type="email" placeholder="EMAIL ID" required />
+                        <input type="email" aria-label="Email ID" placeholder="EMAIL ID" required />
                       </div>
                       <div className="input-group">
-                        <input type={showPassword ? "text" : "password"} placeholder="Password" required />
+                        <input type={showPassword ? "text" : "password"} aria-label="Password" placeholder="Password" required />
                         <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
                           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
@@ -103,10 +103,10 @@ const MobileLoginModal = ({
                   ) : (
                     <div className="tab-pane fade-in">
                       <div className="input-group">
-                        <input type="text" placeholder="GST COMPANY" />
+                        <input type="text" aria-label="GST Company" placeholder="GST COMPANY" />
                       </div>
                       <div className="input-group">
-                        <input type="text" placeholder="GST NUMBER" />
+                        <input type="text" aria-label="GST Number" placeholder="GST NUMBER" />
                       </div>
                       
                       <div className="date-dropdown-group">
@@ -135,7 +135,7 @@ const MobileLoginModal = ({
                 <>
                   <div className="input-group">
                     <Mail className="input-icon" size={20} />
-                    <input type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required />
+                    <input type="email" aria-label="Email Address" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required />
                   </div>
 
                   <div className="input-group">

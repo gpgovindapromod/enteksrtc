@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 
 import notFoundMiddleware from "./middleware/notFoundMiddleware.js";
 import errorMiddleware from "./middleware/errorMiddleware.js";
+import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.get("/", (req, res) => {
     });
 });
 
+app.use("/api/auth", authRoutes);
 
 app.use(notFoundMiddleware);
 

@@ -68,13 +68,15 @@ const MobileBookingWidget = ({
           <div className="flex items-center gap-2">
             <MapPin size={18} className="text-gray-400 dark:text-white/40" />
             <input
+              id="mobile-origin-input"
+              aria-label="Departure City"
               type="text"
               value={origin}
               onChange={e => setOrigin(e.target.value)}
               onFocus={() => setIsOriginFocused(true)}
               onBlur={() => setTimeout(() => setIsOriginFocused(false), 200)}
               placeholder="Departure City"
-              className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-400 dark:placeholder:text-white/30 p-0"
+              className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
             />
           </div>
           {isOriginFocused && origin && filteredOriginCities.length > 0 && (
@@ -112,13 +114,15 @@ const MobileBookingWidget = ({
           <div className="flex items-center gap-2">
             <MapPin size={18} className="text-gray-400 dark:text-white/40" />
             <input
+              id="mobile-destination-input"
+              aria-label="Destination City"
               type="text"
               value={destination}
               onChange={e => setDestination(e.target.value)}
               onFocus={() => setIsDestFocused(true)}
               onBlur={() => setTimeout(() => setIsDestFocused(false), 200)}
               placeholder="Destination City"
-              className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-400 dark:placeholder:text-white/30 p-0"
+              className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
             />
           </div>
           {isDestFocused && destination && filteredDestCities.length > 0 && (
@@ -142,10 +146,12 @@ const MobileBookingWidget = ({
           <div className="flex items-center gap-2 relative">
             <Calendar size={18} className="text-gray-400 dark:text-white/40" />
             <input
+              id="mobile-date-input"
+              aria-label="Journey Date"
               type="date"
               value={journeyDate}
               onChange={(e) => setJourneyDate(e.target.value)}
-              className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none p-0 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-40 [&::-webkit-calendar-picker-indicator]:dark:invert"
+              className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none p-0 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:dark:invert"
             />
           </div>
         </div>

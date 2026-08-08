@@ -79,7 +79,7 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
               <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100" className="w-full h-full rounded-full object-cover" alt="Profile" />
             </div>
             <div>
-              <h3 className="text-sm font-bold truncate">Welcome, Traveler</h3>
+              <h2 className="text-sm font-bold truncate">Welcome, Traveler</h2>
               <p className="text-[10px] text-[#10b981] font-bold uppercase tracking-tighter">Elite Gold Member</p>
             </div>
           </div>
@@ -127,11 +127,11 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
                 <option value={ROLES.SUPPORT}>Support</option>
               </select>
             </div>
-            <button className="p-2 hover:bg-slate-100/50 dark:bg-slate-800/50 rounded-full transition-colors relative">
+            <button aria-label="Notifications" className="p-2 hover:bg-slate-100/50 dark:bg-slate-800/50 rounded-full transition-colors relative">
               <Bell size={20} className="text-slate-500 dark:text-slate-400" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-[#10b981] rounded-full border-2 border-white dark:border-slate-900"></span>
             </button>
-            <button className="p-2 hover:bg-slate-100/50 dark:bg-slate-800/50 rounded-full transition-colors">
+            <button aria-label="Settings" className="p-2 hover:bg-slate-100/50 dark:bg-slate-800/50 rounded-full transition-colors">
               <Settings size={20} className="text-slate-500 dark:text-slate-400" />
             </button>
 
@@ -139,6 +139,7 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
               onClick={toggleTheme}
               className="p-2 hover:bg-slate-100 dark:bg-slate-800 rounded-full transition-colors"
               title="Toggle Theme"
+              aria-label="Toggle Theme"
             >
               <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
             </button>
@@ -325,7 +326,7 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
           ) : (
             <div className="flex flex-col items-center justify-center h-[60vh] border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/50 rounded-3xl mt-12 w-full">
               <Settings size={48} className="text-[#10b981] mb-6 animate-spin-slow opacity-50" />
-              <h3 className="text-2xl font-bold font-outfit text-slate-900 dark:text-white mb-2">Role specific widgets coming soon!</h3>
+              <h2 className="text-2xl font-bold font-outfit text-slate-900 dark:text-white mb-2">Role specific widgets coming soon!</h2>
               <p className="text-slate-500 dark:text-slate-400">You are currently viewing the {activeRole.toUpperCase()} layout.</p>
             </div>
           )}
