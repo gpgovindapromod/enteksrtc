@@ -1,0 +1,114 @@
+export const GalleryImages = [
+  { id: "1", img: "./assets/images/gallery_1.jpg", url: "#", height: 400 },
+  { id: "2", img: "./assets/images/gallery_2.jpg", url: "#", height: 250 },
+  { id: "3", img: "./assets/images/gallery_3.jpg", url: "#", height: 600 },
+  { id: "4", img: "./assets/images/gallery_4.jpg", url: "#", height: 350 },
+  { id: "5", img: "./assets/images/gallery_5.jpg", url: "#", height: 300 },
+  { id: "6", img: "./assets/images/gallery_6.jpg", url: "#", height: 500 },
+  { id: "7", img: "./assets/images/gallery_7.jpg", url: "#", height: 450 },
+  { id: "8", img: "./assets/images/gallery_8.jpg", url: "#", height: 300 },
+  { id: "9", img: "./assets/images/gallery_9.jpg", url: "#", height: 380 },
+  { id: "10", img: "./assets/images/gallery_10.jpg", url: "#", height: 320 },
+];
+
+export const TopRoutes = [
+  { from: 'Trivandrum', to: 'Kanyakumari', img: './assets/images/route_kanyakumari.jpg', duration: '2h 30m', price: '₹150' },
+  { from: 'Trivandrum', to: 'Palakkad', img: './assets/images/route_palakkad.jpg', duration: '8h 15m', price: '₹450' },
+  { from: 'Trivandrum', to: 'Palani', img: './assets/images/route_palani.jpg', duration: '7h 00m', price: '₹380' },
+  { from: 'Trivandrum', to: 'Bangalore', img: './assets/images/route_bangalore.jpg', duration: '14h 30m', price: '₹1200' },
+  { from: 'Trivandrum', to: 'Coimbatore', img: './assets/images/route_coimbatore.jpg', duration: '9h 00m', price: '₹480' },
+  { from: 'Trivandrum', to: 'Kannur', img: './assets/images/route_kannur.jpg', duration: '12h 45m', price: '₹650' },
+  { from: 'Trivandrum', to: 'Munnar', img: './assets/images/route_munnar.jpg', duration: '8h 30m', price: '₹420' },
+  { from: 'Trivandrum', to: 'Mangalore', img: './assets/images/route_mangalore.jpg', duration: '15h 00m', price: '₹1400' },
+];
+
+export const Destinations = [
+  { name: 'Munnar', img: './assets/images/route_munnar.jpg' },
+  { name: 'Alleppey', img: './assets/images/dest_alleppey.jpg' },
+  { name: 'Kochi', img: './assets/images/dest_kochi.jpg' },
+  { name: 'Kottarakkara', img: './assets/images/dest_kottarakkara.jpg' },
+  { name: 'Gavi', img: './assets/images/dest_gavi.jpg' },
+  { name: 'Kovalam', img: './assets/images/dest_kovalam.jpg' },
+  { name: 'Kozhikode', img: './assets/images/dest_kozhikode.jpg' },
+  { name: 'Wayanad', img: './assets/images/dest_wayanad.jpg' },
+  { name: 'Vagamon', img: './assets/images/dest_vagamon.jpg' },
+  { name: 'Varkala', img: './assets/images/dest_varkala.jpg' },
+  { name: 'Alappuzha', img: './assets/images/dest_alleppey.jpg' },
+];
+
+export const Testimonials = [
+  { name: 'Rahul Nambiar', text: 'The new K-Swift buses are incredibly comfortable for long journeys. Reached Bangalore right on time!' },
+  { name: 'Sreya from Kochi', text: 'KSRTC is the worst transportation service in Kerala. i like city life and uber.' },
+  { name: 'Saniya jose ayyapan', text: 'A great Kerala Government Bus Booking App, for those in Kerala and those in other states who can easily book bus tickets online.' },
+  { name: 'Mohammed Shafi', text: 'Very impressed with the cleanliness and the professional behavior of the staff. Highly recommended.' },
+  { name: 'Anjali Menon', text: 'Booking tickets has never been easier. The live tracking feature is a lifesaver during night travels.' },
+  { name: 'Thomas Varghese', text: 'The Minnal service from Trivandrum to Palakkad is the fastest way to travel across the state. Great experience!' },
+  { name: 'Sneha Ramesh', text: 'Love the new AC Sleeper buses. Very comfortable bedding and smooth driving throughout the trip.' },
+  { name: 'Krishna Kumar', text: 'I Liked: Punctuality, Staff behavior, Cleanliness, Seat comfort. Nice experience with KSRTC Buses.' },
+];
+
+export const MOCK_BUSES = [
+  { id: 'B1', name: 'K-Swift Premium AC Sleeper', departure: '19:30', arrival: '08:45', duration: '13h 15m', fare: 1450, rating: '4.8', type: 'Sleeper (2+1)', brand: 'K-Swift' },
+  { id: 'B2', name: 'Minnal Super Express', departure: '20:15', arrival: '07:30', duration: '11h 15m', fare: 950, rating: '4.2', type: 'Semi-Sleeper (2+2)', brand: 'Minnal' },
+  { id: 'B3', name: 'Swift Deluxe AC Seater', departure: '21:00', arrival: '10:00', duration: '13h 00m', fare: 1100, rating: '4.5', type: 'Seater (2+2)', brand: 'K-Swift' },
+  { id: 'B4', name: 'Fast Passenger (Non-AC)', departure: '18:00', arrival: '09:30', duration: '15h 30m', fare: 650, rating: '3.9', type: 'Seater (3+2)', brand: 'Fast Passenger' }
+];
+
+export const TRANSLATIONS = {
+  en: {
+    welcome: "Where are you heading?",
+    searchPlaceholder: "Search destinations...",
+    origin: "Origin",
+    destination: "Destination",
+    date: "Departure Date",
+    searchBuses: "Search Buses",
+    myTickets: "My Tickets",
+    activeJourneys: "Active Journeys",
+    routes: "Popular Routes",
+    profile: "Profile Settings",
+    support: "Support & Helplines",
+    quickActions: "Quick Actions",
+    liveTracking: "Live Tracking",
+    swiftCargo: "Swift Cargo",
+    busTimings: "Bus Timings",
+    kSwift: "K-Swift",
+    seatSelection: "Seat Selection",
+    confirmBooking: "Confirm Booking",
+    paymentSuccess: "Booking Confirmed!",
+    backHome: "Back to Home",
+    boardingPass: "Boarding Pass",
+    tapToScan: "Tap to view boarding pass",
+    theme: "Dark Theme",
+    language: "Language",
+    phoneEnquiry: "Enquiry Helpline",
+    feedback: "Send Feedback"
+  },
+  ml: {
+    welcome: "നിങ്ങൾ എവിടേക്കാണ് പോകുന്നത്?",
+    searchPlaceholder: "സ്ഥലം തിരയുക...",
+    origin: "പുറപ്പെടുന്ന സ്ഥലം",
+    destination: "എത്തുന്ന സ്ഥലം",
+    date: "യാത്രാ തീയതി",
+    searchBuses: "ബസുകൾ തിരയുക",
+    myTickets: "എന്റെ ടിക്കറ്റുകൾ",
+    activeJourneys: "നിലവിലെ യാത്രകൾ",
+    routes: "പ്രധാന റൂട്ടുകൾ",
+    profile: "പ്രൊഫൈൽ ക്രമീകരണങ്ങൾ",
+    support: "സഹായ കേന്ദ്രം",
+    quickActions: "ദ്രുത സേവനങ്ങൾ",
+    liveTracking: "ലൈവ് ട്രാക്കിംഗ്",
+    swiftCargo: "സ്വിഫ്റ്റ് കാർഗോ",
+    busTimings: "ബസ് സമയവിവരങ്ങൾ",
+    kSwift: "കെ-സ്വിഫ്റ്റ്",
+    seatSelection: "സീറ്റ് തിരഞ്ഞെടുക്കുക",
+    confirmBooking: "ബുക്കിംഗ് സ്ഥിരീകരിക്കുക",
+    paymentSuccess: "ബുക്കിംഗ് വിജയിച്ചു!",
+    backHome: "ഹോമിലേക്ക് മടങ്ങുക",
+    boardingPass: "ബോർഡിംഗ് പാസ്",
+    tapToScan: "ബോർഡിംഗ് പാസ് കാണാൻ ക്ലിക്ക് ചെയ്യുക",
+    theme: "ഡാർക്ക് തീം",
+    language: "ഭാഷ",
+    phoneEnquiry: "ഹെൽപ്പ്‌ലൈൻ നമ്പർ",
+    feedback: "അഭിപ്രായങ്ങൾ അറിയിക്കുക"
+  }
+};
