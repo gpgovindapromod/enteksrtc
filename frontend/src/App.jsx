@@ -49,41 +49,41 @@ import Dashboard from './components/dashboard/Dashboard';
 
 
 const GalleryImages = [
-  { id: "1", img: "/assets/images/gallery_1.jpg", url: "#", height: 400 },
-  { id: "2", img: "/assets/images/gallery_2.jpg", url: "#", height: 250 },
-  { id: "3", img: "/assets/images/gallery_3.jpg", url: "#", height: 600 },
-  { id: "4", img: "/assets/images/gallery_4.jpg", url: "#", height: 350 },
-  { id: "5", img: "/assets/images/gallery_5.jpg", url: "#", height: 300 },
-  { id: "6", img: "/assets/images/gallery_6.jpg", url: "#", height: 500 },
-  { id: "7", img: "/assets/images/gallery_7.jpg", url: "#", height: 450 },
-  { id: "8", img: "/assets/images/gallery_8.jpg", url: "#", height: 300 },
-  { id: "9", img: "/assets/images/gallery_9.jpg", url: "#", height: 380 },
-  { id: "10", img: "/assets/images/gallery_10.jpg", url: "#", height: 320 },
+  { id: "1", img: "./assets/images/gallery_1.jpg", url: "#", height: 400 },
+  { id: "2", img: "./assets/images/gallery_2.jpg", url: "#", height: 250 },
+  { id: "3", img: "./assets/images/gallery_3.jpg", url: "#", height: 600 },
+  { id: "4", img: "./assets/images/gallery_4.jpg", url: "#", height: 350 },
+  { id: "5", img: "./assets/images/gallery_5.jpg", url: "#", height: 300 },
+  { id: "6", img: "./assets/images/gallery_6.jpg", url: "#", height: 500 },
+  { id: "7", img: "./assets/images/gallery_7.jpg", url: "#", height: 450 },
+  { id: "8", img: "./assets/images/gallery_8.jpg", url: "#", height: 300 },
+  { id: "9", img: "./assets/images/gallery_9.jpg", url: "#", height: 380 },
+  { id: "10", img: "./assets/images/gallery_10.jpg", url: "#", height: 320 },
 ];
 
 const TopRoutes = [
-  { from: 'Trivandrum', to: 'Kanyakumari', img: '/assets/images/route_kanyakumari.jpg', duration: '2h 30m', price: '₹150' },
-  { from: 'Trivandrum', to: 'Palakkad', img: '/assets/images/route_palakkad.jpg', duration: '8h 15m', price: '₹450' },
-  { from: 'Trivandrum', to: 'Palani', img: '/assets/images/route_palani.jpg', duration: '7h 00m', price: '₹380' },
-  { from: 'Trivandrum', to: 'Bangalore', img: '/assets/images/route_bangalore.jpg', duration: '14h 30m', price: '₹1200' },
-  { from: 'Trivandrum', to: 'Coimbatore', img: '/assets/images/route_coimbatore.jpg', duration: '9h 00m', price: '₹480' },
-  { from: 'Trivandrum', to: 'Kannur', img: '/assets/images/route_kannur.jpg', duration: '12h 45m', price: '₹650' },
-  { from: 'Trivandrum', to: 'Munnar', img: '/assets/images/route_munnar.jpg', duration: '8h 30m', price: '₹420' },
-  { from: 'Trivandrum', to: 'Mangalore', img: '/assets/images/route_mangalore.jpg', duration: '15h 00m', price: '₹1400' },
+  { from: 'Trivandrum', to: 'Kanyakumari', img: './assets/images/route_kanyakumari.jpg', duration: '2h 30m', price: '₹150' },
+  { from: 'Trivandrum', to: 'Palakkad', img: './assets/images/route_palakkad.jpg', duration: '8h 15m', price: '₹450' },
+  { from: 'Trivandrum', to: 'Palani', img: './assets/images/route_palani.jpg', duration: '7h 00m', price: '₹380' },
+  { from: 'Trivandrum', to: 'Bangalore', img: './assets/images/route_bangalore.jpg', duration: '14h 30m', price: '₹1200' },
+  { from: 'Trivandrum', to: 'Coimbatore', img: './assets/images/route_coimbatore.jpg', duration: '9h 00m', price: '₹480' },
+  { from: 'Trivandrum', to: 'Kannur', img: './assets/images/route_kannur.jpg', duration: '12h 45m', price: '₹650' },
+  { from: 'Trivandrum', to: 'Munnar', img: './assets/images/route_munnar.jpg', duration: '8h 30m', price: '₹420' },
+  { from: 'Trivandrum', to: 'Mangalore', img: './assets/images/route_mangalore.jpg', duration: '15h 00m', price: '₹1400' },
 ];
 
 const Destinations = [
-  { name: 'Munnar', img: '/assets/images/route_munnar.jpg' },
-  { name: 'Alleppey', img: '/assets/images/dest_alleppey.jpg' },
-  { name: 'Kochi', img: '/assets/images/dest_kochi.jpg' },
-  { name: 'Kottarakkara', img: '/assets/images/dest_kottarakkara.jpg' },
-  { name: 'Gavi', img: '/assets/images/dest_gavi.jpg' },
-  { name: 'Kovalam', img: '/assets/images/dest_kovalam.jpg' },
-  { name: 'Kozhikode', img: '/assets/images/dest_kozhikode.jpg' },
-  { name: 'Wayanad', img: '/assets/images/dest_wayanad.jpg' },
-  { name: 'Vagamon', img: '/assets/images/dest_vagamon.jpg' },
-  { name: 'Varkala', img: '/assets/images/dest_varkala.jpg' },
-  { name: 'Alappuzha', img: '/assets/images/dest_alleppey.jpg' },
+  { name: 'Munnar', img: './assets/images/route_munnar.jpg' },
+  { name: 'Alleppey', img: './assets/images/dest_alleppey.jpg' },
+  { name: 'Kochi', img: './assets/images/dest_kochi.jpg' },
+  { name: 'Kottarakkara', img: './assets/images/dest_kottarakkara.jpg' },
+  { name: 'Gavi', img: './assets/images/dest_gavi.jpg' },
+  { name: 'Kovalam', img: './assets/images/dest_kovalam.jpg' },
+  { name: 'Kozhikode', img: './assets/images/dest_kozhikode.jpg' },
+  { name: 'Wayanad', img: './assets/images/dest_wayanad.jpg' },
+  { name: 'Vagamon', img: './assets/images/dest_vagamon.jpg' },
+  { name: 'Varkala', img: './assets/images/dest_varkala.jpg' },
+  { name: 'Alappuzha', img: './assets/images/dest_alleppey.jpg' },
 ];
 
 const Testimonials = [
@@ -457,10 +457,10 @@ function App() {
   }, []);
 
   const heroImages = [
-    '/assets/images/premium_hero_1.jpg',
-    '/assets/images/premium_hero_2.jpg',
-    '/assets/images/premium_hero_3.jpg',
-    '/assets/images/premium_hero_4.jpg'
+    './assets/images/premium_hero_1.jpg',
+    './assets/images/premium_hero_2.jpg',
+    './assets/images/premium_hero_3.jpg',
+    './assets/images/premium_hero_4.jpg'
   ];
 
   useEffect(() => {
@@ -807,7 +807,7 @@ function App() {
 <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter h-auto md:h-[600px]">
 {/*  Munnar (Large Feature)  */}
 <div className="relative rounded-xl overflow-hidden group cursor-pointer md:col-span-2 md:row-span-2 h-[400px] md:h-auto border border-white/10 shadow-lg">
-<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuCpovBCBQ4ZZLKLOSa9pozzVeIgh29fkOCe20zgkwgve4ailXKQzSLGojSpkge8iIcdnum57332-J6K6tQ54H6jKQmBDOKM39pNLYqwVgbP7jUFT4c6nrwa-cklraMMNY33dNxb4b46r47sAkVPrh_wHCoaCtYke3G2i6j5HjJJR2EU8lSyb7gDrfoYG9GZYPxCffTyewR6_X0IpeLzWfV6IwjXBiJWZ_0PpPsY1ljR78H9y9T-pPA')` }}></div>
+<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/route_munnar.jpg')` }}></div>
 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
 <div className="absolute bottom-stack-lg left-stack-lg">
 <h3 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-2 drop-shadow-lg">Munnar</h3>
@@ -816,7 +816,7 @@ function App() {
 </div>
 {/*  Kochi  */}
 <div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
-<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuA37NzZLa650ZYZsr07Xcm8902nMutBRS74Sme8mhc0ys_K_oXTa9B0jf3iT32QIPoWnHLBq0z8kRHubszdtSXgFgTIjcbHWyKbE_n5EDzD5EcDqe5fvlOwPWk-OFr3qcOvRiddxr8cv3_CSe9SYnOH2AbI0KKs481QyRnanU_sSLy-_JoeCUgJjLnNcvV0-CtGkjNhriuPTGm1mF3CotQr1Gq4IA-3xgdlxcI-4Mz8TMw_FVLbhJE')` }}></div>
+<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/dest_kochi.jpg')` }}></div>
 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
 <div className="absolute bottom-stack-md left-stack-md">
 <h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Kochi</h3>
@@ -824,7 +824,7 @@ function App() {
 </div>
 {/*  Alleppey  */}
 <div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
-<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuDZNHpO9tDoPqxCZFQoy9ypuaolmdDE5FwIUwuC27tFmFy-i1Tq5KqUZJ78bMiw4At2iJm9tiEA-8JbVfB7AM6q9fgkgIk87rtKUNPK7pUhor7IHJYZBGTU2T2EvZJZ5MJK4VHr_flVKCZzD2i4lrHIPCrjlVInxHPnE_9ZDnwep3-dOKjUB85qRXBntaG_gvi935iYaNe3ie2aO_kFe-19wXRykdP5-Zeeno7vZBsvUGcvsB7v2B8')` }}></div>
+<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/dest_alleppey.jpg')` }}></div>
 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
 <div className="absolute bottom-stack-md left-stack-md">
 <h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Alleppey</h3>
