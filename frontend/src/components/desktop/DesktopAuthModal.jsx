@@ -172,7 +172,7 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
 
               <div className="social-auth">
                 <button type="button" className="btn-social google">
-                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" width="18" />
+                  <img src="/assets/images/google_icon.svg" alt="Google" width="18" />
                   Google
                 </button>
               </div>

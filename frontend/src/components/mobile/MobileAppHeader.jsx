@@ -12,7 +12,7 @@ const MobileAppHeader = ({
   return (
     <header className="mobile-app-header">
       <div className="app-header-left">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-app" width="40" height="40" />
+        <img src="/assets/images/ksrtc_logo.png" alt="KSRTC" className="ksrtc-logo-app" width="40" height="40" />
         <div className="app-brand-text">
           <span className="app-title">Ente KSRTC</span>
           <span className="app-subtitle">Premium Journey</span>

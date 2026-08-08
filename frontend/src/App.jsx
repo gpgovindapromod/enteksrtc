@@ -48,41 +48,41 @@ import DesktopAuthModal from './components/desktop/DesktopAuthModal';
 
 
 const GalleryImages = [
-  { id: "1", img: "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=60&w=400&auto=format&fit=crop", url: "#", height: 400 },
-  { id: "2", img: "https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?q=60&w=400&auto=format&fit=crop", url: "#", height: 250 },
-  { id: "3", img: "https://images.unsplash.com/photo-1464219789935-c2d9d9aba644?q=60&w=400&auto=format&fit=crop", url: "#", height: 600 },
-  { id: "4", img: "https://images.unsplash.com/photo-1590766940554-634a7ed41450?q=60&w=400&auto=format&fit=crop", url: "#", height: 350 },
-  { id: "5", img: "https://upload.wikimedia.org/wikipedia/commons/2/2b/K.S.R.T.C.Bus.jpg?_=20110514164313", url: "#", height: 300 },
-  { id: "6", img: "https://vadakkus.com/wp-content/uploads/2024/10/KSRTC-Fast-Passenger-UPI-payment-scaled.jpg", url: "#", height: 500 },
-  { id: "7", img: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=60&w=400&auto=format&fit=crop", url: "#", height: 450 },
-  { id: "8", img: "https://images.unsplash.com/photo-1593693397690-362cb9666fc2?q=60&w=400&auto=format&fit=crop", url: "#", height: 300 },
-  { id: "9", img: "https://www.tickettogetlost.com/wp-content/uploads/2023/04/Kerala-KSRTC-SWIFT-Super-Fast-Bus-Timings-from-Thiruvananthapuram-Parassala-and-Neyyattinkara.jpg", url: "#", height: 380 },
-  { id: "10", img: "https://i.pinimg.com/736x/84/da/68/84da6820c103d0dd0457d54cd8209d24.jpg", url: "#", height: 320 },
+  { id: "1", img: "/assets/images/gallery_1.jpg", url: "#", height: 400 },
+  { id: "2", img: "/assets/images/gallery_2.jpg", url: "#", height: 250 },
+  { id: "3", img: "/assets/images/gallery_3.jpg", url: "#", height: 600 },
+  { id: "4", img: "/assets/images/gallery_4.jpg", url: "#", height: 350 },
+  { id: "5", img: "/assets/images/gallery_5.jpg", url: "#", height: 300 },
+  { id: "6", img: "/assets/images/gallery_6.jpg", url: "#", height: 500 },
+  { id: "7", img: "/assets/images/gallery_7.jpg", url: "#", height: 450 },
+  { id: "8", img: "/assets/images/gallery_8.jpg", url: "#", height: 300 },
+  { id: "9", img: "/assets/images/gallery_9.jpg", url: "#", height: 380 },
+  { id: "10", img: "/assets/images/gallery_10.jpg", url: "#", height: 320 },
 ];
 
 const TopRoutes = [
-  { from: 'Trivandrum', to: 'Kanyakumari', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-iwwYU0S8HeV3fxaQoFhyVbMXlnsZCM3e17kLqjVHIUjEnZT_T54woKQ&s=10&q=60&w=400&auto=format&fit=crop', duration: '2h 30m', price: '₹150' },
-  { from: 'Trivandrum', to: 'Palakkad', img: 'https://www.holidify.com/images/bgImages/PALAKKAD.jpg?q=60&w=400&auto=format&fit=crop', duration: '8h 15m', price: '₹450' },
-  { from: 'Trivandrum', to: 'Palani', img: 'https://c9admin.cottage9.com/uploads/5704/palani-murugan-temple.jpg?q=60&w=400&auto=format&fit=crop', duration: '7h 00m', price: '₹380' },
-  { from: 'Trivandrum', to: 'Bangalore', img: 'https://static.toiimg.com/photo/54559212.cms?q=60&w=400&auto=format&fit=crop', duration: '14h 30m', price: '₹1200' },
-  { from: 'Trivandrum', to: 'Coimbatore', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1AEn2xeDFITPhGG09_u1X70naWQlouSnnHv653OTmqw&s=10&q=60&w=400&auto=format&fit=crop', duration: '9h 00m', price: '₹480' },
-  { from: 'Trivandrum', to: 'Kannur', img: 'https://client-websites.blr1.cdn.digitaloceanspaces.com/frenzyholidays/wp-content/uploads/2025/07/01040344/Hidden-Places-in-Kannur-4.jpg?q=60&w=400&auto=format&fit=crop', duration: '12h 45m', price: '₹650' },
-  { from: 'Trivandrum', to: 'Munnar', img: 'https://assets.onlineksrtcswift.com/img/theme64/top-destination/munnar.jpg?q=60&w=400&auto=format&fit=crop', duration: '8h 30m', price: '₹420' },
-  { from: 'Trivandrum', to: 'Mangalore', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJQagrNXvzzfYN0YF803hMfCsgQWNwSk62vmfMxilRJQ&s=10&q=60&w=400&auto=format&fit=crop', duration: '15h 00m', price: '₹1400' },
+  { from: 'Trivandrum', to: 'Kanyakumari', img: '/assets/images/route_kanyakumari.jpg', duration: '2h 30m', price: '₹150' },
+  { from: 'Trivandrum', to: 'Palakkad', img: '/assets/images/route_palakkad.jpg', duration: '8h 15m', price: '₹450' },
+  { from: 'Trivandrum', to: 'Palani', img: '/assets/images/route_palani.jpg', duration: '7h 00m', price: '₹380' },
+  { from: 'Trivandrum', to: 'Bangalore', img: '/assets/images/route_bangalore.jpg', duration: '14h 30m', price: '₹1200' },
+  { from: 'Trivandrum', to: 'Coimbatore', img: '/assets/images/route_coimbatore.jpg', duration: '9h 00m', price: '₹480' },
+  { from: 'Trivandrum', to: 'Kannur', img: '/assets/images/route_kannur.jpg', duration: '12h 45m', price: '₹650' },
+  { from: 'Trivandrum', to: 'Munnar', img: '/assets/images/route_munnar.jpg', duration: '8h 30m', price: '₹420' },
+  { from: 'Trivandrum', to: 'Mangalore', img: '/assets/images/route_mangalore.jpg', duration: '15h 00m', price: '₹1400' },
 ];
 
 const Destinations = [
-  { name: 'Munnar', img: 'https://assets.onlineksrtcswift.com/img/theme64/top-destination/munnar.jpg?q=60&w=400&auto=format&fit=crop' },
-  { name: 'Alleppey', img: 'https://hblimg.mmtcdn.com/content/hubble/img/desttvimg/mmt/destination/m_Alleppey_tv_destination_img_1_l_645_859.jpg?im=Resize=(412,412)&q=60&w=400&auto=format&fit=crop' },
-  { name: 'Kochi', img: 'https://assets.cntraveller.in/photos/6780d2480354c3ddddbf9994/master/w_1600%2Cc_limit/GettyImages-2171350077.jpg?q=60&w=400&auto=format&fit=crop' },
-  { name: 'Kottarakkara', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHr7ZQSELvk-I21KZmAw46mnzb4KCVEr2dYYeMLCuIdbw3ceSfTZU4qoY&s=10&q=60&w=400&auto=format&fit=crop' },
-  { name: 'Gavi', img: 'https://www.keralatourism.org/images/destination/mobile/gavi20131127164933_355_1.jpg?q=60&w=400&auto=format&fit=crop' },
-  { name: 'Kovalam', img: 'https://hblimg.mmtcdn.com/content/hubble/img/kovalam/mmt/destination/m_Kovalam_activity_beach_l_383_614.jpg?q=60&w=400&auto=format&fit=crop' },
-  { name: 'Kozhikode', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdJS_hkbzYE9e9fEGgWn8ca-AuZax0KvhYSpM6ucxJmA&s=10&q=60&w=400&auto=format&fit=crop' },
-  { name: 'Wayanad', img: 'https://assets.cntraveller.in/photos/666d21d4b9bacccca58f2f7b/2:3/w_2176,h_3264,c_limit/wayanad.jpg?q=60&w=400&auto=format&fit=crop' },
-  { name: 'Vagamon', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ8ebwmUpnQ33zJ1BHnc72v88grw_UTGLh9-2wlGmazg&s=10&q=60&w=400&auto=format&fit=crop' },
-  { name: 'Varkala', img: 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/832651196.jpg?k=ea4095c0b933b0ca23a5d14a99d5839adb5f21976f1eeaa8643107617689b536&o=&q=60&w=400&auto=format&fit=crop' },
-  { name: 'Alappuzha', img: 'https://hblimg.mmtcdn.com/content/hubble/img/desttvimg/mmt/destination/m_Alleppey_tv_destination_img_1_l_645_859.jpg?im=Resize=(412,412)&q=60&w=400&auto=format&fit=crop' },
+  { name: 'Munnar', img: '/assets/images/route_munnar.jpg' },
+  { name: 'Alleppey', img: '/assets/images/dest_alleppey.jpg' },
+  { name: 'Kochi', img: '/assets/images/dest_kochi.jpg' },
+  { name: 'Kottarakkara', img: '/assets/images/dest_kottarakkara.jpg' },
+  { name: 'Gavi', img: '/assets/images/dest_gavi.jpg' },
+  { name: 'Kovalam', img: '/assets/images/dest_kovalam.jpg' },
+  { name: 'Kozhikode', img: '/assets/images/dest_kozhikode.jpg' },
+  { name: 'Wayanad', img: '/assets/images/dest_wayanad.jpg' },
+  { name: 'Vagamon', img: '/assets/images/dest_vagamon.jpg' },
+  { name: 'Varkala', img: '/assets/images/dest_varkala.jpg' },
+  { name: 'Alappuzha', img: '/assets/images/dest_alleppey.jpg' },
 ];
 
 const Testimonials = [
@@ -435,10 +435,10 @@ function App() {
   }, []);
 
   const heroImages = [
-    'https://upload.wikimedia.org/wikipedia/commons/2/2b/K.S.R.T.C.Bus.jpg?_=20110514164313',
-    'https://vadakkus.com/wp-content/uploads/2024/10/KSRTC-Fast-Passenger-UPI-payment-scaled.jpg',
-    'https://www.justkerala.in/wp-content/uploads/2012/12/ksrtc-bus-service.jpg',
-    'https://fottam.com/wp-content/uploads/2016/02/Kerala-KSRTC-New-Scania-Metrolink-Bus.jpg'
+    '/assets/images/premium_hero_1.jpg',
+    '/assets/images/premium_hero_2.jpg',
+    '/assets/images/premium_hero_3.jpg',
+    '/assets/images/premium_hero_4.jpg'
   ];
 
   useEffect(() => {
@@ -554,19 +554,9 @@ function App() {
     if (showDesktopSearch && !showMobileView) {
       return (
         <>
-          <nav className="modern-navbar" style={{ background: 'var(--white)', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-            <div className="navbar-container">
-              <div className="nav-brand">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-small" width="40" height="40" />
-                <div className="brand-text-minimal">
-                  <span className="brand-title">Ente KSRTC</span>
-                  <span className="brand-tag">Premium Journey</span>
-                </div>
-              </div>
-              <button className="btn-secondary-modern" onClick={() => setShowDesktopSearch(false)}>Back to Home</button>
-            </div>
-          </nav>
           <DesktopSearchResults
+            theme={theme}
+            toggleTheme={toggleTheme}
             onBack={() => setShowDesktopSearch(false)}
             origin={origin}
             setOrigin={setOrigin}
@@ -594,7 +584,7 @@ function App() {
         <nav className={`modern-navbar ${isScrolled ? 'scrolled' : 'transparent'}`}>
           <div className="navbar-container">
             <div className="nav-brand">
-              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLWQfS0R2m1lTTNcpBqGKE8oBi2RxmC27R_wcpV3v8BQ&s=10" alt="KSRTC" className="ksrtc-logo-small" width="40" height="40" />
+              <img src="/assets/images/ksrtc_logo.png" alt="KSRTC" className="ksrtc-logo-small" width="40" height="40" />
               <div className="brand-text-minimal">
                 <span className="brand-title">Ente KSRTC</span>
                 <span className="brand-tag">Premium Journey</span>
@@ -621,7 +611,7 @@ function App() {
                   {theme === 'dark' ? <Sun size={22} /> : <Moon size={22} />}
                 </button>
                 <div className="nav-divider"></div>
-                <img src="https://banner2.cleanpng.com/20181120/jiq/kisspng-kerala-logo-gods-own-country-vector-graphics-clip-1713920244732.webp" alt="Kerala Tourism" className="tourism-logo-small" width="80" height="40" />
+                <img src="/assets/images/kerala_tourism.webp" alt="Kerala Tourism" className="tourism-logo-small" width="80" height="40" />
                 <div className="nav-divider"></div>
                 <button className="btn-secondary-modern">Manage</button>
                 {isUserLoggedIn ? (
@@ -807,7 +797,7 @@ function App() {
                   </div>
                   <h3 className="footer-title" style={{ marginBottom: 0, fontSize: '1.4rem' }}>Ente KSRTC</h3>
                 </div>
-                <p style={{ color: 'var(--gray-400)', lineHeight: '1.7', fontSize: '0.95rem', marginBottom: '24px' }}>
+                <p style={{ lineHeight: '1.7', fontSize: '0.95rem', marginBottom: '24px', color: 'var(--gray)' }}>
                   The official bus ticket booking application for Kerala State Road Transport Corporation. We provide safe, comfortable, and reliable travel across Kerala and neighboring states.
                 </p>
                 <div style={{ display: 'flex', gap: '16px' }}>
@@ -850,7 +840,7 @@ function App() {
                     <span>0471-2463799 / 18005994011</span>
                   </p>
                 </div>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="app-store-badge mt-4" style={{ height: '40px', cursor: 'pointer', transition: 'transform 0.2s', marginTop: '24px' }} onMouseOver={(e) => e.currentTarget.style.transform='scale(1.05)'} onMouseOut={(e) => e.currentTarget.style.transform='scale(1)'} width="119" height="40" />
+                <img src="/assets/images/app_store.svg" alt="App Store" className="app-store-badge mt-4" style={{ height: '40px', cursor: 'pointer', transition: 'transform 0.2s', marginTop: '24px' }} onMouseOver={(e) => e.currentTarget.style.transform='scale(1.05)'} onMouseOut={(e) => e.currentTarget.style.transform='scale(1)'} width="119" height="40" />
               </div>
             </div>
             <div className="footer-bottom">

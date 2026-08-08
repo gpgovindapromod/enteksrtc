@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Clock, Bus, MapPin, Filter, X, ArrowLeftRight, Calendar, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, ArrowDownWideNarrow, RotateCcw, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Clock, Bus, MapPin, Filter, X, ArrowLeftRight, Calendar, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, ArrowDownWideNarrow, RotateCcw, CheckCircle2, Moon, Sun } from 'lucide-react';
 import { getFilteredAndSortedBuses, generateSeatLayoutData } from '../../services/busService';
 
 const DesktopSearchResults = ({ 
   onBack, 
+  theme,
+  toggleTheme,
   origin, 
   setOrigin, 
   destination, 
@@ -136,11 +138,29 @@ const DesktopSearchResults = ({
         
         {/* Old Header Removed */}
 
-        {/* Extra Modify Search Panel */}
-        <div className="desktop-modify-panel">
+        {/* Unified Search Header */}
+        <div className="unified-search-header glass-widget">
           
-          {/* Top Row: Search Modification */}
-          <div className="modify-search-bar">
+          {/* Top Row: Brand & Actions */}
+          <div className="ush-top-row">
+            <div className="nav-brand" style={{ cursor: 'pointer' }} onClick={onBack}>
+              <img src="/assets/images/ksrtc_logo.png" alt="KSRTC" className="ksrtc-logo-small" width="40" height="40" />
+              <div className="brand-text-minimal">
+                <span className="brand-title">Ente KSRTC</span>
+                <span className="brand-tag">Premium Journey</span>
+              </div>
+            </div>
+            
+            <div className="ush-actions">
+              <button className="theme-toggle-btn" onClick={toggleTheme} aria-label="Toggle Theme">
+                {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
+              <button className="btn-secondary-modern" onClick={onBack}>Back to Home</button>
+            </div>
+          </div>
+
+          {/* Bottom Row: Search Modification */}
+          <div className="modify-search-bar ush-bottom-row">
             
             <div className="modify-input-group">
               <div className="modify-label">Travelling From</div>
@@ -198,28 +218,6 @@ const DesktopSearchResults = ({
             <button className="btn-modify-submit">MODIFY</button>
           </div>
 
-          {/* Middle Row: Filters & Sort */}
-          <div className="modify-filters-bar">
-            <div className="left-filters">
-              <button className="filter-dropdown outline" onClick={clearAllFilters}><SlidersHorizontal size={14} /> Clear All Filters </button>
-            </div>
-            <div className="right-sort">
-              <span className="sort-label"><ArrowDownWideNarrow size={14} /> Sort By</span>
-              <select className="sort-select" style={{ background: 'transparent', border: 'none', color: 'white', outline: 'none' }} value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                  <option style={{ color: 'black' }}>Relevance</option>
-                  <option style={{ color: 'black' }}>Price: Low to High</option>
-                  <option style={{ color: 'black' }}>Departure: Earliest First</option>
-                  <option style={{ color: 'black' }}>Rating: High to Low</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Bottom Row: Trip Pill */}
-          <div className="modify-trip-pill-bar">
-            <div className="trip-pill">
-              Onward Trip: {origin || 'Kollam (2)'} - {destination || 'Kottarakkara'}, 03 Aug
-            </div>
-          </div>
         </div>
 
         <div className="desktop-search-layout">
@@ -254,7 +252,12 @@ const DesktopSearchResults = ({
           {/* Main Results Column */}
           <main className="results-main">
             <div className="results-toolbar">
-              <span>Showing <strong>{filteredBuses.length}</strong> buses found</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span>Showing <strong>{filteredBuses.length}</strong> buses</span>
+                <div className="trip-pill" style={{ background: 'var(--primary-light)', padding: '4px 12px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: '500', color: 'var(--primary)' }}>
+                  {origin || 'Origin'} → {destination || 'Destination'} (03 Aug)
+                </div>
+              </div>
               <div className="sort-by">
                 <label>Sort by:</label>
                 <select className="sort-select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
