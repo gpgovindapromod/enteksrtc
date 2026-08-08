@@ -40,12 +40,12 @@ import MobileLiveTracking from './components/mobile/MobileLiveTracking';
 import MobileTimings from './components/mobile/MobileTimings';
 import MobileSearchResults from './components/mobile/MobileSearchResults';
 import MobileTicketsTab from './components/mobile/MobileTicketsTab';
-import MobileProfileTab from './components/mobile/MobileProfileTab';
+import MobileDashboard from './components/mobile/MobileDashboard';
 import MobileHomeTab from './components/mobile/MobileHomeTab';
 import MobileLoginModal from './components/mobile/MobileLoginModal';
 import DesktopSearchResults from './components/desktop/DesktopSearchResults';
 import DesktopAuthModal from './components/desktop/DesktopAuthModal';
-import Dashboard from './components/dashboard/Dashboard';
+import DesktopDashboard from './components/desktop/DesktopDashboard';
 
 
 const GalleryImages = [
@@ -579,7 +579,7 @@ function App() {
       return (
         <div style={{width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 99999, overflowY: 'auto', backgroundColor: 'var(--bg-color)'}}>
            <button onClick={() => setShowDashboard(false)} className="fixed bottom-6 right-6 z-[60] bg-white text-emerald-500 px-4 py-2 rounded-xl font-bold shadow-xl border border-emerald-500 hover:scale-105 active:scale-95 transition-all">Back to App</button>
-           <Dashboard theme={theme} toggleTheme={toggleTheme} />
+           <DesktopDashboard theme={theme} toggleTheme={toggleTheme} />
         </div>
       );
     }
@@ -1037,7 +1037,7 @@ function App() {
             setShowLoginModal={setShowLoginModal}
           />
           <main className="mobile-webapp-content" style={{ flex: 1, paddingTop: '64px' }}>
-            <MobileProfileTab
+            <MobileDashboard
               theme={theme}
               toggleTheme={toggleTheme}
               language={language}
@@ -1155,7 +1155,7 @@ function App() {
             onClick={() => setActiveMobileTab('profile')}
           >
             <User size={22} />
-            <span>Profile</span>
+            <span>Dashboard</span>
           </button>
         )}
       </nav>

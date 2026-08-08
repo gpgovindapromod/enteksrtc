@@ -15,7 +15,7 @@ const ROLES = {
   SUPPORT: 'support'
 };
 
-const Dashboard = ({ theme, toggleTheme }) => {
+const DesktopDashboard = ({ theme, toggleTheme }) => {
   const [activeRole, setActiveRole] = useState(ROLES.PASSENGER);
 
   const getSidebarLinks = () => {
@@ -335,4 +335,4 @@ const Dashboard = ({ theme, toggleTheme }) => {
   );
 };
 
-export default Dashboard;
+export default DesktopDashboard;
