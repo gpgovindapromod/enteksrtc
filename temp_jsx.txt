@@ -1,0 +1,257 @@
+
+{/*  TopAppBar  */}
+<nav className="fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-4 py-4" id="navbar">
+<div className="flex justify-between items-center px-6 h-20 max-w-container-max mx-auto transition-all duration-500 ease-in-out w-full" id="navbar-container">
+{/*  Brand (Left)  */}
+<div className="flex items-center gap-3 cursor-pointer active:scale-95 transition-transform duration-300 w-1/4">
+<span className="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">directions_bus</span>
+<div className="flex flex-col">
+<span className="font-headline-md text-headline-md font-bold text-primary leading-none">Ente KSRTC</span>
+<span className="text-xs text-on-surface-variant uppercase tracking-widest mt-1">Premium Journey</span>
+</div>
+</div>
+{/*  Center Navigation Links  */}
+<div className="hidden md:flex justify-center gap-8 w-2/4">
+<a className="text-on-surface hover:text-primary hover:scale-105 transition-transform duration-300 font-medium" href="#">Home</a>
+<a className="text-on-surface hover:text-primary hover:scale-105 transition-transform duration-300 font-medium" href="#">Routes</a>
+<a className="text-on-surface hover:text-primary hover:scale-105 transition-transform duration-300 font-medium" href="#">Contact</a>
+</div>
+{/*  Right Actions  */}
+<div className="flex items-center justify-end gap-6 w-1/4">
+<a className="hidden md:block text-on-surface-variant text-sm hover:text-primary transition-colors duration-300" href="#">Kerala Tourism</a>
+{/*  Theme Toggle  */}
+<div className="cursor-pointer active:scale-95 hover:scale-105 transition-transform duration-300 text-on-surface-variant hover:text-primary">
+<span className="material-symbols-outlined">dark_mode</span>
+</div>
+</div>
+</div>
+</nav>
+
+{/*  Hero Section  */}
+<header className="relative min-h-[90vh] flex flex-col justify-center items-center pt-20">
+{/*  Background Image  */}
+<div className="absolute inset-0 z-0 overflow-hidden">
+<div className="w-full h-full bg-cover bg-center scale-105" style="background-image: url('https://lh3.googleusercontent.com/aida/AP1WRLuKwttfwBP6-tz9UkQiJuyz6FH5C71aPCILgJaUrnDpppu82bKdccRev1OwT2yi6LRBVCawC7LbXkvCsq7JQvZn-jHCvnOASIAmgttJU8pNdmrvLmALzCXENv36dySNZcbZk3cMcnZHu5UcLtHCocEc2MvfTIBEtbO4T37qjBDZS-RqwbssYQFAOY3lmUZr-rQxY3M_kn9ZKO-SBhoN5d3lAAAKj9TMMVgVl6wduUFEUs-Jeh8Zp-TqBg')"></div>
+{/*  Gradient Overlay for readability  */}
+<div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/20 to-background"></div>
+</div>
+<div className="relative z-10 text-center px-gutter animate-fade-in-up mt-[-10vh]">
+<h1 className="font-display-hero text-display-hero text-white tracking-tight drop-shadow-2xl">Experience the Journey</h1>
+<p className="font-body-lg text-body-lg text-on-surface-variant mt-6 max-w-2xl mx-auto drop-shadow-lg">Premium mobility across Kerala and beyond. Seamless, comfortable, and cinematic travel.</p>
+</div>
+{/*  Floating Booking Widget (Horizontal Desktop)  */}
+<div className="absolute -bottom-24 w-full max-w-6xl px-edge-margin-mobile md:px-0 z-20 left-1/2 -translate-x-1/2">
+<div className="bg-surface-container/60 backdrop-blur-[24px] border border-white/10 rounded-xl p-6 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+{/*  Tabs  */}
+<div className="flex gap-8 mb-6 border-b border-white/10 pb-2">
+<button className="text-primary font-bold border-b-2 border-primary pb-2 tracking-wide transition-colors">Book Bus Ticket</button>
+<button className="text-on-surface-variant hover:text-on-surface pb-2 tracking-wide transition-colors">Link Ticket Booking</button>
+</div>
+{/*  Horizontal Form  */}
+<div className="flex flex-col md:flex-row gap-gutter items-end">
+<div className="flex-1 border-b border-white/20 pb-2 group focus-within:border-primary transition-colors">
+<label className="font-label-caps text-label-caps text-on-surface-variant block mb-2 uppercase tracking-widest">From</label>
+<div className="flex items-center gap-2">
+<span className="material-symbols-outlined text-outline text-sm">location_on</span>
+<input className="bg-transparent border-none w-full text-on-surface font-body-lg text-body-lg focus:ring-0 placeholder:text-outline/50 p-0" placeholder="Departure City" type="text"/>
+</div>
+</div>
+<div className="flex-1 border-b border-white/20 pb-2 group focus-within:border-primary transition-colors">
+<label className="font-label-caps text-label-caps text-on-surface-variant block mb-2 uppercase tracking-widest">To</label>
+<div className="flex items-center gap-2">
+<span className="material-symbols-outlined text-outline text-sm">pin_drop</span>
+<input className="bg-transparent border-none w-full text-on-surface font-body-lg text-body-lg focus:ring-0 placeholder:text-outline/50 p-0" placeholder="Destination City" type="text"/>
+</div>
+</div>
+<div className="flex-1 border-b border-white/20 pb-2 group focus-within:border-primary transition-colors">
+<label className="font-label-caps text-label-caps text-on-surface-variant block mb-2 uppercase tracking-widest">Date</label>
+<div className="flex items-center gap-2">
+<span className="material-symbols-outlined text-outline text-sm">calendar_month</span>
+<input className="bg-transparent border-none w-full text-on-surface font-body-lg text-body-lg focus:ring-0 p-0 [&amp;::-webkit-calendar-picker-indicator]:invert-[0.8] [&amp;::-webkit-calendar-picker-indicator]:opacity-50 hover:[&amp;::-webkit-calendar-picker-indicator]:opacity-100 cursor-pointer" type="date"/>
+</div>
+</div>
+<button className="bg-primary-container text-white h-14 px-8 rounded-lg font-headline-md text-headline-md flex items-center justify-center gap-2 hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-[0_0_20px_rgba(16,185,129,0.15)] group w-full md:w-auto mt-4 md:mt-0">
+<span>Search</span>
+<span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+{/*  Main Content Area  */}
+<main className="mt-48 md:mt-40">
+{/*  Top Routes  */}
+<section className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop py-stack-xl">
+<div className="flex justify-between items-end mb-stack-lg">
+<h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold">Top Routes</h2>
+<a className="text-primary hover:text-primary-fixed flex items-center gap-1 transition-colors" href="#">View All <span className="material-symbols-outlined text-sm">chevron_right</span></a>
+</div>
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+{/*  Route Card 1  */}
+<div className="bg-surface-container-low/40 backdrop-blur-md border border-white/5 rounded-xl p-6 hover:bg-surface-container/60 transition-all duration-300 cursor-pointer group hover:-translate-y-1">
+<div className="flex justify-between items-center mb-6">
+<div className="flex flex-col">
+<span className="font-headline-md text-headline-md">Trivandrum</span>
+<span className="text-on-surface-variant text-sm uppercase tracking-widest mt-1">10:00 PM</span>
+</div>
+<span className="material-symbols-outlined text-primary/50 group-hover:text-primary transition-colors">arrow_right_alt</span>
+<div className="flex flex-col text-right">
+<span className="font-headline-md text-headline-md">Bangalore</span>
+<span className="text-on-surface-variant text-sm uppercase tracking-widest mt-1">08:00 AM</span>
+</div>
+</div>
+<div className="flex justify-between items-end pt-4 border-t border-white/5">
+<div className="flex flex-col">
+<span className="font-label-caps text-label-caps text-outline uppercase">Starting from</span>
+<span className="font-headline-md text-headline-md text-primary">₹1,250</span>
+</div>
+<button className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-on-surface hover:bg-white/10 transition-colors text-sm">Select Seats</button>
+</div>
+</div>
+{/*  Route Card 2  */}
+<div className="bg-surface-container-low/40 backdrop-blur-md border border-white/5 rounded-xl p-6 hover:bg-surface-container/60 transition-all duration-300 cursor-pointer group hover:-translate-y-1">
+<div className="flex justify-between items-center mb-6">
+<div className="flex flex-col">
+<span className="font-headline-md text-headline-md">Kochi</span>
+<span className="text-on-surface-variant text-sm uppercase tracking-widest mt-1">11:30 PM</span>
+</div>
+<span className="material-symbols-outlined text-primary/50 group-hover:text-primary transition-colors">arrow_right_alt</span>
+<div className="flex flex-col text-right">
+<span className="font-headline-md text-headline-md">Chennai</span>
+<span className="text-on-surface-variant text-sm uppercase tracking-widest mt-1">09:15 AM</span>
+</div>
+</div>
+<div className="flex justify-between items-end pt-4 border-t border-white/5">
+<div className="flex flex-col">
+<span className="font-label-caps text-label-caps text-outline uppercase">Starting from</span>
+<span className="font-headline-md text-headline-md text-primary">₹1,400</span>
+</div>
+<button className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-on-surface hover:bg-white/10 transition-colors text-sm">Select Seats</button>
+</div>
+</div>
+{/*  Route Card 3  */}
+<div className="bg-surface-container-low/40 backdrop-blur-md border border-white/5 rounded-xl p-6 hover:bg-surface-container/60 transition-all duration-300 cursor-pointer group hover:-translate-y-1">
+<div className="flex justify-between items-center mb-6">
+<div className="flex flex-col">
+<span className="font-headline-md text-headline-md">Kozhikode</span>
+<span className="text-on-surface-variant text-sm uppercase tracking-widest mt-1">08:00 PM</span>
+</div>
+<span className="material-symbols-outlined text-primary/50 group-hover:text-primary transition-colors">arrow_right_alt</span>
+<div className="flex flex-col text-right">
+<span className="font-headline-md text-headline-md">Mysore</span>
+<span className="text-on-surface-variant text-sm uppercase tracking-widest mt-1">03:30 AM</span>
+</div>
+</div>
+<div className="flex justify-between items-end pt-4 border-t border-white/5">
+<div className="flex flex-col">
+<span className="font-label-caps text-label-caps text-outline uppercase">Starting from</span>
+<span className="font-headline-md text-headline-md text-primary">₹850</span>
+</div>
+<button className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-on-surface hover:bg-white/10 transition-colors text-sm">Select Seats</button>
+</div>
+</div>
+{/*  Route Card 4 (Added for better grid layout)  */}
+<div className="hidden lg:block bg-surface-container-low/40 backdrop-blur-md border border-white/5 rounded-xl p-6 hover:bg-surface-container/60 transition-all duration-300 cursor-pointer group hover:-translate-y-1">
+<div className="flex justify-between items-center mb-6">
+<div className="flex flex-col">
+<span className="font-headline-md text-headline-md">Ernakulam</span>
+<span className="text-on-surface-variant text-sm uppercase tracking-widest mt-1">09:30 PM</span>
+</div>
+<span className="material-symbols-outlined text-primary/50 group-hover:text-primary transition-colors">arrow_right_alt</span>
+<div className="flex flex-col text-right">
+<span className="font-headline-md text-headline-md">Coimbatore</span>
+<span className="text-on-surface-variant text-sm uppercase tracking-widest mt-1">04:00 AM</span>
+</div>
+</div>
+<div className="flex justify-between items-end pt-4 border-t border-white/5">
+<div className="flex flex-col">
+<span className="font-label-caps text-label-caps text-outline uppercase">Starting from</span>
+<span className="font-headline-md text-headline-md text-primary">₹650</span>
+</div>
+<button className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-on-surface hover:bg-white/10 transition-colors text-sm">Select Seats</button>
+</div>
+</div>
+</div>
+</section>
+{/*  Popular Destinations Grid  */}
+<section className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop py-stack-xl mb-stack-xl">
+<h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold mb-stack-lg">Popular Destinations</h2>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-gutter h-auto md:h-[600px]">
+{/*  Munnar (Large Feature)  */}
+<div className="relative rounded-xl overflow-hidden group cursor-pointer md:col-span-2 md:row-span-2 h-[400px] md:h-auto border border-white/10 shadow-lg">
+<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCpovBCBQ4ZZLKLOSa9pozzVeIgh29fkOCe20zgkwgve4ailXKQzSLGojSpkge8iIcdnum57332-J6K6tQ54H6jKQmBDOKM39pNLYqwVgbP7jUFT4c6nrwa-cklraMMNY33dNxb4b46r47sAkVPrh_wHCoaCtYke3G2i6j5HjJJR2EU8lSyb7gDrfoYG9GZYPxCffTyewR6_X0IpeLzWfV6IwjXBiJWZ_0PpPsY1ljR78H9y9T-pPA')"></div>
+<div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent"></div>
+<div className="absolute bottom-stack-lg left-stack-lg">
+<h3 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-2 drop-shadow-lg">Munnar</h3>
+<p className="text-on-surface-variant font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">The Emerald Hills of Kerala</p>
+</div>
+</div>
+{/*  Kochi  */}
+<div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
+<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA37NzZLa650ZYZsr07Xcm8902nMutBRS74Sme8mhc0ys_K_oXTa9B0jf3iT32QIPoWnHLBq0z8kRHubszdtSXgFgTIjcbHWyKbE_n5EDzD5EcDqe5fvlOwPWk-OFr3qcOvRiddxr8cv3_CSe9SYnOH2AbI0KKs481QyRnanU_sSLy-_JoeCUgJjLnNcvV0-CtGkjNhriuPTGm1mF3CotQr1Gq4IA-3xgdlxcI-4Mz8TMw_FVLbhJE')"></div>
+<div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent"></div>
+<div className="absolute bottom-stack-md left-stack-md">
+<h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Kochi</h3>
+</div>
+</div>
+{/*  Alleppey  */}
+<div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
+<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDZNHpO9tDoPqxCZFQoy9ypuaolmdDE5FwIUwuC27tFmFy-i1Tq5KqUZJ78bMiw4At2iJm9tiEA-8JbVfB7AM6q9fgkgIk87rtKUNPK7pUhor7IHJYZBGTU2T2EvZJZ5MJK4VHr_flVKCZzD2i4lrHIPCrjlVInxHPnE_9ZDnwep3-dOKjUB85qRXBntaG_gvi935iYaNe3ie2aO_kFe-19wXRykdP5-Zeeno7vZBsvUGcvsB7v2B8')"></div>
+<div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent"></div>
+<div className="absolute bottom-stack-md left-stack-md">
+<h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Alleppey</h3>
+</div>
+</div>
+</div>
+</section>
+</main>
+{/*  Footer  */}
+<footer className="bg-surface dark:bg-surface-container-lowest border-t border-outline-variant w-full relative z-10 py-stack-lg">
+<div className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop">
+<div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 border-b border-outline-variant pb-8">
+{/*  Brand Column  */}
+<div className="col-span-1 md:col-span-1">
+<div className="flex items-center gap-2 mb-4">
+<span className="font-headline-md text-headline-md text-primary font-bold">Ente KSRTC</span>
+</div>
+<p className="text-on-surface-variant font-body-md text-body-md">Premium Mobility Excellence across God's Own Country and beyond.</p>
+</div>
+{/*  Quick Links  */}
+<div>
+<h4 className="font-headline-md text-body-lg font-bold text-on-surface mb-4">Explore</h4>
+<ul className="space-y-2">
+<li><a className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Schedules</a></li>
+<li><a className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Fleet</a></li>
+<li><a className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Offers</a></li>
+</ul>
+</div>
+{/*  Support  */}
+<div>
+<h4 className="font-headline-md text-body-lg font-bold text-on-surface mb-4">Support</h4>
+<ul className="space-y-2">
+<li><a className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Contact Us</a></li>
+<li><a className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">FAQs</a></li>
+<li><a className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Feedback</a></li>
+</ul>
+</div>
+{/*  Policies  */}
+<div>
+<h4 className="font-headline-md text-body-lg font-bold text-on-surface mb-4">Legal</h4>
+<ul className="space-y-2">
+<li><a className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Travel Policy</a></li>
+<li><a className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Privacy</a></li>
+<li><a className="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200" href="#">Terms of Service</a></li>
+</ul>
+</div>
+</div>
+<div className="flex flex-col md:flex-row justify-between items-center gap-4">
+<div className="font-body-md text-body-md text-on-surface-variant text-sm">
+                © 2024 Ente KSRTC. All rights reserved.
+            </div>
+<div className="flex gap-4">
+<a className="text-on-surface-variant hover:text-primary transition-colors" href="#"><span className="material-symbols-outlined">language</span></a>
+<a className="text-on-surface-variant hover:text-primary transition-colors" href="#"><span className="material-symbols-outlined">share</span></a>
+</div>
+</div>
+</div>
+</footer>

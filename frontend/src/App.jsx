@@ -581,273 +581,304 @@ function App() {
     return (
       <>
         {/* Navbar */}
-        <nav className={`modern-navbar ${isScrolled ? 'scrolled' : 'transparent'}`}>
-          <div className="navbar-container">
-            <div className="nav-brand">
-              <img src="/assets/images/ksrtc_logo.png" alt="KSRTC" className="ksrtc-logo-small" width="40" height="40" />
-              <div className="brand-text-minimal">
-                <span className="brand-title">Ente KSRTC</span>
-                <span className="brand-tag">Premium Journey</span>
-              </div>
+        
+{/*  TopAppBar  */}
+<nav className={`fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-4 ${isScrolled ? "py-2" : "py-4"}`} id="navbar">
+<div className={`flex justify-between items-center px-6 h-20 mx-auto transition-all duration-500 ease-in-out ${isScrolled ? "bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-lg rounded-full max-w-4xl" : "w-full max-w-container-max"}`} id="navbar-container">
+{/*  Brand (Left)  */}
+<div className="flex items-center gap-3 cursor-pointer active:scale-95 transition-transform duration-300 w-1/4">
+<span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>directions_bus</span>
+<div className="flex flex-col">
+<span className="font-headline-md text-headline-md font-bold text-primary leading-none">Ente KSRTC</span>
+<span className={`text-xs uppercase tracking-widest mt-1 drop-shadow-md ${isScrolled ? 'text-gray-500 dark:text-white/60' : 'text-white/80'}`}>Premium Journey</span>
+</div>
+</div>
+{/*  Center Navigation Links  */}
+<div className="hidden md:flex justify-center gap-8 w-2/4">
+<a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Home</a>
+<a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Routes</a>
+<a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Contact</a>
+</div>
+{/*  Right Actions  */}
+<div className="flex items-center justify-end gap-6 w-1/4">
+<a className={`hidden md:block drop-shadow-md text-sm hover:text-primary transition-colors duration-300 font-medium ${isScrolled ? 'text-gray-600 dark:text-white/70' : 'text-white/80'}`} href="#">Kerala Tourism</a>
+{/*  Theme Toggle  */}
+
+    {isUserLoggedIn ? (
+      <button className="text-sm font-medium text-primary border border-primary px-4 py-1.5 rounded-full hover:bg-primary/10" onClick={() => setIsUserLoggedIn(false)}>Logout</button>
+    ) : (
+      <button className="text-sm font-medium bg-primary text-on-primary px-4 py-1.5 rounded-full shadow-lg shadow-primary/20 hover:brightness-110 active:scale-95 transition-all" onClick={() => setShowLoginModal(true)}>Login</button>
+    )}
+    <div className={`cursor-pointer active:scale-95 hover:scale-105 transition-transform duration-300 hover:text-primary drop-shadow-md ${isScrolled ? 'text-gray-700 dark:text-white/80' : 'text-white/80'}`}>
+  
+<span className="material-symbols-outlined" onClick={toggleTheme}>{theme === "dark" ? "light_mode" : "dark_mode"}</span>
+</div>
+</div>
+</div>
+</nav>
+
+{/*  Hero Section  */}
+<header className="relative min-h-[90vh] flex flex-col justify-center items-center pt-20">
+{/*  Background Image  */}
+<div className="absolute inset-0 z-0 overflow-hidden">
+
+      {heroImages.map((img, index) => (
+        <div
+          key={index}
+          className={`w-full h-full absolute inset-0 bg-cover bg-center transition-opacity duration-1000 scale-105 ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+          style={{ backgroundImage: `url(${img})` }}
+        />
+      ))}
+    
+{/*  Gradient Overlay for readability  */}
+<div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/70"></div>
+</div>
+<div className="relative z-10 text-center px-gutter animate-fade-in-up mt-[-10vh]">
+<h1 className="font-display-hero text-display-hero text-white tracking-tight drop-shadow-2xl">Experience the Journey</h1>
+<p className="font-body-lg text-body-lg text-white/80 mt-6 max-w-2xl mx-auto drop-shadow-lg">Premium mobility across Kerala and beyond. Seamless, comfortable, and cinematic travel.</p>
+</div>
+{/*  Floating Booking Widget (Horizontal Desktop)  */}
+<div className="absolute -bottom-24 w-full max-w-6xl px-edge-margin-mobile md:px-0 z-20 left-1/2 -translate-x-1/2">
+<div className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-[24px] border border-gray-200 dark:border-white/10 rounded-xl p-6 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+{/*  Tabs  */}
+<div className="flex gap-8 mb-6 border-b border-gray-200 dark:border-white/10 pb-2">
+<button className="text-primary font-bold border-b-2 border-primary pb-2 tracking-wide transition-colors text-sm">Book Bus Ticket</button>
+<button className="text-gray-500 dark:text-white/50 hover:text-gray-800 dark:hover:text-white pb-2 tracking-wide transition-colors text-sm">Link Ticket Booking</button>
+</div>
+{/*  Horizontal Form  */}
+<div className="flex flex-col md:flex-row gap-3 md:gap-0 items-stretch md:items-end">
+
+  {/* FROM Field */}
+  <div className="flex-1 border-b-2 border-gray-200 dark:border-white/20 pb-3 focus-within:border-primary transition-colors px-0 md:pr-4">
+    <label className="block text-[10px] text-gray-500 dark:text-white/50 uppercase tracking-widest mb-2 font-bold">From</label>
+    <div className="flex items-center gap-2">
+      <span className="material-symbols-outlined text-gray-400 dark:text-white/40" style={{ fontSize: '18px' }}>location_on</span>
+      <input
+        className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-400 dark:placeholder:text-white/30 p-0"
+        placeholder="Departure City"
+        type="text"
+        value={origin}
+        onChange={(e) => setOrigin(e.target.value)}
+      />
+    </div>
+  </div>
+
+  {/* Swap Button - inline between fields */}
+  <div className="hidden md:flex items-end pb-3 px-2">
+    <button
+      onClick={() => { const temp = origin; setOrigin(destination); setDestination(temp); }}
+      className="bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-white/20 rounded-full p-2 hover:bg-primary/10 dark:hover:bg-primary/20 hover:border-primary transition-all group flex-shrink-0"
+      title="Swap origin and destination"
+    >
+      <span className="material-symbols-outlined text-gray-500 dark:text-white/60 group-hover:text-primary transition-colors" style={{ fontSize: '18px' }}>swap_horiz</span>
+    </button>
+  </div>
+
+  {/* TO Field */}
+  <div className="flex-1 border-b-2 border-gray-200 dark:border-white/20 pb-3 focus-within:border-primary transition-colors px-0 md:px-4">
+    <label className="block text-[10px] text-gray-500 dark:text-white/50 uppercase tracking-widest mb-2 font-bold">To</label>
+    <div className="flex items-center gap-2">
+      <span className="material-symbols-outlined text-gray-400 dark:text-white/40" style={{ fontSize: '18px' }}>flag</span>
+      <input
+        className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-400 dark:placeholder:text-white/30 p-0"
+        placeholder="Destination City"
+        type="text"
+        value={destination}
+        onChange={(e) => setDestination(e.target.value)}
+      />
+    </div>
+  </div>
+
+  {/* Divider */}
+  <div className="hidden md:block w-px bg-gray-200 dark:bg-white/10 mx-4 mb-3"></div>
+
+  {/* DATE Field */}
+  <div className="flex-1 border-b-2 border-gray-200 dark:border-white/20 pb-3 focus-within:border-primary transition-colors px-0 md:pl-4">
+    <label className="block text-[10px] text-gray-500 dark:text-white/50 uppercase tracking-widest mb-2 font-bold">Date</label>
+    <div className="flex items-center gap-2">
+      <span className="material-symbols-outlined text-gray-400 dark:text-white/40" style={{ fontSize: '18px' }}>calendar_month</span>
+      <input
+        className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none p-0 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-40 [&::-webkit-calendar-picker-indicator]:dark:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+        type="date"
+        value={journeyDate}
+        onChange={(e) => setJourneyDate(e.target.value)}
+      />
+    </div>
+  </div>
+
+  {/* Search Button */}
+  <div className="md:pl-4 mt-4 md:mt-0 flex-shrink-0">
+    <button
+      onClick={() => { setSelectedBus(null); setSelectedSeats([]); setIsBookingSuccess(false); setShowDesktopSearch(true); }}
+      className="bg-primary text-white h-12 md:h-14 px-8 rounded-xl font-bold text-base flex items-center justify-center gap-2 hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-primary/30 group w-full md:w-auto"
+    >
+      <span>Search</span>
+      <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform" style={{ fontSize: '20px' }}>arrow_forward</span>
+    </button>
+  </div>
+
+</div>
+</div>
+</div>
+</header>
+
+{/*  Main Content Area  */}
+<main className="mt-48 md:mt-40 bg-white dark:bg-slate-950 transition-colors duration-300">
+
+<section className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop py-stack-xl">
+  <div className="flex justify-between items-end mb-stack-lg">
+    <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold text-gray-900 dark:text-white">Top Routes</h2>
+    <a className="text-primary hover:brightness-110 flex items-center gap-1 transition-colors" href="#">View All <span className="material-symbols-outlined text-sm">chevron_right</span></a>
+  </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+    {TopRoutes.map((route, idx) => (
+      <div key={idx} className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-white/5 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1 flex flex-col shadow-sm">
+        <div className="h-40 w-full overflow-hidden relative">
+          <img src={route.img} alt={`${route.from} to ${route.to}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <div className="absolute bottom-3 left-3 text-white text-xs font-bold px-2.5 py-1 bg-primary/90 rounded-md shadow-md backdrop-blur-sm">
+            {route.duration}
+          </div>
+        </div>
+        <div className="p-5 flex-1 flex flex-col justify-between">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex flex-col">
+              <span className="font-headline-md text-body-lg font-bold text-gray-900 dark:text-white">{route.from}</span>
             </div>
-
-            <div className={`nav-menu-modern ${isMenuOpen ? 'active' : ''}`}>
-              <div className="nav-links-modern">
-                <a href="#" className="nav-item" onClick={(e) => { e.preventDefault(); document.getElementById('mobile-routes-section')?.scrollIntoView({ behavior: 'smooth' }); }}>Routes</a>
-                <a href="#" className="nav-item" onClick={(e) => { e.preventDefault(); document.getElementById('mobile-destinations-section')?.scrollIntoView({ behavior: 'smooth' }); }}>Destinations</a>
-                <a href="#" className="nav-item" onClick={(e) => { e.preventDefault(); document.getElementById('mobile-gallery-section')?.scrollIntoView({ behavior: 'smooth' }); }}>Gallery</a>
-                <a href="#" className="nav-item" onClick={(e) => { e.preventDefault(); setShowLiveTracking(true); }}>Track Bus</a>
-                <a href="#" className="nav-item" onClick={(e) => { e.preventDefault(); setShowTimingsModal(true); }}>Timings</a>
-                {isUserLoggedIn && (
-                  <a href="#" className="nav-item" onClick={(e) => { e.preventDefault(); setShowDesktopTicketsModal(true); }}>My Tickets</a>
-                )}
-              </div>
-
-              <div className="nav-actions">
-                <button
-                  onClick={toggleTheme}
-                  style={{ background: 'transparent', border: 'none', color: 'var(--dark)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-                >
-                  {theme === 'dark' ? <Sun size={22} /> : <Moon size={22} />}
-                </button>
-                <div className="nav-divider"></div>
-                <img src="/assets/images/kerala_tourism.webp" alt="Kerala Tourism" className="tourism-logo-small" width="80" height="40" />
-                <div className="nav-divider"></div>
-                <button className="btn-secondary-modern">Manage</button>
-                {isUserLoggedIn ? (
-                  <button className="btn-primary-modern" onClick={() => setIsUserLoggedIn(false)}>Logout</button>
-                ) : (
-                  <button className="btn-primary-modern" onClick={() => setShowLoginModal(true)}>Login</button>
-                )}
-              </div>
+            <span className="material-symbols-outlined text-primary/70 group-hover:text-primary transition-colors">arrow_right_alt</span>
+            <div className="flex flex-col text-right">
+              <span className="font-headline-md text-body-lg font-bold text-gray-900 dark:text-white">{route.to}</span>
             </div>
+          </div>
+          <div className="flex justify-between items-end pt-4 border-t border-gray-100 dark:border-white/5 mt-auto">
+            <div className="flex flex-col">
+              <span className="font-label-caps text-[10px] text-gray-500 dark:text-white/50 uppercase tracking-wider mb-1">Starting from</span>
+              <span className="font-headline-md text-headline-md text-primary font-bold">{route.price}</span>
+            </div>
+            <button className="px-5 py-2 bg-primary/10 border border-primary/20 rounded-lg text-primary hover:bg-primary hover:text-white transition-all shadow-sm text-sm font-bold active:scale-95">Book</button>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+{/*  Popular Destinations Grid  */}
+<section className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop py-stack-xl mb-stack-xl">
+<h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold mb-stack-lg text-gray-900 dark:text-white">Popular Destinations</h2>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-gutter h-auto md:h-[600px]">
+{/*  Munnar (Large Feature)  */}
+<div className="relative rounded-xl overflow-hidden group cursor-pointer md:col-span-2 md:row-span-2 h-[400px] md:h-auto border border-white/10 shadow-lg">
+<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuCpovBCBQ4ZZLKLOSa9pozzVeIgh29fkOCe20zgkwgve4ailXKQzSLGojSpkge8iIcdnum57332-J6K6tQ54H6jKQmBDOKM39pNLYqwVgbP7jUFT4c6nrwa-cklraMMNY33dNxb4b46r47sAkVPrh_wHCoaCtYke3G2i6j5HjJJR2EU8lSyb7gDrfoYG9GZYPxCffTyewR6_X0IpeLzWfV6IwjXBiJWZ_0PpPsY1ljR78H9y9T-pPA')` }}></div>
+<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+<div className="absolute bottom-stack-lg left-stack-lg">
+<h3 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-2 drop-shadow-lg">Munnar</h3>
+<p className="text-white/70 font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">The Emerald Hills of Kerala</p>
+</div>
+</div>
+{/*  Kochi  */}
+<div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
+<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuA37NzZLa650ZYZsr07Xcm8902nMutBRS74Sme8mhc0ys_K_oXTa9B0jf3iT32QIPoWnHLBq0z8kRHubszdtSXgFgTIjcbHWyKbE_n5EDzD5EcDqe5fvlOwPWk-OFr3qcOvRiddxr8cv3_CSe9SYnOH2AbI0KKs481QyRnanU_sSLy-_JoeCUgJjLnNcvV0-CtGkjNhriuPTGm1mF3CotQr1Gq4IA-3xgdlxcI-4Mz8TMw_FVLbhJE')` }}></div>
+<div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div className="absolute bottom-stack-md left-stack-md">
+<h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Kochi</h3>
+</div>
+</div>
+{/*  Alleppey  */}
+<div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
+<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuDZNHpO9tDoPqxCZFQoy9ypuaolmdDE5FwIUwuC27tFmFy-i1Tq5KqUZJ78bMiw4At2iJm9tiEA-8JbVfB7AM6q9fgkgIk87rtKUNPK7pUhor7IHJYZBGTU2T2EvZJZ5MJK4VHr_flVKCZzD2i4lrHIPCrjlVInxHPnE_9ZDnwep3-dOKjUB85qRXBntaG_gvi935iYaNe3ie2aO_kFe-19wXRykdP5-Zeeno7vZBsvUGcvsB7v2B8')` }}></div>
+<div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div className="absolute bottom-stack-md left-stack-md">
+<h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Alleppey</h3>
+</div>
+</div>
+</div>
+</section>
+</main>
+{/*  Footer  */}
 
-            <button className="mobile-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle Menu">
-              {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+<footer className="bg-slate-900 text-white w-full relative z-10 pt-20 pb-10 mt-20 border-t border-white/10">
+  <div className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop">
+    <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+      
+      {/* Brand Column */}
+      <div className="col-span-1 md:col-span-4 pr-8">
+        <div className="flex items-center gap-3 mb-6">
+          <span className="material-symbols-outlined text-primary text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>directions_bus</span>
+          <div className="flex flex-col">
+            <span className="font-headline-md text-2xl text-white font-black tracking-tight">Ente KSRTC</span>
+            <span className="text-xs text-primary uppercase tracking-widest font-bold">Premium Journey</span>
+          </div>
+        </div>
+        <p className="text-white/60 font-body-md text-sm leading-relaxed mb-8">
+          Experience the pinnacle of mobility across God's Own Country. We connect communities, empower travelers, and deliver cinematic journeys with unparalleled comfort and safety.
+        </p>
+        <div className="flex gap-4">
+          <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white hover:border-primary transition-all hover:scale-110 shadow-lg">
+            <span className="material-symbols-outlined text-sm">public</span>
+          </a>
+          <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white hover:border-primary transition-all hover:scale-110 shadow-lg">
+            <span className="material-symbols-outlined text-sm">share</span>
+          </a>
+          <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white hover:border-primary transition-all hover:scale-110 shadow-lg">
+            <span className="material-symbols-outlined text-sm">mail</span>
+          </a>
+        </div>
+      </div>
+
+      {/* Links Columns */}
+      <div className="col-span-1 md:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div>
+          <h4 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-primary"></span> Explore
+          </h4>
+          <ul className="space-y-4">
+            <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Routes</a></li>
+            <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Fleet</a></li>
+            <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Offers</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-primary"></span> Support
+          </h4>
+          <ul className="space-y-4">
+            <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Help Center</a></li>
+            <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Contact</a></li>
+            <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Grievances</a></li>
+          </ul>
+        </div>
+
+        <div className="col-span-2 md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-primary/30 transition-colors duration-500"></div>
+          <h4 className="font-headline-md text-lg font-bold text-white mb-2 relative z-10">Get the App</h4>
+          <p className="text-xs text-white/60 mb-6 relative z-10">Book tickets instantly from your pocket.</p>
+          <div className="flex flex-col gap-3 relative z-10">
+            <button className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white text-white hover:text-black py-2 px-4 rounded-xl transition-all text-sm font-bold border border-white/20">
+              <span className="material-symbols-outlined text-lg">shop</span> Play Store
+            </button>
+            <button className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white text-white hover:text-black py-2 px-4 rounded-xl transition-all text-sm font-bold border border-white/20">
+              <span className="material-symbols-outlined text-lg">apple</span> App Store
             </button>
           </div>
-        </nav>
+        </div>
+      </div>
+    </div>
 
-        {/* Hero Section */}
-        <header className="hero">
-          {heroImages.map((img, index) => (
-            <div
-              key={index}
-              className={`hero-bg ${index === currentSlide ? 'active' : ''}`}
-              style={{ backgroundImage: `url(${img})` }}
-            />
-          ))}
-          <div className="hero-overlay"></div>
+    <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="text-xs text-white/40 font-medium">
+        &copy; {new Date().getFullYear()} Kerala State Road Transport Corporation. All rights reserved.
+      </div>
+      <div className="flex items-center gap-6 text-xs text-white/40 font-medium">
+        <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
+        <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
+        <a href="#" className="hover:text-primary transition-colors">Accessibility</a>
+      </div>
+    </div>
+  </div>
+</footer>
 
-          {/* Modern Slider Controls */}
-          <div className="slider-controls">
-            {heroImages.map((_, index) => (
-              <div
-                key={index}
-                className={`slider-dot ${index === currentSlide ? 'active' : ''}`}
-                onMouseEnter={() => setCurrentSlide(index)}
-                onClick={() => setCurrentSlide(index)}
-              >
-                <div className="dot-progress"></div>
-              </div>
-            ))}
-          </div>
 
-          <div className="container hero-content center-content">
-            <div className="hero-title-area">
-              <h1 className="hero-title">Experience the Journey</h1>
-              <p className="hero-subtitle">Safe, Reliable, and Comfortable travel across Kerala and beyond.</p>
-            </div>
-
-            {showMobileView ? (
-              renderMobileBookingWidget()
-            ) : (
-              <BorderGlow
-                className="booking-widget glass-widget"
-                glowColor="25 90 55"
-                backgroundColor="transparent"
-                borderRadius={24}
-                glowIntensity={0.8}
-                colors={['#10b981', '#059669', '#047857']}
-              >
-                <div className="widget-tabs">
-                  <button className="widget-tab active">
-                    <Bus size={20} />
-                    Book Bus Ticket
-                  </button>
-                  <button className="widget-tab" style={{ color: 'var(--gray)' }}>
-                    Link Ticket Booking
-                  </button>
-                </div>
-
-                <div className="trip-type">
-                  <button
-                    className={`badge-btn ${tripType === 'one-way' ? 'active' : ''}`}
-                    onClick={() => setTripType('one-way')}
-                  >
-                    ONE WAY
-                  </button>
-                  <button
-                    className={`badge-btn ${tripType === 'round' ? 'active' : ''}`}
-                    onClick={() => setTripType('round')}
-                  >
-                    ROUND TRIP
-                  </button>
-                </div>
-
-                <div className="form-grid">
-                  <div className="input-group">
-                    <label htmlFor="origin-input">Travelling From</label>
-                    <input
-                      id="origin-input"
-                      type="text"
-                      className="input-field"
-                      placeholder="Select Origin"
-                      value={origin}
-                      onChange={(e) => setOrigin(e.target.value)}
-                    />
-                    <MapPin className="input-icon" size={20} />
-                  </div>
-
-                  <button className="swap-btn" aria-label="Swap Origin and Destination" onClick={() => { const temp = origin; setOrigin(destination); setDestination(temp); }}>
-                    <ArrowRightLeft size={18} />
-                  </button>
-
-                  <div className="input-group">
-                    <label htmlFor="destination-input">Going To</label>
-                    <input
-                      id="destination-input"
-                      type="text"
-                      className="input-field"
-                      placeholder="Select Destination"
-                      value={destination}
-                      onChange={(e) => setDestination(e.target.value)}
-                    />
-                    <MapPin className="input-icon" size={20} />
-                  </div>
-                </div>
-
-                <div className="form-grid">
-                  <div className="input-group">
-                    <label htmlFor="journey-date-input">Journey Date</label>
-                    <input
-                      id="journey-date-input"
-                      type="date"
-                      className="input-field"
-                      value={journeyDate}
-                      onChange={(e) => setJourneyDate(e.target.value)}
-                    />
-                  </div>
-                  <div className="input-group">
-                    <label htmlFor="return-date-input">Return Date (Optional)</label>
-                    <input id="return-date-input" type="date" className="input-field" disabled={tripType === 'one-way'} />
-                  </div>
-                </div>
-
-                <button className="btn-primary" onClick={() => { setSelectedBus(null); setSelectedSeats([]); setIsBookingSuccess(false); setShowDesktopSearch(true); }}>SEARCH BUSES</button>
-              </BorderGlow>
-            )}
-          </div>
-          <GradualBlur
-            target="parent"
-            position="bottom"
-            height="12rem"
-            strength={4}
-            divCount={6}
-            curve="bezier"
-            zIndex={3}
-          />
-        </header>
-
-        {/* Sections */}
-        <LazyLoad minHeight="500px">
-          <TopRoutesSection 
-            routes={TopRoutes} 
-            onBookRoute={(from, to) => {
-              setOrigin(from);
-              setDestination(to);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-              setTimeout(() => {
-                alert(`Route ${from} to ${to} selected.\nPlease select your journey date to continue booking.`);
-              }, 500);
-            }}
-          />
-        </LazyLoad>
-
-        <LazyLoad minHeight="400px">
-          <DestinationsSection destinations={Destinations} />
-        </LazyLoad>
-
-        <LazyLoad minHeight="800px">
-          <GallerySection images={GalleryImages} />
-        </LazyLoad>
-
-        <LazyLoad minHeight="400px">
-          <TestimonialsSection testimonials={Testimonials} />
-        </LazyLoad>
-
-        {/* Footer */}
-        <footer className="footer">
-          <div className="container">
-            <div className="footer-grid">
-              <div className="footer-column">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                  <div style={{ background: 'white', padding: '6px', borderRadius: '8px', display: 'flex' }}>
-                    <Bus size={24} color="var(--primary)" />
-                  </div>
-                  <h3 className="footer-title" style={{ marginBottom: 0, fontSize: '1.4rem' }}>Ente KSRTC</h3>
-                </div>
-                <p style={{ lineHeight: '1.7', fontSize: '0.95rem', marginBottom: '24px', color: 'var(--gray)' }}>
-                  The official bus ticket booking application for Kerala State Road Transport Corporation. We provide safe, comfortable, and reliable travel across Kerala and neighboring states.
-                </p>
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <a href="#" className="footer-link"><Facebook size={22} /></a>
-                  <a href="#" className="footer-link"><Twitter size={22} /></a>
-                  <a href="#" className="footer-link"><Instagram size={22} /></a>
-                  <a href="#" className="footer-link"><Youtube size={22} /></a>
-                </div>
-              </div>
-              <div className="footer-column">
-                <h3 className="footer-title">Quick Links</h3>
-                <ul className="footer-links">
-                  <li><a href="#" className="footer-link">Home</a></li>
-                  <li><a href="#" className="footer-link">About Us</a></li>
-                  <li><a href="#" className="footer-link">View Booking</a></li>
-                  <li><a href="#" className="footer-link">Gallery</a></li>
-                  <li><a href="#" className="footer-link">Terms & Conditions</a></li>
-                </ul>
-              </div>
-              <div className="footer-column">
-                <h3 className="footer-title">Support</h3>
-                <ul className="footer-links">
-                  <li><a href="#" className="footer-link">Contact Us</a></li>
-                  <li><a href="#" className="footer-link">Cancellation</a></li>
-                  <li><a href="#" className="footer-link">Feedback</a></li>
-                  <li><a href="#" className="footer-link">Privacy Policy</a></li>
-                </ul>
-              </div>
-              <div className="footer-column">
-                <h3 className="footer-title">Corporate Office</h3>
-                <div className="contact-info">
-                  <p style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                    <MapPin size={18} style={{ color: 'var(--primary)', flexShrink: 0, marginTop: '4px' }} />
-                    <span>Office of Managing Director,<br />
-                    TRANSPORT BHAVAN, Fort,<br />
-                    Trivandrum, Pin 695023</span>
-                  </p>
-                  <p style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '16px' }}>
-                    <Phone size={18} style={{ color: 'var(--primary)' }} />
-                    <span>0471-2463799 / 18005994011</span>
-                  </p>
-                </div>
-                <img src="/assets/images/app_store.svg" alt="App Store" className="app-store-badge mt-4" style={{ height: '40px', cursor: 'pointer', transition: 'transform 0.2s', marginTop: '24px' }} onMouseOver={(e) => e.currentTarget.style.transform='scale(1.05)'} onMouseOut={(e) => e.currentTarget.style.transform='scale(1)'} width="119" height="40" />
-              </div>
-            </div>
-            <div className="footer-bottom">
-              <p>&copy; 2026, All Rights Reserved, Kerala State Road Transport Corporation - KSRTC</p>
-            </div>
-          </div>
-        </footer>
       </>
     );
   };
