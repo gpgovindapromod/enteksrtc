@@ -3,7 +3,7 @@ export const GalleryImages = [
   { id: "2", img: "./assets/images/gallery_2.jpg", url: "#", height: 250 },
   { id: "3", img: "./assets/images/gallery_3.jpg", url: "#", height: 600 },
   { id: "4", img: "./assets/images/gallery_4.jpg", url: "#", height: 350 },
-  { id: "5", img: "./assets/images/gallery_5.jpg", url: "#", height: 300 },
+  { id: "5", img: "./assets/images/gallery_4.jpg", url: "#", height: 300 },
   { id: "6", img: "./assets/images/gallery_6.jpg", url: "#", height: 500 },
   { id: "7", img: "./assets/images/gallery_7.jpg", url: "#", height: 450 },
   { id: "8", img: "./assets/images/gallery_8.jpg", url: "#", height: 300 },

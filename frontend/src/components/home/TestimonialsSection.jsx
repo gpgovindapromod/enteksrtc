@@ -57,7 +57,7 @@ const TestimonialsSection = React.memo(({ testimonials }) => {
                     <User size={24} />
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-900 dark:text-white font-outfit">{testimonial.name}</h4>
+                    <h3 className="font-bold text-slate-900 dark:text-white font-outfit">{testimonial.name}</h3>
                     <span className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest">Traveller</span>
                   </div>
                 </div>

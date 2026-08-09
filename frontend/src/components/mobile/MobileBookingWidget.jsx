@@ -97,6 +97,7 @@ const MobileBookingWidget = ({
         {/* Swap Button (Absolute positioned between From and To for mobile) */}
         <div className="absolute right-0 top-[60px] translate-y-[-50%] z-40">
           <button
+            aria-label="Swap origin and destination"
             className="bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-white/20 rounded-full p-2 hover:bg-emerald-500/10 dark:hover:bg-emerald-500/20 hover:border-emerald-500 transition-all group flex-shrink-0 shadow-sm"
             onClick={() => {
               const temp = origin;

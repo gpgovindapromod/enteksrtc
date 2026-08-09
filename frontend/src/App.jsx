@@ -605,9 +605,9 @@ function App() {
               {/* Links Columns */}
               <div className="col-span-1 md:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
                 <div>
-                  <h4 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
+                  <h3 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-primary"></span> Explore
-                  </h4>
+                  </h3>
                   <ul className="space-y-4">
                     <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Routes</a></li>
                     <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Fleet</a></li>
@@ -616,9 +616,9 @@ function App() {
                 </div>
 
                 <div>
-                  <h4 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
+                  <h3 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-primary"></span> Support
-                  </h4>
+                  </h3>
                   <ul className="space-y-4">
                     <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Help Center</a></li>
                     <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Contact</a></li>
@@ -628,7 +628,7 @@ function App() {
 
                 <div className="col-span-2 md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-primary/30 transition-colors duration-500"></div>
-                  <h4 className="font-headline-md text-lg font-bold text-white mb-2 relative z-10">Get the App</h4>
+                  <h3 className="font-headline-md text-lg font-bold text-white mb-2 relative z-10">Get the App</h3>
                   <p className="text-xs text-white/60 mb-6 relative z-10">Book tickets instantly from your pocket.</p>
                   <div className="flex flex-col gap-3 relative z-10">
                     <button className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white text-white hover:text-black py-2 px-4 rounded-xl transition-all text-sm font-bold border border-white/20">

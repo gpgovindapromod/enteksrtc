@@ -44,7 +44,7 @@ const MobileHomeTab = ({
   }, [heroImages, setCurrentSlide]);
 
   return (
-    <div className={`font-inter ${theme === 'dark' ? 'dark bg-background text-white' : 'bg-background text-slate-900'} min-h-screen overflow-x-hidden`}>
+    <main className={`font-inter ${theme === 'dark' ? 'dark bg-background text-white' : 'bg-background text-slate-900'} min-h-screen overflow-x-hidden`}>
       {/* Mobile Navbar */}
       <nav className="fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-6 py-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-gray-200 dark:border-white/10 shadow-lg">
         <div className="flex justify-between items-center h-16">
@@ -61,7 +61,7 @@ const MobileHomeTab = ({
           <div className="flex items-center gap-4">
             {!isUserLoggedIn && (
               <button
-                className="text-sm font-bold bg-emerald-500 text-white px-5 py-2 rounded-full shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-transform"
+                className="text-sm font-bold bg-emerald-500 text-slate-950 px-5 py-2 rounded-full shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-transform"
                 onClick={() => setShowLoginModal(true)}
               >
                 Login
@@ -69,6 +69,7 @@ const MobileHomeTab = ({
             )}
             <button
               onClick={toggleTheme}
+              aria-label="Toggle Theme"
               className="p-2 bg-gray-100 dark:bg-white/10 rounded-full text-gray-600 dark:text-white/80 active:scale-95 transition-transform"
             >
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
@@ -117,7 +118,7 @@ const MobileHomeTab = ({
 
       {/* Quick Services Grid */}
       <div className="px-6 py-8 relative z-20 -mt-12 bg-transparent">
-        <h3 className="text-lg font-bold font-outfit mb-4 text-slate-900 dark:text-white">Quick Services</h3>
+        <h2 className="text-lg font-bold font-outfit mb-4 text-slate-900 dark:text-white">Quick Services</h2>
         <div className="grid grid-cols-3 gap-3">
           <button 
             onClick={() => setShowLiveTracking(true)}
@@ -203,9 +204,9 @@ const MobileHomeTab = ({
               {/* Links Columns */}
               <div className="grid grid-cols-2 gap-8">
                 <div>
-                  <h4 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
+                  <h3 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Explore
-                  </h4>
+                  </h3>
                   <ul className="space-y-4">
                     <li><a className="text-sm text-white/60 hover:text-emerald-500 transition-colors" href="#">Routes</a></li>
                     <li><a className="text-sm text-white/60 hover:text-emerald-500 transition-colors" href="#">Fleet</a></li>
@@ -214,9 +215,9 @@ const MobileHomeTab = ({
                 </div>
                 
                 <div>
-                  <h4 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
+                  <h3 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Support
-                  </h4>
+                  </h3>
                   <ul className="space-y-4">
                     <li><a className="text-sm text-white/60 hover:text-emerald-500 transition-colors" href="#">Help Center</a></li>
                     <li><a className="text-sm text-white/60 hover:text-emerald-500 transition-colors" href="#">Contact</a></li>
@@ -227,10 +228,10 @@ const MobileHomeTab = ({
             </div>
 
             <div className="border-t border-white/10 pt-8 flex flex-col items-center gap-4">
-              <div className="text-xs text-white/40 font-medium text-center">
+              <div className="text-xs text-gray-400 font-medium text-center">
                 &copy; {new Date().getFullYear()} Kerala State Road Transport Corporation.<br/>All rights reserved.
               </div>
-              <div className="flex items-center justify-center gap-6 text-xs text-white/40 font-medium mt-2">
+              <div className="flex items-center justify-center gap-6 text-xs text-gray-400 font-medium mt-2">
                 <a href="#" className="hover:text-emerald-500 transition-colors">Privacy</a>
                 <a href="#" className="hover:text-emerald-500 transition-colors">Terms</a>
                 <a href="#" className="hover:text-emerald-500 transition-colors">Accessibility</a>
@@ -239,7 +240,7 @@ const MobileHomeTab = ({
           </div>
         </footer>
       </div>
-    </div>
+    </main>
   );
 };
 

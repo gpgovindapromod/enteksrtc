@@ -102,7 +102,8 @@ const Masonry = ({
   };
 
   useEffect(() => {
-    preloadImages(items.map(i => i.img)).then(() => setImagesReady(true));
+    // Lighthouse fix: Avoid enormous network payloads by not preloading all gallery images upfront
+    setImagesReady(true);
   }, [items]);
 
   const { grid, maxHeight } = useMemo(() => {
@@ -233,7 +234,14 @@ const Masonry = ({
             onMouseEnter={e => handleMouseEnter(e, item)}
             onMouseLeave={e => handleMouseLeave(e, item)}
           >
-            <div className="item-img" style={{ backgroundImage: `url(${item.img})` }}>
+            <div className="item-img relative overflow-hidden bg-gray-200 dark:bg-slate-800">
+              <img 
+                src={item.img} 
+                alt="Gallery" 
+                loading="lazy" 
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover rounded-[10px]"
+              />
               {colorShiftOnHover && (
                 <div
                   className="color-overlay"
