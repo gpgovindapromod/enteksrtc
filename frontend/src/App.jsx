@@ -53,6 +53,7 @@ import TopRoutesSection from './components/home/TopRoutesSection';
 import DestinationsSection from './components/home/DestinationsSection';
 import GallerySection from './components/home/GallerySection';
 import TestimonialsSection from './components/home/TestimonialsSection';
+import Marquee from './components/home/Marquee';
 import { useTheme } from './context/ThemeContext';
 
 function App() {
@@ -116,17 +117,17 @@ function App() {
     if (!destination || !destination.trim()) { setSearchError("Please enter a destination city."); return; }
     if (origin.trim().toLowerCase() === destination.trim().toLowerCase()) { setSearchError("Origin and destination cannot be the same."); return; }
     if (!journeyDate) { setSearchError("Please select a journey date."); return; }
-    
+
     const selectedDate = new Date(journeyDate);
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
     if (selectedDate < today) { setSearchError("Journey date cannot be in the past."); return; }
 
     setSearchError('');
-    setSelectedBus(null); 
-    setSelectedSeats([]); 
-    setIsBookingSuccess(false); 
-    setShowDesktopSearch(true); 
+    setSelectedBus(null);
+    setSelectedSeats([]);
+    setIsBookingSuccess(false);
+    setShowDesktopSearch(true);
   };
 
   const [showLiveTracking, setShowLiveTracking] = useState(false);
@@ -193,7 +194,7 @@ function App() {
     if (showLiveTracking) {
       const interval = setInterval(() => {
         setTrackingStep((prev) => (prev + 1) % 6);
-  }, 3000);
+      }, 3000);
       return () => clearInterval(interval);
     }
   }, [showLiveTracking]);
@@ -292,9 +293,9 @@ function App() {
   const renderWebsiteReplicaContent = () => {
     if (showDashboard) {
       return (
-        <div style={{width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 99999, overflowY: 'auto', backgroundColor: 'var(--bg-color)'}}>
-           <button onClick={() => setShowDashboard(false)} className="fixed bottom-6 right-6 z-[60] bg-white text-emerald-500 px-4 py-2 rounded-xl font-bold shadow-xl border border-emerald-500 hover:scale-105 active:scale-95 transition-all">Back to App</button>
-           <DesktopDashboard theme={theme} toggleTheme={toggleTheme} />
+        <div style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 99999, overflowY: 'auto', backgroundColor: 'var(--bg-color)' }}>
+          <button onClick={() => setShowDashboard(false)} className="fixed bottom-6 right-6 z-[60] bg-white text-emerald-500 px-4 py-2 rounded-xl font-bold shadow-xl border border-emerald-500 hover:scale-105 active:scale-95 transition-all">Back to App</button>
+          <DesktopDashboard theme={theme} toggleTheme={toggleTheme} />
         </div>
       );
     }
@@ -328,327 +329,331 @@ function App() {
     return (
       <>
         {/* Navbar */}
-        
-{/*  TopAppBar  */}
-<nav className={`fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-4 ${isScrolled ? "py-2" : "py-4"}`} id="navbar">
-<div className={`flex justify-between items-center px-6 h-20 mx-auto transition-all duration-500 ease-in-out ${isScrolled ? "bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-lg rounded-full max-w-4xl" : "w-full max-w-container-max"}`} id="navbar-container">
-{/*  Brand (Left)  */}
-<div className="flex items-center gap-3 cursor-pointer active:scale-95 transition-transform duration-300 w-1/4">
-<span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>directions_bus</span>
-<div className="flex flex-col">
-<span className="font-headline-md text-headline-md font-bold text-primary leading-none">Ente KSRTC</span>
-<span className={`text-xs uppercase tracking-widest mt-1 drop-shadow-md ${isScrolled ? 'text-gray-500 dark:text-white/60' : 'text-white/80'}`}>Premium Journey</span>
-</div>
-</div>
-{/*  Center Navigation Links  */}
-<div className="hidden md:flex justify-center gap-8 w-2/4">
-<a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Home</a>
-<a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Routes</a>
-<a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Contact</a>
-<button onClick={() => setShowDashboard(true)} className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`}>Experience Dashboard</button>
-</div>
-{/*  Right Actions  */}
-<div className="flex items-center justify-end gap-6 w-1/4">
-<a className={`hidden md:block drop-shadow-md text-sm hover:text-primary transition-colors duration-300 font-medium ${isScrolled ? 'text-gray-600 dark:text-white/70' : 'text-white/80'}`} href="#">Kerala Tourism</a>
-{/*  Theme Toggle  */}
 
-    {isUserLoggedIn ? (
-      <button className="text-sm font-medium text-primary border border-primary px-4 py-1.5 rounded-full hover:bg-primary/10" onClick={() => setIsUserLoggedIn(false)}>Logout</button>
-    ) : (
-      <button className="text-sm font-medium bg-emerald-700 text-white px-4 py-1.5 rounded-full shadow-lg shadow-emerald-700/20 hover:brightness-110 active:scale-95 transition-all" onClick={() => setShowLoginModal(true)}>Login</button>
-    )}
-    <div className={`cursor-pointer active:scale-95 hover:scale-105 transition-transform duration-300 hover:text-primary drop-shadow-md ${isScrolled ? 'text-gray-700 dark:text-white/80' : 'text-white/80'}`}>
-  
-<span className="material-symbols-outlined" onClick={toggleTheme}>{theme === "dark" ? "light_mode" : "dark_mode"}</span>
-</div>
-</div>
-</div>
-</nav>
-
-{/*  Hero Section  */}
-<header className="relative min-h-[90vh] flex flex-col justify-center items-center pt-20">
-{/*  Background Image  */}
-<div className="absolute inset-0 z-0 overflow-hidden">
-
-      {heroImages.map((img, index) => (
-        <div
-          key={index}
-          className={`w-full h-full absolute inset-0 bg-cover bg-center transition-opacity duration-1000 scale-105 ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-          style={{ backgroundImage: `url(${img})` }}
-        />
-      ))}
-    
-{/*  Gradient Overlay for readability  */}
-<div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/70"></div>
-</div>
-<div className="relative z-10 text-center px-gutter animate-fade-in-up mt-[-10vh]">
-<h1 className="font-display-hero text-display-hero text-white tracking-tight drop-shadow-2xl">Experience the Journey</h1>
-<p className="font-body-lg text-body-lg text-white/80 mt-6 max-w-2xl mx-auto drop-shadow-lg">Premium mobility across Kerala and beyond. Seamless, comfortable, and cinematic travel.</p>
-</div>
-{/*  Floating Booking Widget (Horizontal Desktop)  */}
-<div className="absolute bottom-8 w-full max-w-6xl px-edge-margin-mobile md:px-0 z-20 left-1/2 -translate-x-1/2">
-<div className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-[24px] border border-gray-200 dark:border-white/10 rounded-xl p-6 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
-{/*  Tabs  */}
-<div className="flex gap-8 mb-6 border-b border-gray-200 dark:border-white/10 pb-2">
-<button className="text-primary font-bold border-b-2 border-primary pb-2 tracking-wide transition-colors text-sm">Book Bus Ticket</button>
-<button className="text-gray-500 dark:text-white/50 hover:text-gray-800 dark:hover:text-white pb-2 tracking-wide transition-colors text-sm">Link Ticket Booking</button>
-</div>
-{/*  Horizontal Form  */}
-<div className="flex flex-col md:flex-row gap-3 md:gap-0 items-stretch md:items-end">
-
-  {/* FROM Field */}
-  <div className="flex-1 border-b-2 border-gray-200 dark:border-white/20 pb-3 focus-within:border-primary transition-colors px-0 md:pr-4">
-    <label htmlFor="origin-input" className="block text-[10px] text-gray-600 dark:text-gray-300 uppercase tracking-widest mb-2 font-bold">From</label>
-    <div className="flex items-center gap-2">
-      <span className="material-symbols-outlined text-gray-500 dark:text-gray-400" style={{ fontSize: '18px' }}>location_on</span>
-      <input
-        id="origin-input"
-        aria-label="Departure City"
-        className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
-        placeholder="Departure City"
-        type="text"
-        value={origin}
-        onChange={(e) => setOrigin(e.target.value)}
-      />
-    </div>
-  </div>
-
-  {/* Swap Button - inline between fields */}
-  <div className="hidden md:flex items-end pb-3 px-2">
-    <button
-      onClick={() => { const temp = origin; setOrigin(destination); setDestination(temp); }}
-      className="bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-white/20 rounded-full p-2 hover:bg-primary/10 dark:hover:bg-primary/20 hover:border-primary transition-all group flex-shrink-0"
-      title="Swap origin and destination"
-      aria-label="Swap origin and destination"
-    >
-      <span className="material-symbols-outlined text-gray-500 dark:text-white/60 group-hover:text-primary transition-colors" style={{ fontSize: '18px' }}>swap_horiz</span>
-    </button>
-  </div>
-
-  {/* TO Field */}
-  <div className="flex-1 border-b-2 border-gray-200 dark:border-white/20 pb-3 focus-within:border-primary transition-colors px-0 md:px-4">
-    <label htmlFor="destination-input" className="block text-[10px] text-gray-600 dark:text-gray-300 uppercase tracking-widest mb-2 font-bold">To</label>
-    <div className="flex items-center gap-2">
-      <span className="material-symbols-outlined text-gray-500 dark:text-gray-400" style={{ fontSize: '18px' }}>flag</span>
-      <input
-        id="destination-input"
-        aria-label="Destination City"
-        className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
-        placeholder="Destination City"
-        type="text"
-        value={destination}
-        onChange={(e) => setDestination(e.target.value)}
-      />
-    </div>
-  </div>
-
-  {/* Divider */}
-  <div className="hidden md:block w-px bg-gray-200 dark:bg-white/10 mx-4 mb-3"></div>
-
-  {/* DATE Field */}
-  <div className="flex-1 border-b-2 border-gray-200 dark:border-white/20 pb-3 focus-within:border-primary transition-colors px-0 md:pl-4">
-    <label htmlFor="date-input" className="block text-[10px] text-gray-600 dark:text-gray-300 uppercase tracking-widest mb-2 font-bold">Date</label>
-    <div className="flex items-center gap-2">
-      <span className="material-symbols-outlined text-gray-500 dark:text-gray-400" style={{ fontSize: '18px' }}>calendar_month</span>
-      <input
-        id="date-input"
-        aria-label="Journey Date"
-        className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none p-0 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:dark:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer"
-        type="date"
-        value={journeyDate}
-        onChange={(e) => setJourneyDate(e.target.value)}
-      />
-    </div>
-  </div>
-
-  {/* Search Button */}
-  {/* Search Button */}
-  <div className="md:pl-4 mt-4 md:mt-0 flex-shrink-0 relative">
-    <button
-      onClick={handleSearchClick}
-      className="bg-emerald-700 text-white h-12 md:h-14 px-8 rounded-xl font-bold text-base flex items-center justify-center gap-2 hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-emerald-700/30 group w-full md:w-auto"
-    >
-      <span>Search</span>
-      <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform" style={{ fontSize: '20px' }}>arrow_forward</span>
-    </button>
-  </div>
-
-</div>
-
-{searchError && (
-  <div className="text-red-500 font-bold text-sm mt-3 animate-fade-in-up">
-    {searchError}
-  </div>
-)}
-
-</div>
-</div>
-</header>
-
-{/*  Main Content Area  */}
-<main className="pt-16 bg-white dark:bg-slate-950 transition-colors duration-300">
-
-<section className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop py-stack-xl">
-  <div className="flex justify-between items-end mb-stack-lg">
-    <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold text-gray-900 dark:text-white">Top Routes</h2>
-    <a className="text-primary hover:brightness-110 flex items-center gap-1 transition-colors" href="#">View All <span className="material-symbols-outlined text-sm">chevron_right</span></a>
-  </div>
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
-    {TopRoutes.map((route, idx) => (
-      <div key={idx} className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-white/5 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1 flex flex-col shadow-sm">
-        <div className="h-40 w-full overflow-hidden relative">
-          <img src={route.img} alt={`${route.from} to ${route.to}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-          <div className="absolute bottom-3 left-3 text-white text-xs font-bold px-2.5 py-1 bg-primary/90 rounded-md shadow-md backdrop-blur-sm">
-            {route.duration}
-          </div>
-        </div>
-        <div className="p-5 flex-1 flex flex-col justify-between">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex flex-col">
-              <span className="font-headline-md text-body-lg font-bold text-gray-900 dark:text-white">{route.from}</span>
+        {/*  TopAppBar  */}
+        <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-4 ${isScrolled ? "py-2" : "py-4"}`} id="navbar">
+          <div className={`flex justify-between items-center px-6 h-20 mx-auto transition-all duration-500 ease-in-out ${isScrolled ? "bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-lg rounded-full max-w-4xl" : "w-full max-w-container-max"}`} id="navbar-container">
+            {/*  Brand (Left)  */}
+            <div className="flex items-center gap-3 cursor-pointer active:scale-95 transition-transform duration-300 w-1/4">
+              <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>directions_bus</span>
+              <div className="flex flex-col">
+                <span className="font-headline-md text-headline-md font-bold text-primary leading-none">Ente KSRTC</span>
+                <span className={`text-xs uppercase tracking-widest mt-1 drop-shadow-md ${isScrolled ? 'text-gray-500 dark:text-white/60' : 'text-white/80'}`}>Premium Journey</span>
+              </div>
             </div>
-            <span className="material-symbols-outlined text-primary/70 group-hover:text-primary transition-colors">arrow_right_alt</span>
-            <div className="flex flex-col text-right">
-              <span className="font-headline-md text-body-lg font-bold text-gray-900 dark:text-white">{route.to}</span>
+            {/*  Center Navigation Links  */}
+            <div className="hidden md:flex justify-center gap-8 w-2/4">
+              <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Home</a>
+              <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Routes</a>
+              <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Contact</a>
+              <button onClick={() => setShowDashboard(true)} className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`}>Experience Dashboard</button>
+            </div>
+            {/*  Right Actions  */}
+            <div className="flex items-center justify-end gap-6 w-1/4">
+              <a className={`hidden md:block drop-shadow-md text-sm hover:text-primary transition-colors duration-300 font-medium ${isScrolled ? 'text-gray-600 dark:text-white/70' : 'text-white/80'}`} href="#">Kerala Tourism</a>
+              {/*  Theme Toggle  */}
+
+              {isUserLoggedIn ? (
+                <button className="text-sm font-medium text-primary border border-primary px-4 py-1.5 rounded-full hover:bg-primary/10" onClick={() => setIsUserLoggedIn(false)}>Logout</button>
+              ) : (
+                <button className="text-sm font-medium bg-emerald-700 text-white px-4 py-1.5 rounded-full shadow-lg shadow-emerald-700/20 hover:brightness-110 active:scale-95 transition-all" onClick={() => setShowLoginModal(true)}>Login</button>
+              )}
+              <div className={`cursor-pointer active:scale-95 hover:scale-105 transition-transform duration-300 hover:text-primary drop-shadow-md ${isScrolled ? 'text-gray-700 dark:text-white/80' : 'text-white/80'}`}>
+
+                <span className="material-symbols-outlined" onClick={toggleTheme}>{theme === "dark" ? "light_mode" : "dark_mode"}</span>
+              </div>
             </div>
           </div>
-          <div className="flex justify-between items-end pt-4 border-t border-gray-100 dark:border-white/5 mt-auto">
-            <div className="flex flex-col">
-              <span className="font-label-caps text-[10px] text-gray-500 dark:text-white/50 uppercase tracking-wider mb-1">Starting from</span>
-              <span className="font-headline-md text-headline-md text-primary font-bold">{route.price}</span>
+        </nav>
+
+        {/*  Hero Section  */}
+        <header className="relative min-h-screen flex flex-col justify-center items-center pt-20">
+          {/*  Background Image  */}
+          <div className="absolute inset-0 z-0 overflow-hidden">
+
+            {heroImages.map((img, index) => (
+              <div
+                key={index}
+                className={`w-full h-full absolute inset-0 bg-cover bg-center transition-opacity duration-1000 scale-105 ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                style={{ backgroundImage: `url(${img})` }}
+              />
+            ))}
+
+            {/*  Gradient Overlay for readability  */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/70"></div>
+          </div>
+          <div className="relative z-10 text-center px-gutter animate-fade-in-up mt-[-10vh]">
+            <h1 className="font-display-hero text-display-hero text-white tracking-tight drop-shadow-2xl">Experience the Journey</h1>
+            <p className="font-body-lg text-body-lg text-white/80 mt-6 max-w-2xl mx-auto drop-shadow-lg">Premium mobility across Kerala and beyond. Seamless, comfortable, and cinematic travel.</p>
+          </div>
+          {/*  Floating Booking Widget (Horizontal Desktop)  */}
+          <div className="absolute bottom-8 w-full max-w-6xl px-edge-margin-mobile md:px-0 z-20 left-1/2 -translate-x-1/2">
+            <div className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-[24px] border border-gray-200 dark:border-white/10 rounded-xl p-6 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+              {/*  Tabs  */}
+              <div className="flex gap-8 mb-6 border-b border-gray-200 dark:border-white/10 pb-2">
+                <button className="text-primary font-bold border-b-2 border-primary pb-2 tracking-wide transition-colors text-sm">Book Bus Ticket</button>
+                <button className="text-gray-500 dark:text-white/50 hover:text-gray-800 dark:hover:text-white pb-2 tracking-wide transition-colors text-sm">Link Ticket Booking</button>
+              </div>
+              {/*  Horizontal Form  */}
+              <div className="flex flex-col md:flex-row gap-3 md:gap-0 items-stretch md:items-end">
+
+                {/* FROM Field */}
+                <div className="flex-1 border-b-2 border-gray-200 dark:border-white/20 pb-3 focus-within:border-primary transition-colors px-0 md:pr-4">
+                  <label htmlFor="origin-input" className="block text-[10px] text-gray-600 dark:text-gray-300 uppercase tracking-widest mb-2 font-bold">From</label>
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-gray-500 dark:text-gray-400" style={{ fontSize: '18px' }}>location_on</span>
+                    <input
+                      id="origin-input"
+                      aria-label="Departure City"
+                      className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
+                      placeholder="Departure City"
+                      type="text"
+                      value={origin}
+                      onChange={(e) => setOrigin(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Swap Button - inline between fields */}
+                <div className="hidden md:flex items-end pb-3 px-2">
+                  <button
+                    onClick={() => { const temp = origin; setOrigin(destination); setDestination(temp); }}
+                    className="bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-white/20 rounded-full p-2 hover:bg-primary/10 dark:hover:bg-primary/20 hover:border-primary transition-all group flex-shrink-0"
+                    title="Swap origin and destination"
+                    aria-label="Swap origin and destination"
+                  >
+                    <span className="material-symbols-outlined text-gray-500 dark:text-white/60 group-hover:text-primary transition-colors" style={{ fontSize: '18px' }}>swap_horiz</span>
+                  </button>
+                </div>
+
+                {/* TO Field */}
+                <div className="flex-1 border-b-2 border-gray-200 dark:border-white/20 pb-3 focus-within:border-primary transition-colors px-0 md:px-4">
+                  <label htmlFor="destination-input" className="block text-[10px] text-gray-600 dark:text-gray-300 uppercase tracking-widest mb-2 font-bold">To</label>
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-gray-500 dark:text-gray-400" style={{ fontSize: '18px' }}>flag</span>
+                    <input
+                      id="destination-input"
+                      aria-label="Destination City"
+                      className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
+                      placeholder="Destination City"
+                      type="text"
+                      value={destination}
+                      onChange={(e) => setDestination(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div className="hidden md:block w-px bg-gray-200 dark:bg-white/10 mx-4 mb-3"></div>
+
+                {/* DATE Field */}
+                <div className="flex-1 border-b-2 border-gray-200 dark:border-white/20 pb-3 focus-within:border-primary transition-colors px-0 md:pl-4">
+                  <label htmlFor="date-input" className="block text-[10px] text-gray-600 dark:text-gray-300 uppercase tracking-widest mb-2 font-bold">Date</label>
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-gray-500 dark:text-gray-400" style={{ fontSize: '18px' }}>calendar_month</span>
+                    <input
+                      id="date-input"
+                      aria-label="Journey Date"
+                      className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none p-0 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:dark:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                      type="date"
+                      value={journeyDate}
+                      onChange={(e) => setJourneyDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Search Button */}
+                {/* Search Button */}
+                <div className="md:pl-4 mt-4 md:mt-0 flex-shrink-0 relative">
+                  <button
+                    onClick={handleSearchClick}
+                    className="bg-emerald-700 text-white h-12 md:h-14 px-8 rounded-xl font-bold text-base flex items-center justify-center gap-2 hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-emerald-700/30 group w-full md:w-auto"
+                  >
+                    <span>Search</span>
+                    <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform" style={{ fontSize: '20px' }}>arrow_forward</span>
+                  </button>
+                </div>
+
+              </div>
+
+              {searchError && (
+                <div className="text-red-500 font-bold text-sm mt-3 animate-fade-in-up">
+                  {searchError}
+                </div>
+              )}
+
             </div>
-            <button 
-              className="px-5 py-2 bg-primary/10 border border-primary/20 rounded-lg text-primary hover:bg-primary hover:text-white transition-all shadow-sm text-sm font-bold active:scale-95"
-              onClick={(e) => { e.preventDefault(); handleBookRoute(route.from, route.to); }}
-            >
-              Book
-            </button>
           </div>
-        </div>
-      </div>
-    ))}
-  </div>
-</section>
-{/*  Popular Destinations Grid  */}
-<section className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop py-stack-xl mb-stack-xl">
-<h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold mb-stack-lg text-gray-900 dark:text-white">Popular Destinations</h2>
-<div className="grid grid-cols-1 md:grid-cols-3 gap-gutter h-auto md:h-[600px]">
-{/*  Munnar (Large Feature)  */}
-<div className="relative rounded-xl overflow-hidden group cursor-pointer md:col-span-2 md:row-span-2 h-[400px] md:h-auto border border-white/10 shadow-lg">
-<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/route_munnar.jpg')` }}></div>
-<div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-<div className="absolute bottom-stack-lg left-stack-lg">
-<h3 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-2 drop-shadow-lg">Munnar</h3>
-<p className="text-white/70 font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">The Emerald Hills of Kerala</p>
-</div>
-</div>
-{/*  Kochi  */}
-<div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
-<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/dest_kochi.jpg')` }}></div>
-<div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-<div className="absolute bottom-stack-md left-stack-md">
-<h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Kochi</h3>
-</div>
-</div>
-{/*  Alleppey  */}
-<div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
-<div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/dest_alleppey.jpg')` }}></div>
-<div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-<div className="absolute bottom-stack-md left-stack-md">
-<h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Alleppey</h3>
-</div>
-</div>
-</div>
-</section>
+        </header>
 
-{/* Desktop Gallery & Testimonials (reusing mobile components for now or just adding them) */}
-<GallerySection images={GalleryImages} />
-<TestimonialsSection testimonials={Testimonials} />
+        {/*  Main Content Area  */}
+        <main className="pt-32 md:pt-28 bg-background transition-colors duration-300">
 
-</main>
-{/*  Footer  */}
-<footer className="bg-slate-900 text-white w-full relative z-10 pt-20 pb-10 mt-20 border-t border-white/10">
-  <div className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop">
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
-      
-      {/* Brand Column */}
-      <div className="col-span-1 md:col-span-4 pr-8">
-        <div className="flex items-center gap-3 mb-6">
-          <span className="material-symbols-outlined text-primary text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>directions_bus</span>
-          <div className="flex flex-col">
-            <span className="font-headline-md text-2xl text-white font-black tracking-tight">Ente KSRTC</span>
-            <span className="text-xs text-primary uppercase tracking-widest font-bold">Premium Journey</span>
+          <section className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop py-stack-xl">
+            <div className="flex justify-between items-end mb-stack-lg">
+              <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold text-gray-900 dark:text-white">Top Routes</h2>
+              <a className="text-primary hover:brightness-110 flex items-center gap-1 transition-colors" href="#">View All <span className="material-symbols-outlined text-sm">chevron_right</span></a>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+              {TopRoutes.map((route, idx) => (
+                <div key={idx} className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-white/5 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1 flex flex-col shadow-sm">
+                  <div className="h-40 w-full overflow-hidden relative">
+                    <img src={route.img} alt={`${route.from} to ${route.to}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <div className="absolute bottom-3 left-3 text-white text-xs font-bold px-2.5 py-1 bg-primary/90 rounded-md shadow-md backdrop-blur-sm">
+                      {route.duration}
+                    </div>
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div className="flex justify-between items-center mb-6">
+                      <div className="flex flex-col">
+                        <span className="font-headline-md text-body-lg font-bold text-gray-900 dark:text-white">{route.from}</span>
+                      </div>
+                      <span className="material-symbols-outlined text-primary/70 group-hover:text-primary transition-colors">arrow_right_alt</span>
+                      <div className="flex flex-col text-right">
+                        <span className="font-headline-md text-body-lg font-bold text-gray-900 dark:text-white">{route.to}</span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-end pt-4 border-t border-gray-100 dark:border-white/5 mt-auto">
+                      <div className="flex flex-col">
+                        <span className="font-label-caps text-[10px] text-gray-500 dark:text-white/50 uppercase tracking-wider mb-1">Starting from</span>
+                        <span className="font-headline-md text-headline-md text-primary font-bold">{route.price}</span>
+                      </div>
+                      <button
+                        className="px-5 py-2 bg-primary/10 border border-primary/20 rounded-lg text-primary hover:bg-primary hover:text-white transition-all shadow-sm text-sm font-bold active:scale-95"
+                        onClick={(e) => { e.preventDefault(); handleBookRoute(route.from, route.to); }}
+                      >
+                        Book
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+          {/*  Popular Destinations Grid  */}
+          <section className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop py-stack-xl mb-stack-xl">
+            <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold mb-stack-lg text-gray-900 dark:text-white">Popular Destinations</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter h-auto md:h-[600px]">
+              {/*  Munnar (Large Feature)  */}
+              <div className="relative rounded-xl overflow-hidden group cursor-pointer md:col-span-2 md:row-span-2 h-[400px] md:h-auto border border-white/10 shadow-lg">
+                <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/route_munnar.jpg')` }}></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-stack-lg left-stack-lg">
+                  <h3 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-2 drop-shadow-lg">Munnar</h3>
+                  <p className="text-white/70 font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">The Emerald Hills of Kerala</p>
+                </div>
+              </div>
+              {/*  Kochi  */}
+              <div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
+                <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/dest_kochi.jpg')` }}></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                <div className="absolute bottom-stack-md left-stack-md">
+                  <h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Kochi</h3>
+                </div>
+              </div>
+              {/*  Alleppey  */}
+              <div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
+                <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/dest_alleppey.jpg')` }}></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                <div className="absolute bottom-stack-md left-stack-md">
+                  <h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Alleppey</h3>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Desktop Gallery & Testimonials (reusing mobile components for now or just adding them) */}
+          <GallerySection images={GalleryImages} />
+          <TestimonialsSection testimonials={Testimonials} />
+          
+          <div className="mt-20">
+            <Marquee />
           </div>
-        </div>
-        <p className="text-white/80 font-body-md text-sm leading-relaxed mb-8">
-          Experience the pinnacle of mobility across God's Own Country. We connect communities, empower travelers, and deliver cinematic journeys with unparalleled comfort and safety.
-        </p>
-        <div className="flex gap-4">
-          <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white hover:border-primary transition-all hover:scale-110 shadow-lg">
-            <span className="material-symbols-outlined text-sm">public</span>
-          </a>
-          <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white hover:border-primary transition-all hover:scale-110 shadow-lg">
-            <span className="material-symbols-outlined text-sm">share</span>
-          </a>
-          <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white hover:border-primary transition-all hover:scale-110 shadow-lg">
-            <span className="material-symbols-outlined text-sm">mail</span>
-          </a>
-        </div>
-      </div>
 
-      {/* Links Columns */}
-      <div className="col-span-1 md:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
-        <div>
-          <h4 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-primary"></span> Explore
-          </h4>
-          <ul className="space-y-4">
-            <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Routes</a></li>
-            <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Fleet</a></li>
-            <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Offers</a></li>
-          </ul>
-        </div>
-        
-        <div>
-          <h4 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-primary"></span> Support
-          </h4>
-          <ul className="space-y-4">
-            <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Help Center</a></li>
-            <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Contact</a></li>
-            <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Grievances</a></li>
-          </ul>
-        </div>
+        </main>
+        {/*  Footer  */}
+        <footer className="bg-slate-900 text-white w-full relative z-10 pt-20 pb-10 mt-20 border-t border-white/10">
+          <div className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
 
-        <div className="col-span-2 md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-primary/30 transition-colors duration-500"></div>
-          <h4 className="font-headline-md text-lg font-bold text-white mb-2 relative z-10">Get the App</h4>
-          <p className="text-xs text-white/60 mb-6 relative z-10">Book tickets instantly from your pocket.</p>
-          <div className="flex flex-col gap-3 relative z-10">
-            <button className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white text-white hover:text-black py-2 px-4 rounded-xl transition-all text-sm font-bold border border-white/20">
-              <span className="material-symbols-outlined text-lg">shop</span> Play Store
-            </button>
-            <button className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white text-white hover:text-black py-2 px-4 rounded-xl transition-all text-sm font-bold border border-white/20">
-              <span className="material-symbols-outlined text-lg">apple</span> App Store
-            </button>
+              {/* Brand Column */}
+              <div className="col-span-1 md:col-span-4 pr-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="material-symbols-outlined text-primary text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>directions_bus</span>
+                  <div className="flex flex-col">
+                    <span className="font-headline-md text-2xl text-white font-black tracking-tight">Ente KSRTC</span>
+                    <span className="text-xs text-primary uppercase tracking-widest font-bold">Premium Journey</span>
+                  </div>
+                </div>
+                <p className="text-white/80 font-body-md text-sm leading-relaxed mb-8">
+                  Experience the pinnacle of mobility across God's Own Country. We connect communities, empower travelers, and deliver cinematic journeys with unparalleled comfort and safety.
+                </p>
+                <div className="flex gap-4">
+                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white hover:border-primary transition-all hover:scale-110 shadow-lg">
+                    <span className="material-symbols-outlined text-sm">public</span>
+                  </a>
+                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white hover:border-primary transition-all hover:scale-110 shadow-lg">
+                    <span className="material-symbols-outlined text-sm">share</span>
+                  </a>
+                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white hover:border-primary transition-all hover:scale-110 shadow-lg">
+                    <span className="material-symbols-outlined text-sm">mail</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Links Columns */}
+              <div className="col-span-1 md:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                  <h4 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-primary"></span> Explore
+                  </h4>
+                  <ul className="space-y-4">
+                    <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Routes</a></li>
+                    <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Fleet</a></li>
+                    <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Offers</a></li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h4 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-primary"></span> Support
+                  </h4>
+                  <ul className="space-y-4">
+                    <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Help Center</a></li>
+                    <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Contact</a></li>
+                    <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#"><span className="material-symbols-outlined text-[10px] opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all">arrow_forward_ios</span> Grievances</a></li>
+                  </ul>
+                </div>
+
+                <div className="col-span-2 md:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-primary/30 transition-colors duration-500"></div>
+                  <h4 className="font-headline-md text-lg font-bold text-white mb-2 relative z-10">Get the App</h4>
+                  <p className="text-xs text-white/60 mb-6 relative z-10">Book tickets instantly from your pocket.</p>
+                  <div className="flex flex-col gap-3 relative z-10">
+                    <button className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white text-white hover:text-black py-2 px-4 rounded-xl transition-all text-sm font-bold border border-white/20">
+                      <span className="material-symbols-outlined text-lg">shop</span> Play Store
+                    </button>
+                    <button className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white text-white hover:text-black py-2 px-4 rounded-xl transition-all text-sm font-bold border border-white/20">
+                      <span className="material-symbols-outlined text-lg">apple</span> App Store
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="text-xs text-white/70 font-medium">
+                &copy; {new Date().getFullYear()} Kerala State Road Transport Corporation. All rights reserved.
+              </div>
+              <div className="flex items-center gap-6 text-xs text-white/70 font-medium">
+                <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
+                <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
+                <a href="#" className="hover:text-primary transition-colors">Accessibility</a>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-      <div className="text-xs text-white/70 font-medium">
-        &copy; {new Date().getFullYear()} Kerala State Road Transport Corporation. All rights reserved.
-      </div>
-      <div className="flex items-center gap-6 text-xs text-white/70 font-medium">
-        <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
-        <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
-        <a href="#" className="hover:text-primary transition-colors">Accessibility</a>
-      </div>
-    </div>
-  </div>
-</footer>
+        </footer>
 
 
       </>

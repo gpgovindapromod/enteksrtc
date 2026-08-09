@@ -97,8 +97,11 @@ const DesktopSearchResults = ({
                 cursor: seat.isBooked ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                transition: 'all 0.2s ease',
+                transform: isSelected ? 'scale(1.05)' : 'scale(1)',
               }}
+              className={!seat.isBooked ? "hover:border-emerald-500" : ""}
             >
               {seat.seatLabel}
             </button>
@@ -116,7 +119,7 @@ const DesktopSearchResults = ({
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
 
           {/* Logo */}
-          <div className="flex items-center gap-3 shrink-0 cursor-pointer" onClick={onBack}>
+          <button className="flex items-center gap-3 shrink-0 cursor-pointer appearance-none bg-transparent border-none" onClick={onBack} aria-label="Go Back">
             <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-white">
               <Bus size={24} />
             </div>
@@ -124,7 +127,7 @@ const DesktopSearchResults = ({
               <h1 className="text-xl font-bold font-outfit text-emerald-500 leading-tight">Ente KSRTC</h1>
               <p className="text-[10px] tracking-widest uppercase opacity-60">Premium Journey</p>
             </div>
-          </div>
+          </button>
 
           {/* Search Bar - Compact */}
           <div className="hidden lg:flex flex-col relative">
@@ -177,6 +180,7 @@ const DesktopSearchResults = ({
           <div className="flex items-center gap-4">
             <button
               onClick={toggleTheme}
+              aria-label="Toggle Theme"
               className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-gray-700 dark:text-white"
             >
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
@@ -198,7 +202,7 @@ const DesktopSearchResults = ({
                 <Filter size={18} className="text-emerald-500" />
                 Filters
               </div>
-              <button onClick={clearAllFilters} className="text-xs font-bold text-emerald-500 hover:underline">Reset</button>
+              <button onClick={clearAllFilters} aria-label="Reset Filters" className="text-xs font-bold text-emerald-500 hover:underline">Reset</button>
             </div>
 
             <div className="space-y-8">
@@ -282,12 +286,26 @@ const DesktopSearchResults = ({
           {/* Skeleton Loaders */}
           {isLoading ? (
             [1, 2, 3, 4].map((item) => (
-              <div key={item} className="animate-pulse bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl h-48 w-full shadow-sm"></div>
+              <div key={item} className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 h-auto min-h-[160px] w-full shadow-sm flex flex-col md:flex-row gap-6">
+                <div className="flex-1 space-y-4 py-2">
+                   <div className="h-6 w-32 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
+                   <div className="h-10 w-48 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
+                   <div className="flex items-center gap-4 mt-4">
+                     <div className="h-12 w-20 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
+                     <div className="h-2 flex-1 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
+                     <div className="h-12 w-20 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
+                   </div>
+                </div>
+                <div className="w-full md:w-[240px] flex flex-col justify-end gap-3 md:border-l border-gray-100 dark:border-white/10 md:pl-6 py-2 mt-4 md:mt-0">
+                   <div className="h-10 w-32 rounded bg-gray-200 dark:bg-slate-800 self-end animate-shimmer"></div>
+                   <div className="h-14 w-full rounded-xl bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
+                </div>
+              </div>
             ))
           ) : selectedBus ? (
             !isBookingSuccess ? (
               /* Seat Selection Layout */
-              <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xl">
+              <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xl animate-fade-in-up">
                 <div className="flex justify-between items-center mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
                   <div>
                     <h3 className="text-xl font-bold font-outfit text-gray-900 dark:text-white">{selectedBus.name}</h3>
@@ -351,7 +369,7 @@ const DesktopSearchResults = ({
               </div>
             ) : (
               /* Booking Confirmation Screen */
-              <div className="bg-white dark:bg-slate-900 p-12 rounded-2xl border border-gray-200 dark:border-white/10 text-center shadow-2xl max-w-2xl mx-auto">
+              <div className="bg-white dark:bg-slate-900 p-12 rounded-2xl border border-gray-200 dark:border-white/10 text-center shadow-2xl max-w-2xl mx-auto animate-fade-in-up">
                 <CheckCircle2 size={80} className="text-emerald-500 mx-auto mb-6" />
                 <h2 className="text-3xl font-bold font-outfit text-gray-900 dark:text-white mb-2">Booking Confirmed!</h2>
                 <p className="text-gray-500 dark:text-gray-400 mb-8 text-lg">Your ticket has been booked successfully and added to <strong>My Tickets</strong>.</p>
@@ -381,7 +399,7 @@ const DesktopSearchResults = ({
             filteredBuses.length > 0 ? filteredBuses.map((bus) => (
               <div
                 key={bus.id}
-                className="group bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 hover:border-emerald-500/50 transition-all hover:shadow-2xl hover:shadow-emerald-500/10 flex flex-col md:flex-row shadow-sm"
+                className="group bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 hover:border-emerald-500/50 hover:scale-[1.02] transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/15 flex flex-col md:flex-row shadow-sm"
               >
                 {/* Left Section: Branding & Info */}
                 <div className="flex-1 space-y-4">

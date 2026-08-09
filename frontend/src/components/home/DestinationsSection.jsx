@@ -1,7 +1,7 @@
 import React from 'react';
 
 const DestinationsSection = React.memo(({ destinations }) => (
-  <section className="py-16 bg-white dark:bg-slate-900 transition-colors">
+  <section className="py-16 bg-transparent transition-colors">
     <div className="max-w-7xl mx-auto px-6">
       <div className="text-sm font-bold text-emerald-500 uppercase tracking-widest mb-2">Destinations</div>
       <h2 className="text-3xl font-black font-outfit text-slate-900 dark:text-white mb-8">Popular Destinations from <span className="text-emerald-500">Trivandrum</span></h2>

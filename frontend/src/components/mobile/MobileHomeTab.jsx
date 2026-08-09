@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Bus, Navigation, Clock, CalendarDays, Sun, Moon } from 'lucide-react';
 import MobileBookingWidget from './MobileBookingWidget';
 import GradualBlur from '../GradualBlur';
+import Marquee from '../home/Marquee';
 
 const MobileHomeTab = ({
   origin,
@@ -43,9 +44,9 @@ const MobileHomeTab = ({
   }, [heroImages, setCurrentSlide]);
 
   return (
-    <div className={`font-inter ${theme === 'dark' ? 'dark bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'} min-h-screen overflow-x-hidden`}>
+    <div className={`font-inter ${theme === 'dark' ? 'dark bg-background text-white' : 'bg-background text-slate-900'} min-h-screen overflow-x-hidden`}>
       {/* Mobile Navbar */}
-      <nav className="fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-4 py-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-gray-200 dark:border-white/10 shadow-lg">
+      <nav className="fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-6 py-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-gray-200 dark:border-white/10 shadow-lg">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
@@ -77,7 +78,7 @@ const MobileHomeTab = ({
       </nav>
 
       {/* Hero Section */}
-      <header className="relative min-h-[90vh] flex flex-col pt-24 pb-8 px-4">
+      <header className="relative min-h-[90vh] flex flex-col pt-24 pb-8 px-6">
         <div className="absolute inset-0 z-0 overflow-hidden">
           {heroImages.map((img, index) => (
             <div
@@ -93,7 +94,7 @@ const MobileHomeTab = ({
           <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-2xl font-outfit leading-tight mb-4">
             Experience the <br/><span className="text-emerald-500">Journey</span>
           </h1>
-          <p className="text-base text-white/80 max-w-sm mx-auto drop-shadow-lg font-medium px-4">
+          <p className="text-base text-white/80 max-w-sm mx-auto drop-shadow-lg font-medium px-6">
             Premium mobility across Kerala and beyond. Seamless, comfortable, and cinematic travel.
           </p>
         </div>
@@ -115,7 +116,7 @@ const MobileHomeTab = ({
       </header>
 
       {/* Quick Services Grid */}
-      <div className="px-4 py-8 relative z-20 -mt-12 bg-transparent">
+      <div className="px-6 py-8 relative z-20 -mt-12 bg-transparent">
         <h3 className="text-lg font-bold font-outfit mb-4 text-slate-900 dark:text-white">Quick Services</h3>
         <div className="grid grid-cols-3 gap-3">
           <button 
@@ -157,7 +158,7 @@ const MobileHomeTab = ({
       </div>
 
       {/* Sections Wrapper (to ensure they respect dark mode) */}
-      <div className="bg-slate-50 dark:bg-slate-950 pb-20">
+      <div className="bg-background pb-20">
         <div id="mobile-routes-section">
           <TopRoutesSection routes={TopRoutes} onBookRoute={onBookRoute} />
         </div>
@@ -172,6 +173,10 @@ const MobileHomeTab = ({
 
         <div id="mobile-testimonials-section">
           <TestimonialsSection testimonials={Testimonials} />
+        </div>
+
+        <div className="mt-12">
+          <Marquee />
         </div>
 
         {/* Footer */}

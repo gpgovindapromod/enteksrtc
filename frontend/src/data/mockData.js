@@ -9,8 +9,13 @@ export const GalleryImages = [
   { id: "8", img: "./assets/images/gallery_8.jpg", url: "#", height: 300 },
   { id: "9", img: "./assets/images/gallery_9.jpg", url: "#", height: 380 },
   { id: "10", img: "./assets/images/gallery_10.jpg", url: "#", height: 320 },
+  { id: "11", img: "./assets/images/route_munnar.jpg", url: "#", height: 400 },
+  { id: "12", img: "./assets/images/dest_alleppey.jpg", url: "#", height: 280 },
+  { id: "13", img: "./assets/images/dest_kochi.jpg", url: "#", height: 450 },
+  { id: "14", img: "./assets/images/route_bangalore.jpg", url: "#", height: 320 },
+  { id: "15", img: "./assets/images/dest_varkala.jpg", url: "#", height: 380 },
+  { id: "16", img: "./assets/images/dest_wayanad.jpg", url: "#", height: 500 },
 ];
-
 export const TopRoutes = [
   { from: 'Trivandrum', to: 'Kanyakumari', img: './assets/images/route_kanyakumari.jpg', duration: '2h 30m', price: '₹150' },
   { from: 'Trivandrum', to: 'Palakkad', img: './assets/images/route_palakkad.jpg', duration: '8h 15m', price: '₹450' },

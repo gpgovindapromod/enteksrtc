@@ -88,7 +88,7 @@ const MobileSearchResults = ({
                   setSelectedSeats([...selectedSeats, seat.seatLabel]);
                 }
               }}
-              className={`w-9 h-9 rounded-lg border ${seatBorder} ${seatBg} ${seatColor} font-bold text-xs flex items-center justify-center transition-colors ${seat.isBooked ? 'cursor-not-allowed' : 'cursor-pointer hover:border-emerald-500'}`}
+              className={`w-11 h-11 rounded-lg border ${seatBorder} ${seatBg} ${seatColor} font-bold text-xs flex items-center justify-center transition-colors ${seat.isBooked ? 'cursor-not-allowed' : 'cursor-pointer hover:border-emerald-500'}`}
             >
               {seat.seatLabel}
             </button>
@@ -253,7 +253,7 @@ const MobileSearchResults = ({
               </div>
 
               <div className="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-slate-950">
-                <div className="border-2 border-gray-200 dark:border-white/10 rounded-3xl p-6 bg-white dark:bg-slate-900 max-w-[280px] mx-auto shadow-inner relative pb-10">
+                <div className="border-2 border-gray-200 dark:border-white/10 rounded-3xl p-6 bg-white dark:bg-slate-900 max-w-[320px] mx-auto shadow-inner relative pb-10">
                    <div className="text-right mb-6 text-[10px] font-black text-gray-400 dark:text-gray-500 tracking-widest border-b border-gray-100 dark:border-slate-800 pb-2">STEERING ☸</div>
                    {renderSeatGrid()}
                 </div>

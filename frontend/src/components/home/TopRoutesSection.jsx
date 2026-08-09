@@ -2,15 +2,15 @@ import React from 'react';
 import { CalendarDays } from 'lucide-react';
 
 const TopRoutesSection = React.memo(({ routes, onBookRoute }) => (
-  <section className="py-16 bg-slate-50 dark:bg-slate-950 transition-colors">
+  <section className="py-16 bg-transparent transition-colors">
     <div className="max-w-7xl mx-auto px-6">
       <div className="text-sm font-bold text-emerald-500 uppercase tracking-widest mb-2">Routes</div>
       <h2 className="text-3xl font-black font-outfit text-slate-900 dark:text-white mb-8">Top Routes</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {routes.map((route, idx) => (
-          <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden hover:-translate-y-1 hover:shadow-xl transition-all group flex flex-col shadow-sm cursor-pointer">
+          <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden hover:-translate-y-1 hover:shadow-2xl hover:shadow-emerald-500/20 transition-all duration-300 group flex flex-col shadow-sm cursor-pointer">
             <div className="h-48 w-full overflow-hidden relative">
-              <img src={route.img} alt={`${route.from} to ${route.to}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" width="400" height="250" />
+              <img src={route.img} alt={`${route.from} to ${route.to}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy" width="400" height="250" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
               <div className="absolute bottom-3 left-3 text-white text-xs font-bold px-3 py-1 bg-emerald-500/90 rounded-lg shadow-md backdrop-blur-sm">
                 {route.duration}
