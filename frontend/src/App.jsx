@@ -372,10 +372,13 @@ function App() {
           <div className="absolute inset-0 z-0 overflow-hidden">
 
             {heroImages.map((img, index) => (
-              <div
+              <img
                 key={index}
-                className={`w-full h-full absolute inset-0 bg-cover bg-center transition-opacity duration-1000 scale-105 ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-                style={{ backgroundImage: `url(${img})` }}
+                src={img}
+                alt="Hero Background"
+                className={`w-full h-full object-cover object-center absolute inset-0 transition-opacity duration-1000 scale-105 ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                fetchPriority={index === 0 ? "high" : "auto"}
+                loading={index === 0 ? "eager" : "lazy"}
               />
             ))}
 
