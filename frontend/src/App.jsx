@@ -168,10 +168,10 @@ function App() {
   }, []);
 
   const heroImages = [
-    './assets/images/premium_hero_1.jpg',
-    './assets/images/premium_hero_2.jpg',
-    './assets/images/premium_hero_3.jpg',
-    './assets/images/premium_hero_4.jpg'
+    './assets/images/premium_hero_1.webp',
+    './assets/images/premium_hero_2.webp',
+    './assets/images/premium_hero_3.webp',
+    './assets/images/premium_hero_4.webp'
   ];
 
   useEffect(() => {
@@ -537,7 +537,7 @@ function App() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter h-auto md:h-[600px]">
               {/*  Munnar (Large Feature)  */}
               <div className="relative rounded-xl overflow-hidden group cursor-pointer md:col-span-2 md:row-span-2 h-[400px] md:h-auto border border-white/10 shadow-lg">
-                <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/route_munnar.jpg')` }}></div>
+                <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/route_munnar.webp')` }}></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                 <div className="absolute bottom-stack-lg left-stack-lg">
                   <h3 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-2 drop-shadow-lg">Munnar</h3>
@@ -546,7 +546,7 @@ function App() {
               </div>
               {/*  Kochi  */}
               <div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
-                <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/dest_kochi.jpg')` }}></div>
+                <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/dest_kochi.webp')` }}></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                 <div className="absolute bottom-stack-md left-stack-md">
                   <h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Kochi</h3>
@@ -554,7 +554,7 @@ function App() {
               </div>
               {/*  Alleppey  */}
               <div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
-                <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/dest_alleppey.jpg')` }}></div>
+                <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/dest_alleppey.webp')` }}></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                 <div className="absolute bottom-stack-md left-stack-md">
                   <h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Alleppey</h3>
