@@ -18,7 +18,7 @@ const GallerySection = React.memo(({ images }) => (
         backgroundColor="transparent"
         borderRadius={32} 
         glowRadius={40} 
-        animated={true}
+        animated={false}
       >
         <div className="glass-panel rounded-[32px] p-4 md:p-8 relative z-10">
           <Masonry
@@ -29,7 +29,7 @@ const GallerySection = React.memo(({ images }) => (
             animateFrom="bottom"
             scaleOnHover={true}
             hoverScale={1.05}
-            blurToFocus={true}
+            blurToFocus={false}
             colorShiftOnHover={false}
           />
         </div>
