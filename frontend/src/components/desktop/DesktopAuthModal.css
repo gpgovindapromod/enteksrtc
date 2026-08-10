@@ -1,0 +1,280 @@
+.boarding-pass-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.boarding-pass-wrapper {
+  display: flex;
+  width: 850px;
+  max-width: 95vw;
+  height: 620px;
+  background: var(--surface-color, #1e293b);
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-primary, #f8fafc);
+}
+
+/* The perforation circles on top and bottom */
+.boarding-pass-divider {
+  position: relative;
+  width: 2px;
+  background-image: linear-gradient(to bottom, #334155 50%, transparent 50%);
+  background-size: 2px 12px;
+  background-repeat: repeat-y;
+  z-index: 10;
+}
+
+.boarding-pass-divider::before,
+.boarding-pass-divider::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(15, 23, 42, 0.7);
+  border-radius: 50%;
+  box-shadow: inset 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.boarding-pass-divider::before {
+  top: -20px;
+}
+
+.boarding-pass-divider::after {
+  bottom: -20px;
+}
+
+.bp-main {
+  flex: 0 0 68%;
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.bp-stub {
+  flex: 0 0 32%;
+  background: var(--bg-color, #0f172a);
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+/* Typography styles to mimic ticket */
+.bp-label {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary, #94a3b8);
+  margin-bottom: 4px;
+}
+
+.bp-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-primary, #f8fafc);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.bp-airline {
+  font-size: 14px;
+  font-weight: 700;
+  color: #10b981;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Tabs */
+.bp-tabs {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 32px;
+  border-bottom: 2px solid #334155;
+}
+
+.bp-tab {
+  padding: 8px 0;
+  font-weight: 600;
+  color: var(--text-secondary, #94a3b8);
+  position: relative;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+}
+
+.bp-tab.active {
+  color: var(--text-primary, #f8fafc);
+}
+
+.bp-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #10b981;
+}
+
+/* Form Styles */
+.bp-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.bp-input-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.bp-input-group {
+  flex: 1;
+  position: relative;
+}
+
+.bp-input {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #334155;
+  padding: 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary, #f8fafc);
+  background: transparent;
+  transition: border-color 0.3s;
+}
+
+.bp-input:focus {
+  outline: none;
+  border-bottom-color: #10b981;
+}
+
+.bp-input::placeholder {
+  color: #475569;
+  font-weight: 400;
+}
+
+.bp-button {
+  background: #10b981;
+  color: #0f172a;
+  border: none;
+  padding: 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s;
+  margin-top: auto;
+}
+
+.bp-button:hover {
+  background: #34d399;
+  transform: translateY(-2px);
+}
+
+/* Stub elements */
+.bp-stub-top {
+  text-align: center;
+  width: 100%;
+}
+
+.bp-barcode {
+  width: 100%;
+  height: 60px;
+  background: repeating-linear-gradient(
+    90deg,
+    #94a3b8,
+    #94a3b8 2px,
+    transparent 2px,
+    transparent 6px,
+    #94a3b8 6px,
+    #94a3b8 10px,
+    transparent 10px,
+    transparent 12px,
+    #94a3b8 12px,
+    #94a3b8 14px,
+    transparent 14px,
+    transparent 20px
+  );
+  margin: 24px 0 12px 0;
+  opacity: 0.8;
+}
+
+.bp-barcode-text {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 0.4em;
+  color: #94a3b8;
+  font-weight: bold;
+}
+
+.bp-flight-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  border-top: 1px dashed #334155;
+  border-bottom: 1px dashed #334155;
+  padding: 16px 0;
+  margin-bottom: 24px;
+}
+
+.bp-flight-info div {
+  text-align: center;
+}
+
+.bp-flight-info .val {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary, #f8fafc);
+}
+
+.bp-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 20;
+}
+
+.bp-close:hover {
+  color: #ef4444;
+}
+
+.bp-subtext {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 16px;
+  text-align: center;
+}

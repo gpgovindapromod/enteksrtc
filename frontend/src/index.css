@@ -5,9 +5,9 @@
 /* src/index.css */
 :root {
   /* KSRTC Premium Color Palette */
-  --primary: #0b6e4f;
-  --primary-hover: #08553d;
-  --primary-light: #dceee4;
+  --primary: #0e5b92;
+  --primary-hover: #059669;
+  --primary-light: #d1fae5;
   --secondary: #d1483c;
   --secondary-hover: #b13a30;
   --secondary-light: #fbeceb;
@@ -48,18 +48,18 @@
 }
 
 [data-theme="dark"] {
-  --primary: #0b6e4f;
-  --primary-hover: #08553d;
+  --primary: #10b981;
+  --primary-hover: #059669;
   --primary-light: #064e3b;
   --secondary: #d1483c;
   --secondary-hover: #b13a30;
   --secondary-light: #5a1914;
   --dark: #f6f8f7;
-  --light: #1f2a24;
+  --light: #020617;
   --gray: #94a3b8;
   --gray-light: #334155;
   --gray-border: #475569;
-  --white: #2b3a32;
+  --white: #0f172a;
 
   --glass-bg: rgba(9, 9, 11, 0.35);
   --glass-border: rgba(255, 255, 255, 0.08);
@@ -325,7 +325,7 @@ button {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(4, 120, 87, 0.4) 50%, rgba(15, 23, 42, 0.8) 100%);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.4) 50%, rgba(15, 23, 42, 0.8) 100%);
   backdrop-filter: blur(1px);
   z-index: 2;
 }
@@ -575,7 +575,7 @@ button {
   outline: none;
   border-color: var(--primary);
   background: var(--white);
-  box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.01);
+  box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.15), inset 0 2px 4px rgba(0, 0, 0, 0.01);
 }
 
 .input-field:disabled {
@@ -630,7 +630,7 @@ button {
   width: 100%;
   padding: 16px;
   border: none;
-  background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-hover) 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
   color: var(--white);
   font-size: 1.1rem;
   font-weight: 700;
@@ -661,7 +661,7 @@ button {
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--secondary-light) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(234, 88, 12, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
@@ -719,7 +719,7 @@ button {
 
 .route-card:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(4, 120, 87, 0.3);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(15, 23, 42, 0.3);
 }
 
 .route-img {
@@ -840,7 +840,7 @@ button {
 }
 
 .dest-card:hover {
-  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(4, 120, 87, 0.3);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(15, 23, 42, 0.3);
   transform: translateY(-8px);
 }
 
@@ -867,7 +867,7 @@ button {
 }
 
 .dest-card:hover .dest-overlay {
-  background: linear-gradient(to top, rgba(4, 120, 87, 0.95) 0%, rgba(15, 23, 42, 0.2) 60%);
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.2) 60%);
 }
 
 .dest-name {
@@ -911,7 +911,7 @@ button {
 
 .testimonial-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(4, 120, 87, 0.1);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
 }
 
 .quote-mark {
@@ -1152,7 +1152,7 @@ button {
   }
 
   .hero-overlay {
-    background: linear-gradient(to bottom, rgba(4, 120, 87, 0.5) 0%, rgba(15, 23, 42, 0.7) 100%);
+    background: linear-gradient(to bottom, rgba(15, 23, 42, 0.5) 0%, rgba(15, 23, 42, 0.7) 100%);
   }
 
   .hero-title {
@@ -1320,7 +1320,7 @@ button:active,
   border-radius: 50px;
   padding: 12px 24px;
   font-weight: 700;
-  box-shadow: 0 8px 24px rgba(4, 120, 87, 0.4);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.4);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1332,7 +1332,7 @@ button:active,
 .desktop-preview-toggle-button:hover {
   background-color: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(4, 120, 87, 0.5);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.5);
 }
 
 .desktop-back-toggle {
@@ -1640,7 +1640,7 @@ button:active,
   color: white;
   border-radius: 20px;
   padding: 24px 20px;
-  box-shadow: 0 8px 24px rgba(4, 120, 87, 0.25);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
   margin-bottom: 20px;
 }
 
@@ -1704,7 +1704,7 @@ button:active,
 }
 
 .action-icon.cargo {
-  background-color: rgba(4, 120, 87, 0.1);
+  background-color: rgba(15, 23, 42, 0.1);
   color: var(--primary);
 }
 
@@ -1804,7 +1804,7 @@ button:active,
 }
 
 .bwm-trip-type.active {
-  background-color: rgba(4, 120, 87, 0.1);
+  background-color: rgba(15, 23, 42, 0.1);
   border-color: #047857;
   color: #047857;
 }
@@ -1937,7 +1937,7 @@ button:active,
 }
 
 .bwm-quick-date-card.active {
-  background-color: rgba(4, 120, 87, 0.1);
+  background-color: rgba(15, 23, 42, 0.1);
   border-color: #047857;
 }
 
@@ -1988,8 +1988,8 @@ button:active,
 
 /* About Swift Banner */
 .about-kerala-swift-banner {
-  background-color: rgba(4, 120, 87, 0.05);
-  border: 1px solid rgba(4, 120, 87, 0.15);
+  background-color: rgba(15, 23, 42, 0.05);
+  border: 1px solid rgba(15, 23, 42, 0.15);
   border-radius: 16px;
   padding: 16px;
   display: flex;
@@ -2378,7 +2378,7 @@ button:active,
 }
 
 .bus-brand-tag {
-  background-color: rgba(4, 120, 87, 0.1);
+  background-color: rgba(15, 23, 42, 0.1);
   color: var(--primary);
   font-size: 0.65rem;
   font-weight: 800;
@@ -3110,7 +3110,7 @@ button:active,
 }
 
 .ticket-price-badge {
-  background-color: rgba(4, 120, 87, 0.1);
+  background-color: rgba(15, 23, 42, 0.1);
   color: var(--primary);
   font-weight: 800;
   font-size: 0.85rem;
@@ -3352,7 +3352,7 @@ button:active,
 }
 
 .btn-explore-book {
-  background-color: rgba(4, 120, 87, 0.1);
+  background-color: rgba(15, 23, 42, 0.1);
   color: var(--primary);
   border: none;
   border-radius: 8px;
@@ -3387,7 +3387,7 @@ button:active,
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background-color: rgba(4, 120, 87, 0.1);
+  background-color: rgba(15, 23, 42, 0.1);
   color: var(--primary);
   display: flex;
   align-items: center;
@@ -4287,7 +4287,7 @@ button:active,
 .banner-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(4, 120, 87, 0.1), rgba(4, 120, 87, 0.9));
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.1), rgba(15, 23, 42, 0.9));
 }
 
 .banner-content {
@@ -4430,7 +4430,7 @@ button:active,
   outline: none;
   border-color: var(--primary);
   background: var(--white);
-  box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.1);
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
 }
 
 .password-toggle {
@@ -4700,7 +4700,7 @@ button:active,
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(4, 120, 87, 0.3);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.3);
 }
 
 .app-header-icon {

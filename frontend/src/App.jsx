@@ -327,7 +327,7 @@ function App() {
         <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-4 ${isScrolled ? "py-2" : "py-4"}`} id="navbar">
           <div className={`flex justify-between items-center px-6 h-20 mx-auto transition-all duration-500 ease-in-out ${isScrolled ? "bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-lg rounded-full max-w-4xl" : "w-full max-w-container-max"}`} id="navbar-container">
             {/*  Brand (Left)  */}
-            <div className="flex items-center gap-3 cursor-pointer active:scale-95 transition-transform duration-300 w-1/4">
+            <div className="flex items-center gap-3 cursor-pointer active:scale-95 transition-transform duration-300">
               <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>directions_bus</span>
               <div className="flex flex-col">
                 <span className="font-headline-md text-headline-md font-bold text-primary leading-none">Ente KSRTC</span>
@@ -335,15 +335,15 @@ function App() {
               </div>
             </div>
             {/*  Center Navigation Links  */}
-            <div className="hidden md:flex justify-center gap-8 w-2/4">
+            <div className="hidden lg:flex justify-center gap-8 flex-1 px-4">
               <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Home</a>
               <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Routes</a>
               <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Contact</a>
               <button onClick={() => navigate('/dashboard')} className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`}>Experience Dashboard</button>
             </div>
             {/*  Right Actions  */}
-            <div className="flex items-center justify-end gap-6 w-1/4">
-              <a className={`hidden md:block drop-shadow-md text-sm hover:text-primary transition-colors duration-300 font-medium ${isScrolled ? 'text-gray-600 dark:text-white/70' : 'text-white/80'}`} href="#">Kerala Tourism</a>
+            <div className="flex items-center justify-end gap-5">
+              <a className={`hidden lg:block drop-shadow-md text-sm hover:text-primary transition-colors duration-300 font-medium ${isScrolled ? 'text-gray-600 dark:text-white/70' : 'text-white/80'}`} href="#">Kerala Tourism</a>
               {/*  Theme Toggle  */}
 
               {isUserLoggedIn ? (

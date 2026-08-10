@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { X, Bus, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import './DesktopAuthModal.css';
 
 const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup'
@@ -10,175 +11,220 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLoginSuccess();
-    onClose();
+    if (onLoginSuccess) onLoginSuccess();
+    if (onClose) onClose();
   };
 
   return (
-    <div className="desktop-auth-overlay" onClick={onClose}>
-      <div className="desktop-auth-modal" onClick={e => e.stopPropagation()}>
-        <button className="auth-close-btn" onClick={onClose}>
+    <div className="boarding-pass-overlay" onClick={onClose}>
+      <div className="boarding-pass-wrapper animate-fade-in-up" onClick={e => e.stopPropagation()}>
+        <button className="bp-close" onClick={onClose}>
           <X size={24} />
         </button>
 
-        <div className={`auth-modal-content ${authMode}`}>
-          {/* Left Side: Image/Branding */}
-          <div className="auth-banner">
-            <div className="banner-overlay"></div>
-            <div className="banner-content">
-              <h2>Ente KSRTC</h2>
-              <p>Your premium journey begins here.</p>
-            </div>
+        {/* Main Body (Left) */}
+        <div className="bp-main">
+          <div className="bp-airline">
+            <Bus size={18} /> ENTE KSRTC PREMIUM
+          </div>
+          <h2 className="bp-title">
+            {authMode === 'login' ? 'Passenger Check-In' : 'New Passenger Registration'}
+          </h2>
+
+          <div className="bp-tabs">
+            <button 
+              className={`bp-tab ${authMode === 'login' ? 'active' : ''}`}
+              onClick={() => setAuthMode('login')}
+            >
+              Sign In
+            </button>
+            <button 
+              className={`bp-tab ${authMode === 'signup' ? 'active' : ''}`}
+              onClick={() => setAuthMode('signup')}
+            >
+              Sign Up
+            </button>
           </div>
 
-          {/* Right Side: Form */}
-          <div className="auth-form-container">
-            <div className="auth-header">
-              <h2>{authMode === 'login' ? 'Welcome Back' : 'Create Account'}</h2>
-              <p>{authMode === 'login' ? 'Please sign in to your account' : 'Join us for a seamless travel experience'}</p>
-            </div>
+          <form onSubmit={handleSubmit} className="bp-form">
+            {authMode === 'signup' && (
+              <>
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+                  <button 
+                    type="button"
+                    className={`bp-subtab ${signupTab === 'mandatory' ? 'text-emerald-500 font-bold border-b-2 border-emerald-500' : 'text-slate-400'}`}
+                    onClick={() => setSignupTab('mandatory')}
+                    style={{ paddingBottom: '4px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                  >
+                    Mandatory Info
+                  </button>
+                  <button 
+                    type="button"
+                    className={`bp-subtab ${signupTab === 'optional' ? 'text-emerald-500 font-bold border-b-2 border-emerald-500' : 'text-slate-400'}`}
+                    onClick={() => setSignupTab('optional')}
+                    style={{ paddingBottom: '4px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                  >
+                    Optional Info
+                  </button>
+                </div>
 
-            <div className="auth-tabs">
-              <button 
-                className={`auth-tab ${authMode === 'login' ? 'active' : ''}`}
-                onClick={() => setAuthMode('login')}
-              >
-                Sign In
-              </button>
-              <button 
-                className={`auth-tab ${authMode === 'signup' ? 'active' : ''}`}
-                onClick={() => setAuthMode('signup')}
-              >
-                Sign Up
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="modern-auth-form">
-              {authMode === 'signup' && (
-                <>
-                  <div className="signup-sub-tabs">
-                    <button 
-                      type="button"
-                      className={`sub-tab ${signupTab === 'mandatory' ? 'active' : ''}`}
-                      onClick={() => setSignupTab('mandatory')}
-                    >
-                      MANDATORY INFO
-                    </button>
-                    <button 
-                      type="button"
-                      className={`sub-tab ${signupTab === 'optional' ? 'active' : ''}`}
-                      onClick={() => setSignupTab('optional')}
-                    >
-                      OPTIONAL INFO
-                    </button>
-                  </div>
-
-                  {signupTab === 'mandatory' ? (
-                    <div className="tab-pane fade-in">
-                      <div className="input-group">
-                        <input type="text" aria-label="Name" placeholder="NAME" required />
+                {signupTab === 'mandatory' ? (
+                  <div className="fade-in" style={{ overflowY: 'auto', paddingRight: '8px', maxHeight: '320px' }}>
+                    <div className="bp-input-row">
+                      <div className="bp-input-group">
+                        <label className="bp-label">Name</label>
+                        <input type="text" className="bp-input" placeholder="NAME" required />
                       </div>
-                      <div className="input-group">
-                        <input type="number" aria-label="Age" placeholder="Age" required />
+                      <div className="bp-input-group">
+                        <label className="bp-label">Age</label>
+                        <input type="number" className="bp-input" placeholder="AGE" required />
                       </div>
-                      <div className="input-group">
-                        <input type="email" aria-label="Email ID" placeholder="EMAIL ID" required />
+                    </div>
+                    
+                    <div className="bp-input-row">
+                      <div className="bp-input-group">
+                        <label className="bp-label">Email ID</label>
+                        <input type="email" className="bp-input" placeholder="EMAIL ID" required />
                       </div>
-                      <div className="input-group">
-                        <input type={showPassword ? "text" : "password"} aria-label="Password" placeholder="Password" required />
-                        <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
-                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                      </div>
-                      <div className="input-group select-group">
-                        <label className="floating-label">GENDER</label>
-                        <select required>
+                      <div className="bp-input-group">
+                        <label className="bp-label">Gender</label>
+                        <select className="bp-input bg-transparent" required>
                           <option value="Male">Male</option>
                           <option value="Female">Female</option>
                           <option value="Other">Other</option>
                         </select>
                       </div>
                     </div>
-                  ) : (
-                    <div className="tab-pane fade-in">
-                      <div className="input-group">
-                        <input type="text" aria-label="GST Company" placeholder="GST COMPANY" />
-                      </div>
-                      <div className="input-group">
-                        <input type="text" aria-label="GST Number" placeholder="GST NUMBER" />
-                      </div>
-                      
-                      <div className="date-dropdown-group">
-                        <label>DATE OF BIRTH</label>
-                        <div className="date-dropdowns">
-                          <select><option>Day</option><option>01</option><option>02</option></select>
-                          <select><option>Month</option><option>Jan</option><option>Feb</option></select>
-                          <select><option>Year</option><option>2000</option><option>1999</option></select>
-                        </div>
-                      </div>
 
-                      <div className="date-dropdown-group">
-                        <label>DATE OF ANNIVERSARY</label>
-                        <div className="date-dropdowns">
-                          <select><option>Day</option><option>01</option><option>02</option></select>
-                          <select><option>Month</option><option>Jan</option><option>Feb</option></select>
-                          <select><option>Year</option><option>2000</option><option>1999</option></select>
+                    <div className="bp-input-row">
+                      <div className="bp-input-group" style={{ position: 'relative' }}>
+                        <label className="bp-label">Password</label>
+                        <input type={showPassword ? "text" : "password"} className="bp-input" placeholder="PASSWORD" required />
+                        <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '0', bottom: '12px', color: '#94a3b8', background: 'none', border: 'none' }}>
+                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="fade-in" style={{ overflowY: 'auto', paddingRight: '8px', maxHeight: '320px' }}>
+                    <div className="bp-input-row">
+                      <div className="bp-input-group">
+                        <label className="bp-label">GST Company</label>
+                        <input type="text" className="bp-input" placeholder="GST COMPANY" />
+                      </div>
+                      <div className="bp-input-group">
+                        <label className="bp-label">GST Number</label>
+                        <input type="text" className="bp-input" placeholder="GST NUMBER" />
+                      </div>
+                    </div>
+
+                    <div className="bp-input-row" style={{ marginBottom: '16px' }}>
+                      <div className="bp-input-group">
+                        <label className="bp-label">Date of Birth</label>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}><option>Day</option><option>01</option><option>02</option></select>
+                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}><option>Month</option><option>Jan</option><option>Feb</option></select>
+                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}><option>Year</option><option>2000</option><option>1999</option></select>
                         </div>
                       </div>
                     </div>
-                  )}
-                </>
-              )}
-              
-              {authMode === 'login' && (
-                <>
-                  <div className="input-group">
-                    <Mail className="input-icon" size={20} />
-                    <input type="email" aria-label="Email Address" placeholder="Email Address" required />
+                    
+                    <div className="bp-input-row">
+                      <div className="bp-input-group">
+                        <label className="bp-label">Date of Anniversary</label>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}><option>Day</option><option>01</option><option>02</option></select>
+                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}><option>Month</option><option>Jan</option><option>Feb</option></select>
+                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}><option>Year</option><option>2000</option><option>1999</option></select>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+                )}
+              </>
+            )}
 
-                  <div className="input-group">
-                    <Lock className="input-icon" size={20} />
-                    <input 
-                      type={showPassword ? "text" : "password"} 
-                      placeholder="Password" 
-                      required 
-                    />
-                    <button 
-                      type="button" 
-                      className="password-toggle"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
+            {authMode === 'login' && (
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div className="bp-input-row">
+                  <div className="bp-input-group">
+                    <label className="bp-label">Email Address</label>
+                    <input type="email" className="bp-input" placeholder="Email Address" required />
+                  </div>
+                </div>
+
+                <div className="bp-input-row" style={{ marginBottom: '16px' }}>
+                  <div className="bp-input-group" style={{ position: 'relative' }}>
+                    <label className="bp-label">Password</label>
+                    <input type={showPassword ? "text" : "password"} className="bp-input" placeholder="Password" required />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '0', bottom: '12px', color: '#94a3b8', background: 'none', border: 'none' }}>
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
-                  
-                  <div className="form-options">
-                    <label className="remember-me">
-                      <input type="checkbox" aria-label="Remember me" /> Remember me
-                    </label>
-                    <a href="#" className="forgot-password">Forgot Password?</a>
-                  </div>
-                </>
-              )}
-
-              <button type="submit" className="btn-primary auth-submit-btn">
-                {authMode === 'login' ? 'Sign In' : 'Create Account'}
-              </button>
-
-              <div className="auth-divider">
-                <span>or continue with</span>
+                </div>
+                
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', fontSize: '12px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94a3b8', cursor: 'pointer' }}>
+                    <input type="checkbox" aria-label="Remember me" style={{ accentColor: '#10b981' }} /> Remember me
+                  </label>
+                  <a href="#" style={{ color: '#10b981', textDecoration: 'none' }}>Forgot Password?</a>
+                </div>
               </div>
+            )}
 
-              <div className="social-auth">
-                <button type="button" className="btn-social google">
+            <div style={{ display: 'flex', gap: '16px', marginTop: 'auto' }}>
+              <button type="submit" className="bp-button" style={{ flex: 1 }}>
+                {authMode === 'login' ? 'Sign In' : 'Create Account'} <ArrowRight size={18} className="inline ml-2" />
+              </button>
+              
+              {authMode === 'login' && (
+                <button type="button" className="bp-button" style={{ background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                   <img src="/assets/images/google_icon.svg" alt="Google" width="18" />
                   Google
                 </button>
-              </div>
-            </form>
+              )}
+            </div>
+          </form>
+        </div>
+
+        {/* Divider with perforations */}
+        <div className="boarding-pass-divider"></div>
+
+        {/* Ticket Stub (Right) */}
+        <div className="bp-stub">
+          <div className="bp-stub-top">
+            <div className="bp-label">Boarding Pass</div>
+            <div className="bp-title" style={{ fontSize: '20px' }}>FIRST CLASS</div>
+            
+            <div className="bp-barcode"></div>
+            <div className="bp-barcode-text">KSRTC-90210-VIP</div>
+          </div>
+
+          <div className="bp-flight-info">
+            <div>
+              <div className="bp-label">CLASS</div>
+              <div className="val text-[#10b981]">VIP</div>
+            </div>
+            <div>
+              <div className="bp-label">GATE</div>
+              <div className="val">A1</div>
+            </div>
+            <div>
+              <div className="bp-label">SEAT</div>
+              <div className="val">TBD</div>
+            </div>
+          </div>
+
+          <div>
+            <div className="bp-label text-center">Status</div>
+            <div className="font-bold text-emerald-500 text-center">
+              {authMode === 'login' ? 'AWAITING CHECK-IN' : 'PENDING REGISTRATION'}
+            </div>
+            <p className="bp-subtext">Present this ticket at the counter for seamless travel.</p>
           </div>
         </div>
+
       </div>
     </div>
   );
