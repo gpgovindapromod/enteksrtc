@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useAuthStore } from './store/useAuthStore';
+import { useBookingStore } from './store/useBookingStore';
+import { useAppStore } from './store/useAppStore';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import {
   Bus,
   ArrowRightLeft,
@@ -58,20 +62,35 @@ import { useTheme } from './context/ThemeContext';
 
 function App() {
   const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Derived state from routes
+  const activeMobileTab = location.pathname === '/profile' ? 'profile' : location.pathname === '/tickets' ? 'tickets' : 'home';
+  const isSearching = location.pathname === '/search';
+  const showDesktopSearch = location.pathname === '/search';
+  const showDashboard = location.pathname === '/dashboard';
+
   const [isLoading, setIsLoading] = useState(true);
-  const [tripType, setTripType] = useState('one-way');
+    const { 
+    origin, setOrigin, destination, setDestination, journeyDate, setJourneyDate, 
+    tripType, setTripType, selectedBus, setSelectedBus, selectedSeats, setSelectedSeats, 
+    isBookingSuccess, setIsBookingSuccess, activeBookings, addActiveBooking, removeActiveBooking
+  } = useBookingStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Mobile WebApp States
-  const [isMobile, setIsMobile] = useState(false);
-  const [forceMobilePreview, setForceMobilePreview] = useState(false);
-  const [activeMobileTab, setActiveMobileTab] = useState('home');
-  const [language, setLanguage] = useState('en');
-  const [hasActivatedWebApp, setHasActivatedWebApp] = useState(false);
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+    const { 
+    isMobile, setIsMobile, forceMobilePreview, setForceMobilePreview, 
+    language, setLanguage, hasActivatedWebApp, setHasActivatedWebApp, 
+    isScrolled, setIsScrolled, showLiveTracking, setShowLiveTracking, 
+    trackingStep, setTrackingStep, showNotifications, setShowNotifications, 
+    showTimingsModal, setShowTimingsModal, expandedTicketId, setExpandedTicketId, 
+    faqExpanded, setFaqExpanded 
+  } = useAppStore();
+    const { isUserLoggedIn, showLoginModal, setIsUserLoggedIn, setShowLoginModal } = useAuthStore();
+  
 
   useEffect(() => {
     const handleScroll = () => {
@@ -94,22 +113,14 @@ function App() {
       onSearch={() => {
         setSelectedSeats([]);
         setHasActivatedWebApp(true);
-        setIsSearching(true);
+        navigate('/search');
       }}
       t={t}
     />
   );
 
   // Search, Selection & Checkout States
-  const [origin, setOrigin] = useState('');
-  const [destination, setDestination] = useState('');
-  const [journeyDate, setJourneyDate] = useState(new Date().toISOString().split('T')[0]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [showDesktopSearch, setShowDesktopSearch] = useState(false);
-  const [showDashboard, setShowDashboard] = useState(false);
-  const [selectedBus, setSelectedBus] = useState(null);
-  const [selectedSeats, setSelectedSeats] = useState([]);
-  const [isBookingSuccess, setIsBookingSuccess] = useState(false);
+  
   const [searchError, setSearchError] = useState('');
 
   const handleSearchClick = () => {
@@ -127,34 +138,14 @@ function App() {
     setSelectedBus(null);
     setSelectedSeats([]);
     setIsBookingSuccess(false);
-    setShowDesktopSearch(true);
+    navigate('/search');
   };
 
-  const [showLiveTracking, setShowLiveTracking] = useState(false);
-  const [trackingStep, setTrackingStep] = useState(0);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [showTimingsModal, setShowTimingsModal] = useState(false);
+  
   const [showDesktopTicketsModal, setShowDesktopTicketsModal] = useState(false);
 
   // Profile accordion state
-  const [faqExpanded, setFaqExpanded] = useState({ 0: false, 1: false, 2: false });
-
-  // Ticket status list
-  const [activeBookings, setActiveBookings] = useState([
-    {
-      id: 'KSRTC-9481023',
-      from: 'Trivandrum',
-      to: 'Bangalore',
-      date: '2026-08-05',
-      time: '18:30',
-      busType: 'K-Swift Premium AC Sleeper',
-      seats: ['S5', 'S6'],
-      price: '₹2,900',
-      qrCode: 'KSRTC-9481023-TVM-BLR-050826'
-    }
-  ]);
-  const [expandedTicketId, setExpandedTicketId] = useState(null);
-
+  
   const t = TRANSLATIONS[language] || TRANSLATIONS.en;
 
   // Screen size resize handler
@@ -263,12 +254,12 @@ function App() {
       price: `₹${(selectedSeats.length * selectedBus.fare).toLocaleString()}`,
       qrCode: `KSRTC-${Math.floor(1000000 + Math.random() * 9000000)}-${origin.substring(0, 3).toUpperCase()}-${destination.substring(0, 3).toUpperCase()}-${journeyDate.replace(/-/g, '')}`
     };
-    setActiveBookings([newBooking, ...activeBookings]);
+    addActiveBooking(newBooking);
     setIsBookingSuccess(true);
   };
 
   const handleCancelBooking = (bookingId) => {
-    setActiveBookings(activeBookings.filter(b => b.id !== bookingId));
+    removeActiveBooking(bookingId);
   };
 
   if (isLoading) {
@@ -294,7 +285,7 @@ function App() {
     if (showDashboard) {
       return (
         <div style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 99999, overflowY: 'auto', backgroundColor: 'var(--bg-color)' }}>
-          <button onClick={() => setShowDashboard(false)} className="fixed bottom-6 right-6 z-[60] bg-white text-emerald-500 px-4 py-2 rounded-xl font-bold shadow-xl border border-emerald-500 hover:scale-105 active:scale-95 transition-all">Back to App</button>
+          <button onClick={() => navigate('/')} className="fixed bottom-6 right-6 z-[60] bg-white text-emerald-500 px-4 py-2 rounded-xl font-bold shadow-xl border border-emerald-500 hover:scale-105 active:scale-95 transition-all">Back to App</button>
           <DesktopDashboard theme={theme} toggleTheme={toggleTheme} />
         </div>
       );
@@ -305,7 +296,7 @@ function App() {
           <DesktopSearchResults
             theme={theme}
             toggleTheme={toggleTheme}
-            onBack={() => setShowDesktopSearch(false)}
+            onBack={() => navigate('/')}
             origin={origin}
             setOrigin={setOrigin}
             destination={destination}
@@ -348,7 +339,7 @@ function App() {
               <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Home</a>
               <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Routes</a>
               <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Contact</a>
-              <button onClick={() => setShowDashboard(true)} className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`}>Experience Dashboard</button>
+              <button onClick={() => navigate('/dashboard')} className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`}>Experience Dashboard</button>
             </div>
             {/*  Right Actions  */}
             <div className="flex items-center justify-end gap-6 w-1/4">
@@ -379,7 +370,7 @@ function App() {
                 src={img}
                 alt="Hero Background"
                 className={`w-full h-full object-cover object-center absolute inset-0 transition-opacity duration-1000 scale-105 ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-                fetchPriority={index === 0 ? "high" : "auto"}
+                fetchpriority={index === 0 ? "high" : "auto"}
                 loading={index === 0 ? "eager" : "lazy"}
               />
             ))}
@@ -667,12 +658,9 @@ function App() {
 
   // Main Render Strategy
 
-  if (!showMobileView) {
-    return (
+  const desktopContent = (
       <>
-
         {renderWebsiteReplicaContent()}
-
         <DesktopAuthModal
           show={showLoginModal}
           onClose={() => setShowLoginModal(false)}
@@ -685,11 +673,10 @@ function App() {
           handleCancelBooking={handleCancelBooking}
         />
       </>
-    );
-  }
+  );
 
   // Mobile WebApp Layout (showMobileView is true)
-  return (
+  const mobileContent = (
     <div className="mobile-app-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
 
 
@@ -707,7 +694,7 @@ function App() {
             setTripType={setTripType}
             onSearch={() => {
               setSelectedSeats([]);
-              setIsSearching(true);
+              navigate('/search');
             }}
             onBookRoute={handleBookRoute}
             t={t}
@@ -731,7 +718,7 @@ function App() {
             setShowLoginModal={setShowLoginModal}
             setShowLiveTracking={setShowLiveTracking}
             setShowTimingsModal={setShowTimingsModal}
-            setActiveMobileTab={setActiveMobileTab}
+            setActiveMobileTab={(tab) => navigate(tab === 'home' ? '/' : `/${tab}`)}
           />
         </div>
       )}
@@ -743,7 +730,7 @@ function App() {
             toggleTheme={toggleTheme}
             showNotifications={showNotifications}
             setShowNotifications={setShowNotifications}
-            setActiveMobileTab={setActiveMobileTab}
+            setActiveMobileTab={(tab) => navigate(tab === 'home' ? '/' : `/${tab}`)}
             isUserLoggedIn={isUserLoggedIn}
             setShowLoginModal={setShowLoginModal}
           />
@@ -753,8 +740,8 @@ function App() {
               expandedTicketId={expandedTicketId}
               setExpandedTicketId={setExpandedTicketId}
               handleCancelBooking={handleCancelBooking}
-              setActiveMobileTab={setActiveMobileTab}
-              setIsSearching={setIsSearching}
+              setActiveMobileTab={(tab) => navigate(tab === 'home' ? '/' : `/${tab}`)}
+              setIsSearching={(val) => { if(!val) navigate('/'); else navigate('/search'); }}
               t={t}
             />
           </main>
@@ -768,7 +755,7 @@ function App() {
             toggleTheme={toggleTheme}
             showNotifications={showNotifications}
             setShowNotifications={setShowNotifications}
-            setActiveMobileTab={setActiveMobileTab}
+            setActiveMobileTab={(tab) => navigate(tab === 'home' ? '/' : `/${tab}`)}
             isUserLoggedIn={isUserLoggedIn}
             setShowLoginModal={setShowLoginModal}
           />
@@ -784,7 +771,7 @@ function App() {
               setFaqExpanded={setFaqExpanded}
               onLogout={() => {
                 setIsUserLoggedIn(false);
-                setActiveMobileTab('home');
+                navigate('/');
               }}
               t={t}
             />
@@ -807,7 +794,7 @@ function App() {
       />
       <MobileSearchResults
         isSearching={isSearching}
-        setIsSearching={setIsSearching}
+        setIsSearching={(val) => { if(!val) navigate('/'); else navigate('/search'); }}
         origin={origin}
         setOrigin={setOrigin}
         destination={destination}
@@ -822,7 +809,7 @@ function App() {
         setIsBookingSuccess={setIsBookingSuccess}
         handleCheckout={handleCheckout}
         setHasActivatedWebApp={setHasActivatedWebApp}
-        setActiveMobileTab={setActiveMobileTab}
+        setActiveMobileTab={(tab) => navigate(tab === 'home' ? '/' : `/${tab}`)}
         t={t}
         isUserLoggedIn={isUserLoggedIn}
         setShowLoginModal={setShowLoginModal}
@@ -840,8 +827,8 @@ function App() {
         <button
           className={`navbar-tab-item ${activeMobileTab === 'home' ? 'active' : ''}`}
           onClick={() => {
-            setActiveMobileTab('home');
-            setIsSearching(false);
+            navigate('/');
+            /* Handled by route */
             setSelectedBus(null);
           }}
         >
@@ -851,8 +838,8 @@ function App() {
         <button
           className="navbar-tab-item"
           onClick={() => {
-            setActiveMobileTab('home');
-            setIsSearching(false);
+            navigate('/');
+            /* Handled by route */
             setSelectedBus(null);
             setTimeout(() => {
               document.getElementById('mobile-routes-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -865,8 +852,8 @@ function App() {
         <button
           className="navbar-tab-item"
           onClick={() => {
-            setActiveMobileTab('home');
-            setIsSearching(false);
+            navigate('/');
+            /* Handled by route */
             setSelectedBus(null);
             setTimeout(() => {
               document.getElementById('mobile-gallery-section')?.scrollIntoView({ behavior: 'smooth' });
@@ -880,7 +867,7 @@ function App() {
         {isUserLoggedIn && (
           <button
             className={`navbar-tab-item ${activeMobileTab === 'tickets' ? 'active' : ''}`}
-            onClick={() => setActiveMobileTab('tickets')}
+            onClick={() => navigate('/tickets')}
           >
             <Ticket size={22} />
             <span>Tickets</span>
@@ -889,7 +876,7 @@ function App() {
         {isUserLoggedIn && (
           <button
             className={`navbar-tab-item ${activeMobileTab === 'profile' ? 'active' : ''}`}
-            onClick={() => setActiveMobileTab('profile')}
+            onClick={() => navigate('/profile')}
           >
             <User size={22} />
             <span>Dashboard</span>
@@ -897,6 +884,12 @@ function App() {
         )}
       </nav>
     </div>
+  );
+
+  return (
+    <Routes>
+      <Route path="*" element={!showMobileView ? desktopContent : mobileContent} />
+    </Routes>
   );
 }
 
