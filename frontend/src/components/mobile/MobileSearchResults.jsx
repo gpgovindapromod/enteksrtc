@@ -22,7 +22,9 @@ const MobileSearchResults = ({
   handleCheckout,
   setHasActivatedWebApp,
   setActiveMobileTab,
-  t
+  t,
+  isUserLoggedIn,
+  setShowLoginModal
 }) => {
   const { theme } = useTheme();
   
@@ -52,6 +54,23 @@ const MobileSearchResults = ({
   const [showSortSheet, setShowSortSheet] = useState(false);
   const [isModifyOpen, setIsModifyOpen] = useState(false);
   const [tripType, setTripType] = useState('one-way');
+  const [pendingBusSelection, setPendingBusSelection] = useState(null);
+
+  React.useEffect(() => {
+    if (isUserLoggedIn && pendingBusSelection) {
+      setSelectedBus(pendingBusSelection);
+      setPendingBusSelection(null);
+    }
+  }, [isUserLoggedIn, pendingBusSelection, setSelectedBus]);
+
+  const handleBusSelection = (bus) => {
+    if (!isUserLoggedIn) {
+      setPendingBusSelection(bus);
+      setShowLoginModal(true);
+    } else {
+      setSelectedBus(bus);
+    }
+  };
 
   if (!isSearching) return null;
 
@@ -179,7 +198,7 @@ const MobileSearchResults = ({
                 ) : (
                   // Actual Buses matching Desktop Aesthetic
                   filteredBuses.map((bus) => (
-                    <div key={bus.id} className="group bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-5 hover:border-emerald-500/50 transition-all shadow-sm flex flex-col" onClick={() => setSelectedBus(bus)}>
+                    <div key={bus.id} className="group bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-5 hover:border-emerald-500/50 transition-all shadow-sm flex flex-col" onClick={() => handleBusSelection(bus)}>
                       <div className="flex justify-between items-center mb-4">
                         <div className="flex items-center gap-3">
                           <div className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-2 py-1 rounded border border-emerald-500/20">
@@ -226,7 +245,13 @@ const MobileSearchResults = ({
                         </div>
                         <div className="flex flex-col items-end gap-2">
                           <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 px-2 py-1 bg-gray-100 dark:bg-white/5 rounded-full">18 Seats left</span>
-                          <button className="bg-emerald-500 text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-lg shadow-emerald-500/20 active:scale-95 transition-transform">Book</button>
+                          <button 
+                            className="bg-emerald-500 text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-lg shadow-emerald-500/20 active:scale-95 transition-transform"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleBusSelection(bus);
+                            }}
+                          >Book</button>
                         </div>
                       </div>
                     </div>

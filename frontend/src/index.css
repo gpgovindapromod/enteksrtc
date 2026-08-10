@@ -4,22 +4,18 @@
 
 /* src/index.css */
 :root {
-  /* Premium Color Palette */
-  --primary: #059669;
-  /* Elegant Emerald */
-  --primary-hover: #047857;
-  --primary-light: #d1fae5;
-  --secondary: #f97316;
-  /* Vibrant Premium Orange */
-  --secondary-hover: #ea580c;
-  --secondary-light: #fb923c;
-  --dark: #0a0a0a;
-  /* Rich Black */
-  --light: #F9F5E9;
-  /* Creamy warm off-white */
-  --gray: #71717a;
-  --gray-light: #f4f4f5;
-  --gray-border: #e4e4e7;
+  /* KSRTC Premium Color Palette */
+  --primary: #0b6e4f;
+  --primary-hover: #08553d;
+  --primary-light: #dceee4;
+  --secondary: #d1483c;
+  --secondary-hover: #b13a30;
+  --secondary-light: #fbeceb;
+  --dark: #1f2a24;
+  --light: #f6f8f7;
+  --gray: #5c6b63;
+  --gray-light: #dfe6e2;
+  --gray-border: #dfe6e2;
   --white: #ffffff;
 
   /* Typography */
@@ -52,23 +48,18 @@
 }
 
 [data-theme="dark"] {
-  --primary: #10b981;
-  --primary-hover: #34d399;
+  --primary: #0b6e4f;
+  --primary-hover: #08553d;
   --primary-light: #064e3b;
-  --secondary: #fb923c;
-  --secondary-hover: #fdba74;
-  --dark: #f8fafc;
-  /* Crisp white for text */
-  --light: #0f172a;
-  /* Deep slate for backgrounds */
+  --secondary: #d1483c;
+  --secondary-hover: #b13a30;
+  --secondary-light: #5a1914;
+  --dark: #f6f8f7;
+  --light: #1f2a24;
   --gray: #94a3b8;
-  /* Muted slate for secondary text */
   --gray-light: #334155;
-  /* Lighter slate for dividers/hover */
   --gray-border: #475569;
-  /* Slate for borders */
-  --white: #1e293b;
-  /* Elevated slate for cards/surfaces */
+  --white: #2b3a32;
 
   --glass-bg: rgba(9, 9, 11, 0.35);
   --glass-border: rgba(255, 255, 255, 0.08);

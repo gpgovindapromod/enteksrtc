@@ -21,7 +21,9 @@ const DesktopSearchResults = ({
   setIsBookingSuccess,
   handleCheckout,
   setShowDesktopTicketsModal,
-  t = {}
+  t = {},
+  isUserLoggedIn,
+  setShowLoginModal
 }) => {
   const {
     isLoading,
@@ -52,6 +54,24 @@ const DesktopSearchResults = ({
     setDestination,
     setJourneyDate
   });
+
+  const [pendingBusSelection, setPendingBusSelection] = useState(null);
+
+  useEffect(() => {
+    if (isUserLoggedIn && pendingBusSelection) {
+      setSelectedBus(pendingBusSelection);
+      setPendingBusSelection(null);
+    }
+  }, [isUserLoggedIn, pendingBusSelection, setSelectedBus]);
+
+  const handleBusSelection = (bus) => {
+    if (!isUserLoggedIn) {
+      setPendingBusSelection(bus);
+      setShowLoginModal(true);
+    } else {
+      setSelectedBus(bus);
+    }
+  };
 
   const renderSeatGrid = () => {
     return seatGridData.map((row) => (
@@ -449,7 +469,7 @@ const DesktopSearchResults = ({
                   </div>
                   <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mb-6 px-3 py-1 bg-gray-100 dark:bg-white/5 rounded-full">18 Seats left</p>
 
-                  <button onClick={() => setSelectedBus(bus)} className="w-full bg-emerald-500 text-white font-bold text-sm py-4 px-6 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-emerald-500/20">
+                  <button onClick={() => handleBusSelection(bus)} className="w-full bg-emerald-500 text-white font-bold text-sm py-4 px-6 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-emerald-500/20">
                     Book Tickets
                   </button>
                 </div>

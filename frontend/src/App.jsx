@@ -321,6 +321,8 @@ function App() {
             handleCheckout={handleCheckout}
             setShowDesktopTicketsModal={setShowDesktopTicketsModal}
             t={t}
+            isUserLoggedIn={isUserLoggedIn}
+            setShowLoginModal={setShowLoginModal}
           />
         </>
       );
@@ -822,13 +824,14 @@ function App() {
         setHasActivatedWebApp={setHasActivatedWebApp}
         setActiveMobileTab={setActiveMobileTab}
         t={t}
+        isUserLoggedIn={isUserLoggedIn}
+        setShowLoginModal={setShowLoginModal}
       />
       <MobileLoginModal
         showLoginModal={showLoginModal}
         setShowLoginModal={setShowLoginModal}
         onLoginSuccess={() => {
           setIsUserLoggedIn(true);
-          setActiveMobileTab('profile');
         }}
       />
 
