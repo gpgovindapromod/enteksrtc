@@ -1,29 +1,58 @@
 import React, { useState } from 'react';
-import { X, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { X, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { loginUser, registerUser } from '../../services/authService';
 
-const MobileLoginModal = ({
-  showLoginModal,
-  setShowLoginModal,
-  onLoginSuccess
-}) => {
-  const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup'
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
+const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess }) => {
+  const [authMode, setAuthMode] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
   const [signupTab, setSignupTab] = useState('mandatory');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [authError, setAuthError] = useState('');
+
+  const [loginForm, setLoginForm] = useState({
+    email: '',
+    password: '',
+  });
+
+  const [signupForm, setSignupForm] = useState({
+    fullName: '',
+    age: '',
+    email: '',
+    gender: 'Male',
+    password: '',
+  });
 
   if (!showLoginModal) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password || (authMode === 'signup' && !fullName)) {
-      alert('Please fill out all required fields.');
-      return;
+    setAuthError('');
+    setIsSubmitting(true);
+
+    try {
+      if (authMode === 'login') {
+        const result = await loginUser({
+          email: loginForm.email,
+          password: loginForm.password,
+        });
+        onLoginSuccess?.(result.user, result.token);
+      } else {
+        const result = await registerUser({
+          fullName: signupForm.fullName,
+          age: signupForm.age ? Number(signupForm.age) : undefined,
+          email: signupForm.email,
+          gender: signupForm.gender,
+          password: signupForm.password,
+        });
+        onLoginSuccess?.(result.user, result.token);
+      }
+
+      setShowLoginModal(false);
+    } catch (error) {
+      setAuthError(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
-    // Perform mock login
-    onLoginSuccess();
-    setShowLoginModal(false);
   };
 
   return (
@@ -37,19 +66,12 @@ const MobileLoginModal = ({
           </button>
         </div>
         <div className="sheet-body">
-
           <div className="mobile-auth-card" style={{ boxShadow: 'none', border: 'none', padding: 0, marginBottom: 0 }}>
             <div className="auth-tabs">
-              <button 
-                className={`auth-tab ${authMode === 'login' ? 'active' : ''}`}
-                onClick={() => setAuthMode('login')}
-              >
+              <button className={`auth-tab ${authMode === 'login' ? 'active' : ''}`} onClick={() => setAuthMode('login')}>
                 Sign In
               </button>
-              <button 
-                className={`auth-tab ${authMode === 'signup' ? 'active' : ''}`}
-                onClick={() => setAuthMode('signup')}
-              >
+              <button className={`auth-tab ${authMode === 'signup' ? 'active' : ''}`} onClick={() => setAuthMode('signup')}>
                 Sign Up
               </button>
             </div>
@@ -58,14 +80,14 @@ const MobileLoginModal = ({
               {authMode === 'signup' && (
                 <>
                   <div className="signup-sub-tabs">
-                    <button 
+                    <button
                       type="button"
                       className={`sub-tab ${signupTab === 'mandatory' ? 'active' : ''}`}
                       onClick={() => setSignupTab('mandatory')}
                     >
                       MANDATORY INFO
                     </button>
-                    <button 
+                    <button
                       type="button"
                       className={`sub-tab ${signupTab === 'optional' ? 'active' : ''}`}
                       onClick={() => setSignupTab('optional')}
@@ -77,23 +99,55 @@ const MobileLoginModal = ({
                   {signupTab === 'mandatory' ? (
                     <div className="tab-pane fade-in">
                       <div className="input-group">
-                        <input type="text" aria-label="Name" placeholder="NAME" required />
+                        <input
+                          type="text"
+                          aria-label="Name"
+                          placeholder="NAME"
+                          value={signupForm.fullName}
+                          onChange={(e) => setSignupForm((prev) => ({ ...prev, fullName: e.target.value }))}
+                          required
+                        />
                       </div>
                       <div className="input-group">
-                        <input type="number" aria-label="Age" placeholder="Age" required />
+                        <input
+                          type="number"
+                          aria-label="Age"
+                          placeholder="Age"
+                          value={signupForm.age}
+                          onChange={(e) => setSignupForm((prev) => ({ ...prev, age: e.target.value }))}
+                          required
+                        />
                       </div>
                       <div className="input-group">
-                        <input type="email" aria-label="Email ID" placeholder="EMAIL ID" required />
+                        <input
+                          type="email"
+                          aria-label="Email ID"
+                          placeholder="EMAIL ID"
+                          value={signupForm.email}
+                          onChange={(e) => setSignupForm((prev) => ({ ...prev, email: e.target.value }))}
+                          required
+                        />
                       </div>
                       <div className="input-group">
-                        <input type={showPassword ? "text" : "password"} aria-label="Password" placeholder="Password" required />
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          aria-label="Password"
+                          placeholder="Password"
+                          value={signupForm.password}
+                          onChange={(e) => setSignupForm((prev) => ({ ...prev, password: e.target.value }))}
+                          required
+                        />
                         <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
                           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                       </div>
                       <div className="input-group select-group">
                         <label className="floating-label">GENDER</label>
-                        <select required>
+                        <select
+                          required
+                          value={signupForm.gender}
+                          onChange={(e) => setSignupForm((prev) => ({ ...prev, gender: e.target.value }))}
+                        >
                           <option value="Male">Male</option>
                           <option value="Female">Female</option>
                           <option value="Other">Other</option>
@@ -108,70 +162,109 @@ const MobileLoginModal = ({
                       <div className="input-group">
                         <input type="text" aria-label="GST Number" placeholder="GST NUMBER" />
                       </div>
-                      
+
                       <div className="date-dropdown-group">
                         <label>DATE OF BIRTH</label>
                         <div className="date-dropdowns">
-                          <select><option>Day</option><option>01</option><option>02</option></select>
-                          <select><option>Month</option><option>Jan</option><option>Feb</option></select>
-                          <select><option>Year</option><option>2000</option><option>1999</option></select>
+                          <select>
+                            <option>Day</option>
+                            <option>01</option>
+                            <option>02</option>
+                          </select>
+                          <select>
+                            <option>Month</option>
+                            <option>Jan</option>
+                            <option>Feb</option>
+                          </select>
+                          <select>
+                            <option>Year</option>
+                            <option>2000</option>
+                            <option>1999</option>
+                          </select>
                         </div>
                       </div>
 
                       <div className="date-dropdown-group">
                         <label>DATE OF ANNIVERSARY</label>
                         <div className="date-dropdowns">
-                          <select><option>Day</option><option>01</option><option>02</option></select>
-                          <select><option>Month</option><option>Jan</option><option>Feb</option></select>
-                          <select><option>Year</option><option>2000</option><option>1999</option></select>
+                          <select>
+                            <option>Day</option>
+                            <option>01</option>
+                            <option>02</option>
+                          </select>
+                          <select>
+                            <option>Month</option>
+                            <option>Jan</option>
+                            <option>Feb</option>
+                          </select>
+                          <select>
+                            <option>Year</option>
+                            <option>2000</option>
+                            <option>1999</option>
+                          </select>
                         </div>
                       </div>
                     </div>
                   )}
                 </>
               )}
-              
+
               {authMode === 'login' && (
                 <>
                   <div className="input-group">
                     <Mail className="input-icon" size={20} />
-                    <input type="email" aria-label="Email Address" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required />
+                    <input
+                      type="email"
+                      aria-label="Email Address"
+                      placeholder="Email Address"
+                      value={loginForm.email}
+                      onChange={(e) => setLoginForm((prev) => ({ ...prev, email: e.target.value }))}
+                      required
+                    />
                   </div>
 
                   <div className="input-group">
                     <Lock className="input-icon" size={20} />
-                    <input 
-                      type={showPassword ? "text" : "password"} 
-                      placeholder="Password" 
-                      value={password} 
-                      onChange={e => setPassword(e.target.value)} 
-                      required 
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Password"
+                      value={loginForm.password}
+                      onChange={(e) => setLoginForm((prev) => ({ ...prev, password: e.target.value }))}
+                      required
                     />
-                    <button 
-                      type="button" 
-                      className="password-toggle"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
+                    <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
 
                   <div className="form-options">
-                    <a href="#" className="forgot-password">Forgot Password?</a>
+                    <a href="#" className="forgot-password">
+                      Forgot Password?
+                    </a>
                   </div>
                 </>
               )}
 
-              <button type="submit" className="btn-primary auth-submit-btn">
-                {authMode === 'login' ? 'Sign In' : 'Create Account'}
+              {authError && (
+                <p style={{ color: '#ef4444', fontSize: '12px', marginBottom: '12px' }}>
+                  {authError}
+                </p>
+              )}
+
+              <button type="submit" className="btn-primary auth-submit-btn" disabled={isSubmitting}>
+                {isSubmitting ? 'Please wait...' : authMode === 'login' ? 'Sign In' : 'Create Account'}
               </button>
             </form>
 
             <p className="auth-footer-text">
               {authMode === 'login' ? (
-                <>Don't have an account? <span onClick={() => setAuthMode('signup')}>Sign Up</span></>
+                <>
+                  Don&apos;t have an account? <span onClick={() => setAuthMode('signup')}>Sign Up</span>
+                </>
               ) : (
-                <>Already have an account? <span onClick={() => setAuthMode('login')}>Sign In</span></>
+                <>
+                  Already have an account? <span onClick={() => setAuthMode('login')}>Sign In</span>
+                </>
               )}
             </p>
           </div>
@@ -182,3 +275,4 @@ const MobileLoginModal = ({
 };
 
 export default MobileLoginModal;
+

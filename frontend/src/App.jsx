@@ -59,6 +59,7 @@ import GallerySection from './components/home/GallerySection';
 import TestimonialsSection from './components/home/TestimonialsSection';
 import Marquee from './components/home/Marquee';
 import { useTheme } from './context/ThemeContext';
+import { getCurrentUser, logoutUser } from './services/authService';
 
 function App() {
   const { theme, toggleTheme } = useTheme();
@@ -89,7 +90,13 @@ function App() {
     showTimingsModal, setShowTimingsModal, expandedTicketId, setExpandedTicketId, 
     faqExpanded, setFaqExpanded 
   } = useAppStore();
-    const { isUserLoggedIn, showLoginModal, setIsUserLoggedIn, setShowLoginModal } = useAuthStore();
+    const {
+    isUserLoggedIn,
+    showLoginModal,
+    setShowLoginModal,
+    setAuthSession,
+    clearAuthSession
+  } = useAuthStore();
   
 
   useEffect(() => {
@@ -99,6 +106,30 @@ function App() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const restoreSession = async () => {
+      try {
+        const result = await getCurrentUser();
+        if (!isMounted) return;
+
+        setAuthSession({ user: result.user });
+      } catch (error) {
+        if (!isMounted) return;
+        if (error.statusCode === 401) {
+          clearAuthSession();
+        }
+      }
+    };
+
+    restoreSession();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [setAuthSession, clearAuthSession]);
 
   const renderMobileBookingWidget = () => (
     <MobileBookingWidget
@@ -262,6 +293,15 @@ function App() {
     removeActiveBooking(bookingId);
   };
 
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } finally {
+      clearAuthSession();
+      navigate('/');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="splash-screen">
@@ -347,7 +387,7 @@ function App() {
               {/*  Theme Toggle  */}
 
               {isUserLoggedIn ? (
-                <button className="text-sm font-medium text-primary border border-primary px-4 py-1.5 rounded-full hover:bg-primary/10" onClick={() => setIsUserLoggedIn(false)}>Logout</button>
+                <button className="text-sm font-medium text-primary border border-primary px-4 py-1.5 rounded-full hover:bg-primary/10" onClick={handleLogout}>Logout</button>
               ) : (
                 <button className="text-sm font-medium bg-emerald-700 text-white px-4 py-1.5 rounded-full shadow-lg shadow-emerald-700/20 hover:brightness-110 active:scale-95 transition-all" onClick={() => setShowLoginModal(true)}>Login</button>
               )}
@@ -664,7 +704,7 @@ function App() {
         <DesktopAuthModal
           show={showLoginModal}
           onClose={() => setShowLoginModal(false)}
-          onLoginSuccess={() => setIsUserLoggedIn(true)}
+          onLoginSuccess={(user, token) => setAuthSession({ user, token })}
         />
         <DesktopTicketsModal
           show={showDesktopTicketsModal}
@@ -770,8 +810,7 @@ function App() {
               faqExpanded={faqExpanded}
               setFaqExpanded={setFaqExpanded}
               onLogout={() => {
-                setIsUserLoggedIn(false);
-                navigate('/');
+                handleLogout();
               }}
               t={t}
             />
@@ -817,9 +856,7 @@ function App() {
       <MobileLoginModal
         showLoginModal={showLoginModal}
         setShowLoginModal={setShowLoginModal}
-        onLoginSuccess={() => {
-          setIsUserLoggedIn(true);
-        }}
+        onLoginSuccess={(user, token) => setAuthSession({ user, token })}
       />
 
       {/* Sticky Persistent Mobile Bottom Navbar */}

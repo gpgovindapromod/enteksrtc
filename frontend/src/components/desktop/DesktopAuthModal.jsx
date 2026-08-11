@@ -1,28 +1,64 @@
 import React, { useState } from 'react';
 import { X, Bus, ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { loginUser, registerUser } from '../../services/authService';
 import './DesktopAuthModal.css';
 
 const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
-  const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup'
+  const [authMode, setAuthMode] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
-  const [signupTab, setSignupTab] = useState('mandatory'); // 'mandatory' | 'optional'
-  
+  const [signupTab, setSignupTab] = useState('mandatory');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [authError, setAuthError] = useState('');
+
+  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
+  const [signupForm, setSignupForm] = useState({
+    fullName: '',
+    age: '',
+    email: '',
+    gender: 'Male',
+    password: '',
+  });
+
   if (!show) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (onLoginSuccess) onLoginSuccess();
-    if (onClose) onClose();
+    setAuthError('');
+    setIsSubmitting(true);
+
+    try {
+      if (authMode === 'login') {
+        const result = await loginUser({
+          email: loginForm.email,
+          password: loginForm.password,
+        });
+        onLoginSuccess?.(result.user, result.token);
+      } else {
+        const result = await registerUser({
+          fullName: signupForm.fullName,
+          age: signupForm.age ? Number(signupForm.age) : undefined,
+          email: signupForm.email,
+          gender: signupForm.gender,
+          password: signupForm.password,
+        });
+        onLoginSuccess?.(result.user, result.token);
+      }
+
+      onClose?.();
+    } catch (error) {
+      setAuthError(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="boarding-pass-overlay" onClick={onClose}>
-      <div className="boarding-pass-wrapper animate-fade-in-up" onClick={e => e.stopPropagation()}>
+      <div className="boarding-pass-wrapper animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
         <button className="bp-close" onClick={onClose}>
           <X size={24} />
         </button>
 
-        {/* Main Body (Left) */}
         <div className="bp-main">
           <div className="bp-airline">
             <Bus size={18} /> ENTE KSRTC PREMIUM
@@ -32,16 +68,10 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
           </h2>
 
           <div className="bp-tabs">
-            <button 
-              className={`bp-tab ${authMode === 'login' ? 'active' : ''}`}
-              onClick={() => setAuthMode('login')}
-            >
+            <button className={`bp-tab ${authMode === 'login' ? 'active' : ''}`} onClick={() => setAuthMode('login')}>
               Sign In
             </button>
-            <button 
-              className={`bp-tab ${authMode === 'signup' ? 'active' : ''}`}
-              onClick={() => setAuthMode('signup')}
-            >
+            <button className={`bp-tab ${authMode === 'signup' ? 'active' : ''}`} onClick={() => setAuthMode('signup')}>
               Sign Up
             </button>
           </div>
@@ -50,17 +80,25 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
             {authMode === 'signup' && (
               <>
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
-                  <button 
+                  <button
                     type="button"
-                    className={`bp-subtab ${signupTab === 'mandatory' ? 'text-emerald-500 font-bold border-b-2 border-emerald-500' : 'text-slate-400'}`}
+                    className={`bp-subtab ${
+                      signupTab === 'mandatory'
+                        ? 'text-emerald-500 font-bold border-b-2 border-emerald-500'
+                        : 'text-slate-400'
+                    }`}
                     onClick={() => setSignupTab('mandatory')}
                     style={{ paddingBottom: '4px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}
                   >
                     Mandatory Info
                   </button>
-                  <button 
+                  <button
                     type="button"
-                    className={`bp-subtab ${signupTab === 'optional' ? 'text-emerald-500 font-bold border-b-2 border-emerald-500' : 'text-slate-400'}`}
+                    className={`bp-subtab ${
+                      signupTab === 'optional'
+                        ? 'text-emerald-500 font-bold border-b-2 border-emerald-500'
+                        : 'text-slate-400'
+                    }`}
                     onClick={() => setSignupTab('optional')}
                     style={{ paddingBottom: '4px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}
                   >
@@ -73,22 +111,48 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                     <div className="bp-input-row">
                       <div className="bp-input-group">
                         <label className="bp-label">Name</label>
-                        <input type="text" className="bp-input" placeholder="NAME" required />
+                        <input
+                          type="text"
+                          className="bp-input"
+                          placeholder="NAME"
+                          value={signupForm.fullName}
+                          onChange={(e) => setSignupForm((prev) => ({ ...prev, fullName: e.target.value }))}
+                          required
+                        />
                       </div>
                       <div className="bp-input-group">
                         <label className="bp-label">Age</label>
-                        <input type="number" className="bp-input" placeholder="AGE" required />
+                        <input
+                          type="number"
+                          className="bp-input"
+                          placeholder="AGE"
+                          value={signupForm.age}
+                          onChange={(e) => setSignupForm((prev) => ({ ...prev, age: e.target.value }))}
+                          required
+                        />
                       </div>
                     </div>
-                    
+
                     <div className="bp-input-row">
                       <div className="bp-input-group">
                         <label className="bp-label">Email ID</label>
-                        <input type="email" className="bp-input" placeholder="EMAIL ID" required />
+                        <input
+                          type="email"
+                          className="bp-input"
+                          placeholder="EMAIL ID"
+                          value={signupForm.email}
+                          onChange={(e) => setSignupForm((prev) => ({ ...prev, email: e.target.value }))}
+                          required
+                        />
                       </div>
                       <div className="bp-input-group">
                         <label className="bp-label">Gender</label>
-                        <select className="bp-input bg-transparent" required>
+                        <select
+                          className="bp-input bg-transparent"
+                          value={signupForm.gender}
+                          onChange={(e) => setSignupForm((prev) => ({ ...prev, gender: e.target.value }))}
+                          required
+                        >
                           <option value="Male">Male</option>
                           <option value="Female">Female</option>
                           <option value="Other">Other</option>
@@ -99,8 +163,19 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                     <div className="bp-input-row">
                       <div className="bp-input-group" style={{ position: 'relative' }}>
                         <label className="bp-label">Password</label>
-                        <input type={showPassword ? "text" : "password"} className="bp-input" placeholder="PASSWORD" required />
-                        <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '0', bottom: '12px', color: '#94a3b8', background: 'none', border: 'none' }}>
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          className="bp-input"
+                          placeholder="PASSWORD"
+                          value={signupForm.password}
+                          onChange={(e) => setSignupForm((prev) => ({ ...prev, password: e.target.value }))}
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          style={{ position: 'absolute', right: '0', bottom: '12px', color: '#94a3b8', background: 'none', border: 'none' }}
+                        >
                           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                       </div>
@@ -123,20 +198,44 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                       <div className="bp-input-group">
                         <label className="bp-label">Date of Birth</label>
                         <div style={{ display: 'flex', gap: '8px' }}>
-                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}><option>Day</option><option>01</option><option>02</option></select>
-                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}><option>Month</option><option>Jan</option><option>Feb</option></select>
-                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}><option>Year</option><option>2000</option><option>1999</option></select>
+                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}>
+                            <option>Day</option>
+                            <option>01</option>
+                            <option>02</option>
+                          </select>
+                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}>
+                            <option>Month</option>
+                            <option>Jan</option>
+                            <option>Feb</option>
+                          </select>
+                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}>
+                            <option>Year</option>
+                            <option>2000</option>
+                            <option>1999</option>
+                          </select>
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="bp-input-row">
                       <div className="bp-input-group">
                         <label className="bp-label">Date of Anniversary</label>
                         <div style={{ display: 'flex', gap: '8px' }}>
-                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}><option>Day</option><option>01</option><option>02</option></select>
-                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}><option>Month</option><option>Jan</option><option>Feb</option></select>
-                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}><option>Year</option><option>2000</option><option>1999</option></select>
+                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}>
+                            <option>Day</option>
+                            <option>01</option>
+                            <option>02</option>
+                          </select>
+                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}>
+                            <option>Month</option>
+                            <option>Jan</option>
+                            <option>Feb</option>
+                          </select>
+                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}>
+                            <option>Year</option>
+                            <option>2000</option>
+                            <option>1999</option>
+                          </select>
                         </div>
                       </div>
                     </div>
@@ -150,36 +249,67 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                 <div className="bp-input-row">
                   <div className="bp-input-group">
                     <label className="bp-label">Email Address</label>
-                    <input type="email" className="bp-input" placeholder="Email Address" required />
+                    <input
+                      type="email"
+                      className="bp-input"
+                      placeholder="Email Address"
+                      value={loginForm.email}
+                      onChange={(e) => setLoginForm((prev) => ({ ...prev, email: e.target.value }))}
+                      required
+                    />
                   </div>
                 </div>
 
                 <div className="bp-input-row" style={{ marginBottom: '16px' }}>
                   <div className="bp-input-group" style={{ position: 'relative' }}>
                     <label className="bp-label">Password</label>
-                    <input type={showPassword ? "text" : "password"} className="bp-input" placeholder="Password" required />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '0', bottom: '12px', color: '#94a3b8', background: 'none', border: 'none' }}>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      className="bp-input"
+                      placeholder="Password"
+                      value={loginForm.password}
+                      onChange={(e) => setLoginForm((prev) => ({ ...prev, password: e.target.value }))}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{ position: 'absolute', right: '0', bottom: '12px', color: '#94a3b8', background: 'none', border: 'none' }}
+                    >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
                   </div>
                 </div>
-                
+
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', fontSize: '12px' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94a3b8', cursor: 'pointer' }}>
                     <input type="checkbox" aria-label="Remember me" style={{ accentColor: '#10b981' }} /> Remember me
                   </label>
-                  <a href="#" style={{ color: '#10b981', textDecoration: 'none' }}>Forgot Password?</a>
+                  <a href="#" style={{ color: '#10b981', textDecoration: 'none' }}>
+                    Forgot Password?
+                  </a>
                 </div>
               </div>
             )}
 
+            {authError && (
+              <div style={{ color: '#ef4444', fontSize: '12px', marginBottom: '12px' }}>
+                {authError}
+              </div>
+            )}
+
             <div style={{ display: 'flex', gap: '16px', marginTop: 'auto' }}>
-              <button type="submit" className="bp-button" style={{ flex: 1 }}>
-                {authMode === 'login' ? 'Sign In' : 'Create Account'} <ArrowRight size={18} className="inline ml-2" />
+              <button type="submit" className="bp-button" style={{ flex: 1 }} disabled={isSubmitting}>
+                {isSubmitting ? 'Please wait...' : authMode === 'login' ? 'Sign In' : 'Create Account'}{' '}
+                {!isSubmitting && <ArrowRight size={18} className="inline ml-2" />}
               </button>
-              
+
               {authMode === 'login' && (
-                <button type="button" className="bp-button" style={{ background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <button
+                  type="button"
+                  className="bp-button"
+                  style={{ background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                >
                   <img src="/assets/images/google_icon.svg" alt="Google" width="18" />
                   Google
                 </button>
@@ -188,15 +318,15 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
           </form>
         </div>
 
-        {/* Divider with perforations */}
         <div className="boarding-pass-divider"></div>
 
-        {/* Ticket Stub (Right) */}
         <div className="bp-stub">
           <div className="bp-stub-top">
             <div className="bp-label">Boarding Pass</div>
-            <div className="bp-title" style={{ fontSize: '20px' }}>FIRST CLASS</div>
-            
+            <div className="bp-title" style={{ fontSize: '20px' }}>
+              FIRST CLASS
+            </div>
+
             <div className="bp-barcode"></div>
             <div className="bp-barcode-text">KSRTC-90210-VIP</div>
           </div>
@@ -224,10 +354,10 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
             <p className="bp-subtext">Present this ticket at the counter for seamless travel.</p>
           </div>
         </div>
-
       </div>
     </div>
   );
 };
 
 export default DesktopAuthModal;
+

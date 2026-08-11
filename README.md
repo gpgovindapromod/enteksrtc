@@ -16,7 +16,15 @@ cd backend
 npm install
 ```
 
-Create a `.env` file in `backend/` with the required values used by the server, such as `MONGO_URI` and `JWT_SECRET`.
+Create a `.env` file in `backend/` with the required values used by the server:
+
+```env
+MONGO_URI=<your-mongodb-connection-string>
+JWT_SECRET=<your-jwt-secret>
+PORT=5011
+# Optional (comma-separated list)
+CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+```
 
 Start the backend:
 
@@ -38,9 +46,9 @@ npm run dev
 ```
 
 The frontend runs on the Vite default port, usually `http://localhost:5173`.
+You can set `VITE_API_BASE_URL` in `frontend/.env` if your API is hosted on a different URL.
 
 ## Project structure
 
 - `backend/` - Express API server
 - `frontend/` - React client app
-
