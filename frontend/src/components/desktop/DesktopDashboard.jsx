@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Bus, Search, MapPin, Calendar, ChevronRight, Clock, CreditCard,
   Star, LayoutDashboard, Ticket, LifeBuoy,
   Coffee, Bell, Settings, ArrowRightLeft,
   Users, TrendingUp, AlertTriangle, Route, CheckCircle
 } from 'lucide-react';
+import { useAuthStore } from '../../store/useAuthStore';
+import { getDashboardData } from '../../services/dashboardService';
 
 
 const ROLES = {
@@ -16,7 +18,26 @@ const ROLES = {
 };
 
 const DesktopDashboard = ({ theme, toggleTheme }) => {
-  const [activeRole, setActiveRole] = useState(ROLES.PASSENGER);
+  const { user } = useAuthStore();
+  const [activeRole, setActiveRole] = useState(user?.role || ROLES.PASSENGER);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (activeRole === ROLES.PASSENGER) {
+      setLoading(true);
+      getDashboardData().then(res => {
+        if (res?.success) {
+          setDashboardData(res.data);
+        }
+        setLoading(false);
+      }).catch(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [activeRole]);
+
+  const upcomingTrip = dashboardData?.upcomingTrips?.[0];
 
   const getSidebarLinks = () => {
     switch (activeRole) {
@@ -79,7 +100,7 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
               <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100" className="w-full h-full rounded-full object-cover" alt="Profile" />
             </div>
             <div>
-              <h2 className="text-sm font-bold truncate">Welcome, Traveler</h2>
+              <h2 className="text-sm font-bold truncate">Welcome, {user?.name || user?.fullName || user?.firstName || 'Traveler'}</h2>
               <p className="text-[10px] text-[#10b981] font-bold uppercase tracking-tighter">Elite Gold Member</p>
             </div>
           </div>
@@ -163,7 +184,7 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
                 <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center px-16">
                   <h2 className="text-5xl font-outfit font-bold mb-4 tracking-tight leading-tight text-white">
                     Welcome back, <br />
-                    <span className="text-[#10b981]">Traveler</span>
+                    <span className="text-[#10b981]">{user?.name || user?.fullName || user?.firstName || 'Traveler'}</span>
                   </h2>
                   <p className="max-w-md text-white/80 text-lg leading-relaxed">
                     Your next luxury journey across the cinematic landscapes of Kerala awaits. Experience precision and comfort.
@@ -214,48 +235,62 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
                   </div>
 
                   {/* Ticket Card */}
-                  <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 relative overflow-hidden group">
-                    <div className="flex justify-between items-start mb-12">
-                      <div className="flex gap-4">
-                        <div className="w-12 h-12 bg-slate-100/50 dark:bg-slate-800/50 rounded-xl flex items-center justify-center text-[#10b981]">
-                          <Bus size={28} />
-                        </div>
-                        <div>
-                          <h4 className="text-xl font-bold font-outfit">K-Swift Gaja</h4>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">Volvo 9600 Multi-Axle Sleeper</p>
-                        </div>
-                      </div>
-                      <div className="text-center p-6 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-2xl">
-                        <p className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 mb-1">Seat</p>
-                        <p className="text-3xl font-bold text-[#10b981]">L4</p>
-                        <p className="text-[10px] text-slate-500 dark:text-slate-400">Lower Sleeper</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-8 relative">
-                      <div className="flex-1 flex justify-between items-center relative">
-                        <div className="text-center">
-                          <p className="text-2xl font-bold">22:30</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Bangalore</p>
-                        </div>
-
-                        <div className="flex-1 flex flex-col items-center px-4 relative">
-                          <div className="w-full h-[2px] bg-slate-100 dark:bg-slate-800 relative">
-                            <div className="absolute top-1/2 left-0 -translate-y-1/2 w-2 h-2 rounded-full bg-[#10b981]"></div>
-                            <div className="absolute top-1/2 right-0 -translate-y-1/2 w-2 h-2 rounded-full bg-outline-variant"></div>
-                            <div className="absolute top-1/2 left-0 h-full bg-[#10b981] transition-all duration-500" style={{ width: '30%' }}></div>
+                  {upcomingTrip ? (
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 relative overflow-hidden group">
+                      <div className="flex justify-between items-start mb-12">
+                        <div className="flex gap-4">
+                          <div className="w-12 h-12 bg-slate-100/50 dark:bg-slate-800/50 rounded-xl flex items-center justify-center text-[#10b981]">
+                            <Bus size={28} />
                           </div>
-                          <p className="text-[10px] font-bold text-[#10b981] mt-3">03:15</p>
-                          <p className="text-[8px] text-slate-500 dark:text-slate-400 uppercase tracking-widest">Coimbatore</p>
+                          <div>
+                            <h4 className="text-xl font-bold font-outfit">{upcomingTrip.tripId?.busId?.busNumber || 'K-Swift Gaja'}</h4>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">{upcomingTrip.tripId?.busId?.busType || 'Volvo 9600 Multi-Axle Sleeper'}</p>
+                          </div>
                         </div>
+                        <div className="text-center p-6 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-2xl">
+                          <p className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 mb-1">Fare</p>
+                          <p className="text-xl font-bold text-[#10b981]">₹{upcomingTrip.totalFare || 0}</p>
+                          <p className="text-[10px] text-slate-500 dark:text-slate-400">Confirmed</p>
+                        </div>
+                      </div>
 
-                        <div className="text-center">
-                          <p className="text-2xl font-bold opacity-40">07:45</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Kochi</p>
+                      <div className="flex items-center gap-8 relative">
+                        <div className="flex-1 flex justify-between items-center relative">
+                          <div className="text-center">
+                            <p className="text-2xl font-bold">
+                              {new Date(upcomingTrip.tripId?.departureDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                              {upcomingTrip.tripId?.routeId?.sourceStop?.stopName || 'Source'}
+                            </p>
+                          </div>
+
+                          <div className="flex-1 flex flex-col items-center px-4 relative">
+                            <div className="w-full h-[2px] bg-slate-100 dark:bg-slate-800 relative">
+                              <div className="absolute top-1/2 left-0 -translate-y-1/2 w-2 h-2 rounded-full bg-[#10b981]"></div>
+                              <div className="absolute top-1/2 right-0 -translate-y-1/2 w-2 h-2 rounded-full bg-outline-variant"></div>
+                              <div className="absolute top-1/2 left-0 h-full bg-[#10b981] transition-all duration-500" style={{ width: '0%' }}></div>
+                            </div>
+                            <p className="text-[10px] font-bold text-[#10b981] mt-3">Route</p>
+                            <p className="text-[8px] text-slate-500 dark:text-slate-400 uppercase tracking-widest">{upcomingTrip.tripId?.routeId?.routeNumber}</p>
+                          </div>
+
+                          <div className="text-center">
+                            <p className="text-2xl font-bold opacity-40">
+                              {new Date(upcomingTrip.tripId?.arrivalDate || upcomingTrip.tripId?.departureDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                              {upcomingTrip.tripId?.routeId?.destinationStop?.stopName || 'Destination'}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 text-center">
+                      <p className="text-slate-500 dark:text-slate-400">No upcoming journeys</p>
+                    </div>
+                  )}
 
                   {/* Lounge Access Card */}
                   <button className="w-full bg-white dark:bg-slate-900 border border-[#10b981]/30 rounded-2xl p-6 flex items-center justify-between group hover:border-[#10b981] transition-all">
@@ -277,12 +312,12 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl hover:scale-[1.02] transition-transform">
                       <Star className="text-[#10b981] mb-4" size={20} />
-                      <p className="text-2xl font-bold font-outfit">1,200</p>
+                      <p className="text-2xl font-bold font-outfit">{loading ? '...' : dashboardData?.loyaltyPoints || 0}</p>
                       <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Loyalty Points</p>
                     </div>
                     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl hover:scale-[1.02] transition-transform">
                       <Bus className="text-[#10b981] mb-4" size={20} />
-                      <p className="text-2xl font-bold font-outfit">24</p>
+                      <p className="text-2xl font-bold font-outfit">{loading ? '...' : dashboardData?.totalTrips || 0}</p>
                       <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Total Trips</p>
                     </div>
                   </div>
@@ -293,7 +328,7 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
                         <CreditCard size={14} className="text-[#10b981]" />
                         <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Travel Credits</p>
                       </div>
-                      <p className="text-2xl font-bold font-outfit">₹2,450</p>
+                      <p className="text-2xl font-bold font-outfit">₹{loading ? '...' : dashboardData?.travelCredits || 0}</p>
                     </div>
                     <button className="px-4 py-2 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-bold hover:bg-[#10b981] hover:text-slate-900 dark:text-white transition-all">
                       Redeem
@@ -306,18 +341,21 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
                       <button className="text-[10px] text-slate-500 dark:text-slate-400 font-bold hover:text-slate-900 dark:text-white transition-colors uppercase tracking-widest">View All</button>
                     </div>
                     <div className="space-y-4">
-                      {[
-                        { route: 'Trivandrum → Munnar', date: '12 Oct 2023', type: 'Minnal Deluxe' },
-                        { route: 'Kochi → Kozhikode', date: '28 Sep 2023', type: 'Swift Garuda' },
-                      ].map((trip, i) => (
+                      {dashboardData?.recentTrips?.length > 0 ? dashboardData.recentTrips.map((trip, i) => (
                         <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl group hover:border-[#10b981]/30 transition-all cursor-pointer">
                           <div className="flex justify-between items-start mb-2">
-                            <h4 className="text-sm font-bold group-hover:text-[#10b981] transition-colors">{trip.route}</h4>
-                            <span className="text-[10px] bg-emerald-500/10 text-[#10b981] px-2 py-0.5 rounded font-bold">Completed</span>
+                            <h4 className="text-sm font-bold group-hover:text-[#10b981] transition-colors">
+                              {trip.tripId?.routeId?.sourceStop?.stopName || 'Source'} → {trip.tripId?.routeId?.destinationStop?.stopName || 'Destination'}
+                            </h4>
+                            <span className="text-[10px] bg-emerald-500/10 text-[#10b981] px-2 py-0.5 rounded font-bold">{trip.bookingStatus}</span>
                           </div>
-                          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">{trip.date} • {trip.type}</p>
+                          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                            {new Date(trip.tripId?.departureDate).toLocaleDateString()} • {trip.tripId?.busId?.busType || 'Bus'}
+                          </p>
                         </div>
-                      ))}
+                      )) : (
+                        <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-4">No recent travels found.</p>
+                      )}
                     </div>
                   </div>
                 </div>

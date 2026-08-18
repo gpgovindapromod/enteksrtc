@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Sun, Moon, Compass, Shield, RotateCcw, ChevronRight, ChevronDown, Phone, Star, Bus, Coffee, CreditCard } from 'lucide-react';
+import { useAuthStore } from '../../store/useAuthStore';
+import { getDashboardData } from '../../services/dashboardService';
 
 const MobileDashboard = ({
   theme,
@@ -13,6 +15,20 @@ const MobileDashboard = ({
   onLogout,
   t
 }) => {
+  const { user } = useAuthStore();
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    getDashboardData().then(res => {
+      if (res?.success) {
+        setDashboardData(res.data);
+      }
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, []);
+
   return (
     <div className="animate-fade-in-up bg-slate-50 dark:bg-slate-950 min-h-full pb-8">
       {/* Profile Header Card */}
@@ -23,7 +39,7 @@ const MobileDashboard = ({
             <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150" className="w-full h-full rounded-full object-cover border-2 border-white dark:border-slate-900" alt="Profile" />
           </div>
           <div className="flex-1 z-10">
-            <h3 className="text-lg font-bold font-outfit text-slate-900 dark:text-white leading-tight">Govind Promod</h3>
+            <h3 className="text-lg font-bold font-outfit text-slate-900 dark:text-white leading-tight">{user?.name || user?.fullName || user?.firstName || 'Traveler'}</h3>
             <p className="text-[10px] text-[#10b981] font-bold uppercase tracking-widest mt-1">Elite Gold Member</p>
           </div>
           <button className="z-10 p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 hover:text-red-500 transition-colors" onClick={onLogout} aria-label="Sign Out">
@@ -35,12 +51,12 @@ const MobileDashboard = ({
         <div className="grid grid-cols-2 gap-3 mb-6">
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm">
             <Star className="text-[#10b981] mb-3" size={18} />
-            <p className="text-2xl font-bold font-outfit text-slate-900 dark:text-white">1,200</p>
+            <p className="text-2xl font-bold font-outfit text-slate-900 dark:text-white">{loading ? '...' : dashboardData?.loyaltyPoints || 0}</p>
             <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mt-1">Loyalty Points</p>
           </div>
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm">
             <Bus className="text-[#10b981] mb-3" size={18} />
-            <p className="text-2xl font-bold font-outfit text-slate-900 dark:text-white">24</p>
+            <p className="text-2xl font-bold font-outfit text-slate-900 dark:text-white">{loading ? '...' : dashboardData?.totalTrips || 0}</p>
             <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mt-1">Total Trips</p>
           </div>
         </div>
@@ -52,7 +68,7 @@ const MobileDashboard = ({
               <CreditCard size={14} className="text-[#10b981]" />
               <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Travel Credits</p>
             </div>
-            <p className="text-2xl font-bold font-outfit text-slate-900 dark:text-white">₹2,450</p>
+            <p className="text-2xl font-bold font-outfit text-slate-900 dark:text-white">₹{loading ? '...' : dashboardData?.travelCredits || 0}</p>
           </div>
           <button className="px-5 py-2 bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30 rounded-xl text-xs font-bold hover:bg-[#10b981] hover:text-white transition-all active:scale-95">
             Redeem

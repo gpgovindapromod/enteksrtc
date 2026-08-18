@@ -19,16 +19,13 @@ export const MOCK_BUSES = [
   { id: 4, name: 'KSRTC Super Fast (2+3)', brand: 'KSRTC', type: 'Non-AC Semi-Sleeper', departure: '22:15', arrival: '13:00', duration: '14h 45m', fare: 720, rating: 3.9 }
 ];
 
-import axios from 'axios';
-
-const isLocalhost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (isLocalhost ? 'http://localhost:5011' : '');
+import apiClient from './apiClient';
 
 export const getFilteredAndSortedBuses = async ({ selectedBusTypes = [], selectedDepTimes = [], sortBy = 'Relevance', origin = '', destination = '', date = '' }) => {
   let result = [];
   try {
     // Attempt to fetch from backend
-    const response = await axios.get(`${API_BASE_URL}/api/buses`, {
+    const response = await apiClient.get('/api/buses', {
       params: { origin, destination, date }
     });
     result = response.data.buses || response.data;
