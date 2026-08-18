@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { loginUser, registerUser } from '../../services/authService';
+import { loginUser, registerUser, sendOtp } from '../../services/authService';
 
 const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess }) => {
   const [authMode, setAuthMode] = useState('login');
@@ -18,9 +18,31 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
     fullName: '',
     age: '',
     email: '',
+    phone: '',
+    otp: '',
     gender: 'Male',
     password: '',
   });
+
+  const [otpSent, setOtpSent] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
+
+  const handleSendOtp = async () => {
+    if (!signupForm.phone) {
+      setAuthError('Please enter your mobile number first.');
+      return;
+    }
+    setAuthError('');
+    setSendingOtp(true);
+    try {
+      await sendOtp(signupForm.phone);
+      setOtpSent(true);
+    } catch (error) {
+      setAuthError(error.message || 'Failed to send OTP');
+    } finally {
+      setSendingOtp(false);
+    }
+  };
 
   if (!showLoginModal) return null;
 
@@ -41,6 +63,8 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
           fullName: signupForm.fullName,
           age: signupForm.age ? Number(signupForm.age) : undefined,
           email: signupForm.email,
+          phone: signupForm.phone,
+          otp: signupForm.otp,
           gender: signupForm.gender,
           password: signupForm.password,
         });
@@ -141,6 +165,40 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                       </div>
+
+                      <div className="input-group" style={{ display: 'flex', gap: '8px', background: 'transparent', padding: 0 }}>
+                        <input
+                          type="tel"
+                          aria-label="Mobile Number"
+                          placeholder="MOBILE NUMBER"
+                          value={signupForm.phone}
+                          onChange={(e) => setSignupForm((prev) => ({ ...prev, phone: e.target.value }))}
+                          required
+                          style={{ flex: 1 }}
+                        />
+                        <button
+                          type="button"
+                          className="btn-primary"
+                          style={{ padding: '0 16px', fontSize: '12px', flex: 'none', background: otpSent ? '#334155' : '#10b981', height: '48px', borderRadius: '12px' }}
+                          onClick={handleSendOtp}
+                          disabled={sendingOtp || otpSent}
+                        >
+                          {sendingOtp ? 'Sending...' : otpSent ? 'Sent' : 'Send OTP'}
+                        </button>
+                      </div>
+
+                      {otpSent && (
+                        <div className="input-group fade-in">
+                          <input
+                            type="text"
+                            aria-label="OTP"
+                            placeholder="ENTER 6-DIGIT OTP"
+                            value={signupForm.otp}
+                            onChange={(e) => setSignupForm((prev) => ({ ...prev, otp: e.target.value }))}
+                            required
+                          />
+                        </div>
+                      )}
                       <div className="input-group select-group">
                         <label className="floating-label">GENDER</label>
                         <select

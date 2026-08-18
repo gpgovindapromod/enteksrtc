@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Bus, ArrowRight, Eye, EyeOff } from 'lucide-react';
-import { loginUser, registerUser } from '../../services/authService';
+import { loginUser, registerUser, sendOtp } from '../../services/authService';
 import './DesktopAuthModal.css';
 
 const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
@@ -15,9 +15,31 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
     fullName: '',
     age: '',
     email: '',
+    phone: '',
+    otp: '',
     gender: 'Male',
     password: '',
   });
+
+  const [otpSent, setOtpSent] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
+
+  const handleSendOtp = async () => {
+    if (!signupForm.phone) {
+      setAuthError('Please enter your mobile number first.');
+      return;
+    }
+    setAuthError('');
+    setSendingOtp(true);
+    try {
+      await sendOtp(signupForm.phone);
+      setOtpSent(true);
+    } catch (error) {
+      setAuthError(error.message || 'Failed to send OTP');
+    } finally {
+      setSendingOtp(false);
+    }
+  };
 
   if (!show) return null;
 
@@ -38,6 +60,8 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
           fullName: signupForm.fullName,
           age: signupForm.age ? Number(signupForm.age) : undefined,
           email: signupForm.email,
+          phone: signupForm.phone,
+          otp: signupForm.otp,
           gender: signupForm.gender,
           password: signupForm.password,
         });
@@ -159,6 +183,47 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                         </select>
                       </div>
                     </div>
+
+                    <div className="bp-input-row">
+                      <div className="bp-input-group" style={{ flex: 1 }}>
+                        <label className="bp-label">Mobile Number</label>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <input
+                            type="tel"
+                            className="bp-input"
+                            placeholder="MOBILE NUMBER"
+                            value={signupForm.phone}
+                            onChange={(e) => setSignupForm((prev) => ({ ...prev, phone: e.target.value }))}
+                            required
+                          />
+                          <button
+                            type="button"
+                            className="bp-button"
+                            style={{ padding: '8px 12px', fontSize: '12px', flex: 'none', background: otpSent ? '#334155' : '#10b981' }}
+                            onClick={handleSendOtp}
+                            disabled={sendingOtp || otpSent}
+                          >
+                            {sendingOtp ? 'Sending...' : otpSent ? 'Sent' : 'Send OTP'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {otpSent && (
+                      <div className="bp-input-row fade-in">
+                        <div className="bp-input-group">
+                          <label className="bp-label">OTP Verification</label>
+                          <input
+                            type="text"
+                            className="bp-input"
+                            placeholder="ENTER 6-DIGIT OTP"
+                            value={signupForm.otp}
+                            onChange={(e) => setSignupForm((prev) => ({ ...prev, otp: e.target.value }))}
+                            required
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     <div className="bp-input-row">
                       <div className="bp-input-group" style={{ position: 'relative' }}>

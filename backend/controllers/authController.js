@@ -3,6 +3,7 @@ import {
     loginUser,
     registerUser
 } from "../services/authService.js";
+import { generateAndSendOtp } from "../services/otpService.js";
 
 const setAuthCookie = (res, token) => {
     res.cookie("jwt", token, {
@@ -66,9 +67,23 @@ export const logout = async (req, res) => {
     });
 };
 
+export const sendOtp = async (req, res, next) => {
+    try {
+        const { phone } = req.body;
+        await generateAndSendOtp(phone);
+        res.status(200).json({
+            success: true,
+            message: "OTP sent successfully."
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export default {
     register,
     login,
     me,
-    logout
+    logout,
+    sendOtp
 };

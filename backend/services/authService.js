@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../database/models/User.js";
+import { verifyOtp } from "./otpService.js";
 
 const normalizeEmail = (value) => (value ? String(value).trim().toLowerCase() : "");
 
@@ -44,9 +45,24 @@ const signToken = (user) =>
 export const registerUser = async (payload = {}) => {
     const email = normalizeEmail(payload.email);
     const password = payload.password;
+    const phone = payload.phone;
+    const otp = payload.otp;
 
-    if (!email || !password) {
-        const error = new Error("Email and password are required.");
+    if (!email || !password || !phone) {
+        const error = new Error("Email, password, and mobile number are required.");
+        error.statusCode = 400;
+        throw error;
+    }
+
+    if (!otp) {
+        const error = new Error("OTP verification code is required.");
+        error.statusCode = 400;
+        throw error;
+    }
+
+    const isValidOtp = verifyOtp(phone, otp);
+    if (!isValidOtp) {
+        const error = new Error("Invalid or expired OTP.");
         error.statusCode = 400;
         throw error;
     }

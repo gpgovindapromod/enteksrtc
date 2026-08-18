@@ -9,6 +9,15 @@ export const registerUser = async (payload) => {
   }
 };
 
+export const sendOtp = async (phone) => {
+  try {
+    const response = await apiClient.post('/api/auth/send-otp', { phone });
+    return response.data;
+  } catch (error) {
+    createServiceError(error, 'Failed to send OTP.');
+  }
+};
+
 export const loginUser = async (payload) => {
   try {
     const response = await apiClient.post('/api/auth/login', payload);
