@@ -22,6 +22,12 @@ Create a `.env` file in `backend/` with the required values used by the server:
 MONGO_URI=<your-mongodb-connection-string>
 JWT_SECRET=<your-jwt-secret>
 PORT=5011
+
+# Twilio Configuration for OTP
+TWILIO_ACCOUNT_SID=<your-twilio-account-sid>
+TWILIO_AUTH_TOKEN=<your-twilio-auth-token>
+TWILIO_PHONE_NUMBER=<your-twilio-phone-number>
+
 # Optional (comma-separated list)
 CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```

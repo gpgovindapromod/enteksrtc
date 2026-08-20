@@ -80,10 +80,31 @@ export const sendOtp = async (req, res, next) => {
     }
 };
 
+export const verifyOtpStep = async (req, res, next) => {
+    try {
+        const { phone, otp } = req.body;
+        const { verifyOtp } = await import("../services/otpService.js");
+        
+        if (!phone || !otp) {
+            return res.status(400).json({ success: false, message: "Phone and OTP are required." });
+        }
+
+        const isValid = verifyOtp(phone, otp, { markAsVerified: true, deleteAfterVerify: false });
+        if (!isValid) {
+            return res.status(400).json({ success: false, message: "Invalid or expired OTP." });
+        }
+
+        res.status(200).json({ success: true, message: "OTP verified successfully." });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export default {
     register,
     login,
     me,
     logout,
-    sendOtp
+    sendOtp,
+    verifyOtpStep
 };

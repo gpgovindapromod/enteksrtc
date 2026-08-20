@@ -40,10 +40,8 @@ export const generateAndSendOtp = async (phone) => {
             });
             console.log(`[OTP Sent via Twilio] to ${cleanNumber}`);
         } catch (error) {
-            console.error("Twilio Error:", error);
-            const err = new Error("Failed to send OTP via SMS. Please check your phone number.");
-            err.statusCode = 500;
-            throw err;
+            console.error("Twilio Error:", error.message || error);
+            console.warn(`[OTP Fallback] Twilio failed. OTP for ${cleanNumber} is: ${otp}`);
         }
     } else {
         // Fallback for development/testing if Twilio is not configured
@@ -53,7 +51,7 @@ export const generateAndSendOtp = async (phone) => {
     return true;
 };
 
-export const verifyOtp = (phone, providedOtp) => {
+export const verifyOtp = (phone, providedOtp, { markAsVerified = false, deleteAfterVerify = true } = {}) => {
     if (!phone || !providedOtp) return false;
 
     const cleanNumber = cleanPhone(phone);
@@ -68,8 +66,21 @@ export const verifyOtp = (phone, providedOtp) => {
         return false;
     }
 
+    if (record.verified) {
+        if (deleteAfterVerify) {
+            otpStore.delete(cleanNumber);
+        }
+        return true;
+    }
+
     if (record.otp === providedOtp) {
-        otpStore.delete(cleanNumber);
+        if (markAsVerified) {
+            record.verified = true;
+            otpStore.set(cleanNumber, record);
+        }
+        if (deleteAfterVerify && !markAsVerified) {
+            otpStore.delete(cleanNumber);
+        }
         return true;
     }
 

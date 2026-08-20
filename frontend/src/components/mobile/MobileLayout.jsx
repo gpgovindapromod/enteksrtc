@@ -248,7 +248,10 @@ const MobileLayout = () => {
       <MobileLoginModal
         showLoginModal={showLoginModal}
         setShowLoginModal={setShowLoginModal}
-        onLoginSuccess={(user, token) => setAuthSession({ user, token })}
+        onLoginSuccess={(user, token) => {
+          setAuthSession({ user, token });
+          navigate('/profile');
+        }}
       />
 
       {/* Sticky Persistent Mobile Bottom Navbar */}

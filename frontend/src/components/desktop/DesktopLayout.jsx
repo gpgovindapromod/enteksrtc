@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useBookingStore } from '../../store/useBookingStore';
 import { useTheme } from '../../context/ThemeContext';
 import { useAppStore } from '../../store/useAppStore';
 import { useAppLogic } from '../../hooks/useAppLogic';
+import { logoutUser } from '../../services/authService';
 
 import DesktopHome from './DesktopHome';
 import DesktopSearchResults from './DesktopSearchResults';
@@ -14,6 +15,7 @@ import DesktopTicketsModal from './DesktopTicketsModal';
 import { TRANSLATIONS } from '../../data/mockData';
 
 const DesktopLayout = () => {
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
 
   const {
@@ -27,13 +29,22 @@ const DesktopLayout = () => {
   } = useBookingStore();
 
   const { language } = useAppStore();
-  const { isUserLoggedIn, showLoginModal, setShowLoginModal, setAuthSession } = useAuthStore();
+  const { isUserLoggedIn, showLoginModal, setShowLoginModal, setAuthSession, clearAuthSession } = useAuthStore();
   
   const { handleCheckout, handleCancelBooking } = useAppLogic();
 
   const [showDesktopTicketsModal, setShowDesktopTicketsModal] = useState(false);
   
   const t = TRANSLATIONS[language] || TRANSLATIONS.en;
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } finally {
+      clearAuthSession();
+      navigate('/');
+    }
+  };
 
   return (
     <>
@@ -66,7 +77,7 @@ const DesktopLayout = () => {
 
         <Route path="/dashboard" element={
           <div style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 99999, overflowY: 'auto', backgroundColor: 'var(--bg-color)' }}>
-            <DesktopDashboard theme={theme} toggleTheme={toggleTheme} />
+            <DesktopDashboard theme={theme} toggleTheme={toggleTheme} onLogout={handleLogout} />
           </div>
         } />
       </Routes>
@@ -74,7 +85,10 @@ const DesktopLayout = () => {
       <DesktopAuthModal
         show={showLoginModal}
         onClose={() => setShowLoginModal(false)}
-        onLoginSuccess={(user, token) => setAuthSession({ user, token })}
+        onLoginSuccess={(user, token) => {
+          setAuthSession({ user, token });
+          navigate('/dashboard');
+        }}
       />
       <DesktopTicketsModal
         show={showDesktopTicketsModal}

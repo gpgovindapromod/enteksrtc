@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Bus, Search, MapPin, Calendar, ChevronRight, Clock, CreditCard,
-  Star, LayoutDashboard, Ticket, LifeBuoy,
+  Star, LayoutDashboard, Ticket, LifeBuoy, LogOut,
   Coffee, Bell, Settings, ArrowRightLeft,
   Users, TrendingUp, AlertTriangle, Route, CheckCircle
 } from 'lucide-react';
@@ -17,7 +17,7 @@ const ROLES = {
   SUPPORT: 'support'
 };
 
-const DesktopDashboard = ({ theme, toggleTheme }) => {
+const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
   const { user } = useAuthStore();
   const [activeRole, setActiveRole] = useState(user?.role || ROLES.PASSENGER);
   const [dashboardData, setDashboardData] = useState(null);
@@ -97,9 +97,11 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
         <div className="px-6 py-4">
           <div className="flex items-center gap-4 p-4 bg-slate-100/50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800 mb-8">
             <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#10b981] to-emerald-300 p-0.5">
-              <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=100" className="w-full h-full rounded-full object-cover" alt="Profile" />
+              <div className="w-full h-full rounded-full bg-[#10b981] flex items-center justify-center text-white font-bold text-xl">
+                {(user?.name || user?.fullName || user?.firstName || 'T').charAt(0).toUpperCase()}
+              </div>
             </div>
-            <div>
+            <div style={{ overflow: 'hidden' }}>
               <h2 className="text-sm font-bold truncate">Welcome, {user?.name || user?.fullName || user?.firstName || 'Traveler'}</h2>
               <p className="text-[10px] text-[#10b981] font-bold uppercase tracking-tighter">Elite Gold Member</p>
             </div>
@@ -110,7 +112,7 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
           </button>
         </div>
 
-        <nav className="flex-1 px-4 space-y-2">
+        <nav className="flex-1 px-4 space-y-2 overflow-y-auto">
           {getSidebarLinks().map((item) => (
             <button
               key={item.label}
@@ -121,6 +123,16 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
             </button>
           ))}
         </nav>
+        
+        <div className="p-6 border-t border-slate-200 dark:border-slate-800 mt-auto">
+          <button 
+             onClick={onLogout}
+             className="w-full flex items-center gap-4 px-6 py-4 rounded-xl transition-all text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500"
+          >
+            <LogOut size={20} />
+            <span className="text-sm font-medium">Log Out</span>
+          </button>
+        </div>
       </aside>
 
       {/* Main Content */}
@@ -164,8 +176,8 @@ const DesktopDashboard = ({ theme, toggleTheme }) => {
             >
               <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
             </button>
-            <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100" className="w-full h-full object-cover" alt="Profile" />
+            <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800 bg-[#10b981] flex items-center justify-center text-white font-bold">
+              {(user?.name || user?.fullName || user?.firstName || 'T').charAt(0).toUpperCase()}
             </div>
           </div>
         </header>

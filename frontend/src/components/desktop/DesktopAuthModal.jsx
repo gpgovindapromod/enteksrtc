@@ -1,80 +1,32 @@
-import React, { useState } from 'react';
-import { X, Bus, ArrowRight, Eye, EyeOff } from 'lucide-react';
-import { loginUser, registerUser, sendOtp } from '../../services/authService';
+import React from 'react';
+import { X, Bus, ArrowRight, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { useAuthForm } from '../../hooks/useAuthForm';
 import './DesktopAuthModal.css';
 
 const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
-  const [authMode, setAuthMode] = useState('login');
-  const [showPassword, setShowPassword] = useState(false);
-  const [signupTab, setSignupTab] = useState('mandatory');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [authError, setAuthError] = useState('');
-
-  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
-  const [signupForm, setSignupForm] = useState({
-    fullName: '',
-    age: '',
-    email: '',
-    phone: '',
-    otp: '',
-    gender: 'Male',
-    password: '',
-  });
-
-  const [otpSent, setOtpSent] = useState(false);
-  const [sendingOtp, setSendingOtp] = useState(false);
-
-  const handleSendOtp = async () => {
-    if (!signupForm.phone) {
-      setAuthError('Please enter your mobile number first.');
-      return;
-    }
-    setAuthError('');
-    setSendingOtp(true);
-    try {
-      await sendOtp(signupForm.phone);
-      setOtpSent(true);
-    } catch (error) {
-      setAuthError(error.message || 'Failed to send OTP');
-    } finally {
-      setSendingOtp(false);
-    }
-  };
+  const {
+    authMode,
+    setAuthMode,
+    showPassword,
+    setShowPassword,
+    signupTab,
+    setSignupTab,
+    isSubmitting,
+    authError,
+    loginForm,
+    setLoginForm,
+    signupForm,
+    setSignupForm,
+    otpSent,
+    sendingOtp,
+    otpVerified,
+    verifyingOtp,
+    handleSendOtp,
+    handleVerifyOtp,
+    handleSubmit
+  } = useAuthForm(onLoginSuccess, onClose);
 
   if (!show) return null;
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setAuthError('');
-    setIsSubmitting(true);
-
-    try {
-      if (authMode === 'login') {
-        const result = await loginUser({
-          email: loginForm.email,
-          password: loginForm.password,
-        });
-        onLoginSuccess?.(result.user, result.token);
-      } else {
-        const result = await registerUser({
-          fullName: signupForm.fullName,
-          age: signupForm.age ? Number(signupForm.age) : undefined,
-          email: signupForm.email,
-          phone: signupForm.phone,
-          otp: signupForm.otp,
-          gender: signupForm.gender,
-          password: signupForm.password,
-        });
-        onLoginSuccess?.(result.user, result.token);
-      }
-
-      onClose?.();
-    } catch (error) {
-      setAuthError(error.message);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className="boarding-pass-overlay" onClick={onClose}>
@@ -106,25 +58,43 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
                   <button
                     type="button"
-                    className={`bp-subtab ${
-                      signupTab === 'mandatory'
-                        ? 'text-emerald-500 font-bold border-b-2 border-emerald-500'
-                        : 'text-slate-400'
-                    }`}
+                    className="bp-subtab"
                     onClick={() => setSignupTab('mandatory')}
-                    style={{ paddingBottom: '4px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                    style={{ 
+                      paddingBottom: '4px', 
+                      fontSize: '12px', 
+                      textTransform: 'uppercase', 
+                      letterSpacing: '0.05em',
+                      fontWeight: signupTab === 'mandatory' ? 'bold' : 'normal',
+                      color: signupTab === 'mandatory' ? 'var(--primary)' : 'var(--gray)',
+                      borderBottom: signupTab === 'mandatory' ? '2px solid var(--primary)' : '2px solid transparent',
+                      background: 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                      cursor: 'pointer'
+                    }}
                   >
                     Mandatory Info
                   </button>
                   <button
                     type="button"
-                    className={`bp-subtab ${
-                      signupTab === 'optional'
-                        ? 'text-emerald-500 font-bold border-b-2 border-emerald-500'
-                        : 'text-slate-400'
-                    }`}
+                    className="bp-subtab"
                     onClick={() => setSignupTab('optional')}
-                    style={{ paddingBottom: '4px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                    style={{ 
+                      paddingBottom: '4px', 
+                      fontSize: '12px', 
+                      textTransform: 'uppercase', 
+                      letterSpacing: '0.05em',
+                      fontWeight: signupTab === 'optional' ? 'bold' : 'normal',
+                      color: signupTab === 'optional' ? 'var(--primary)' : 'var(--gray)',
+                      borderBottom: signupTab === 'optional' ? '2px solid var(--primary)' : '2px solid transparent',
+                      background: 'none',
+                      borderTop: 'none',
+                      borderLeft: 'none',
+                      borderRight: 'none',
+                      cursor: 'pointer'
+                    }}
                   >
                     Optional Info
                   </button>
@@ -195,56 +165,88 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                             value={signupForm.phone}
                             onChange={(e) => setSignupForm((prev) => ({ ...prev, phone: e.target.value }))}
                             required
+                            disabled={otpVerified}
                           />
-                          <button
-                            type="button"
-                            className="bp-button"
-                            style={{ padding: '8px 12px', fontSize: '12px', flex: 'none', background: otpSent ? '#334155' : '#10b981' }}
-                            onClick={handleSendOtp}
-                            disabled={sendingOtp || otpSent}
-                          >
-                            {sendingOtp ? 'Sending...' : otpSent ? 'Sent' : 'Send OTP'}
-                          </button>
+                          {!otpVerified && (
+                            <button
+                              type="button"
+                              className="bp-button"
+                              style={{ padding: '8px 12px', fontSize: '12px', flex: 'none', background: otpSent ? 'var(--gray)' : 'var(--primary)', color: 'var(--white)' }}
+                              onClick={handleSendOtp}
+                              disabled={sendingOtp || (otpSent && !authError)}
+                            >
+                              {sendingOtp ? 'Sending...' : otpSent ? 'Sent' : 'Send OTP'}
+                            </button>
+                          )}
+                          {otpVerified && (
+                             <div style={{ display: 'flex', alignItems: 'center', color: 'var(--primary)', padding: '0 8px' }}>
+                               <CheckCircle size={20} />
+                             </div>
+                          )}
                         </div>
                       </div>
                     </div>
 
-                    {otpSent && (
+                    {otpSent && !otpVerified && (
                       <div className="bp-input-row fade-in">
                         <div className="bp-input-group">
                           <label className="bp-label">OTP Verification</label>
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            <input
+                              type="text"
+                              className="bp-input"
+                              placeholder="ENTER 6-DIGIT OTP"
+                              value={signupForm.otp}
+                              onChange={(e) => setSignupForm((prev) => ({ ...prev, otp: e.target.value }))}
+                              required
+                            />
+                            <button
+                              type="button"
+                              className="bp-button"
+                              style={{ padding: '8px 12px', fontSize: '12px', flex: 'none', background: 'var(--primary)', color: 'var(--white)' }}
+                              onClick={handleVerifyOtp}
+                              disabled={verifyingOtp}
+                            >
+                              {verifyingOtp ? 'Verifying...' : 'Verify'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {otpVerified && (
+                      <div className="bp-input-row fade-in">
+                        <div className="bp-input-group" style={{ position: 'relative' }}>
+                          <label className="bp-label">Password</label>
                           <input
-                            type="text"
+                            type={showPassword ? 'text' : 'password'}
                             className="bp-input"
-                            placeholder="ENTER 6-DIGIT OTP"
-                            value={signupForm.otp}
-                            onChange={(e) => setSignupForm((prev) => ({ ...prev, otp: e.target.value }))}
+                            placeholder="PASSWORD"
+                            value={signupForm.password}
+                            onChange={(e) => setSignupForm((prev) => ({ ...prev, password: e.target.value }))}
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            style={{ position: 'absolute', right: '0', bottom: '12px', color: '#94a3b8', background: 'none', border: 'none' }}
+                          >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+                        <div className="bp-input-group" style={{ position: 'relative' }}>
+                          <label className="bp-label">Confirm Password</label>
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            className="bp-input"
+                            placeholder="CONFIRM PASSWORD"
+                            value={signupForm.confirmPassword}
+                            onChange={(e) => setSignupForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
                             required
                           />
                         </div>
                       </div>
                     )}
-
-                    <div className="bp-input-row">
-                      <div className="bp-input-group" style={{ position: 'relative' }}>
-                        <label className="bp-label">Password</label>
-                        <input
-                          type={showPassword ? 'text' : 'password'}
-                          className="bp-input"
-                          placeholder="PASSWORD"
-                          value={signupForm.password}
-                          onChange={(e) => setSignupForm((prev) => ({ ...prev, password: e.target.value }))}
-                          required
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          style={{ position: 'absolute', right: '0', bottom: '12px', color: '#94a3b8', background: 'none', border: 'none' }}
-                        >
-                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 ) : (
                   <div className="fade-in" style={{ overflowY: 'auto', paddingRight: '8px', maxHeight: '320px' }}>

@@ -36,13 +36,15 @@ const MobileDashboard = ({
         <div className="flex items-center gap-4 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-6 relative overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none"></div>
           <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#10b981] to-emerald-300 p-0.5 shrink-0 z-10">
-            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=150" className="w-full h-full rounded-full object-cover border-2 border-white dark:border-slate-900" alt="Profile" />
+            <div className="w-full h-full rounded-full border-2 border-white dark:border-slate-900 bg-[#10b981] flex items-center justify-center text-white font-bold text-2xl">
+              {(user?.name || user?.fullName || user?.firstName || 'T').charAt(0).toUpperCase()}
+            </div>
           </div>
-          <div className="flex-1 z-10">
-            <h3 className="text-lg font-bold font-outfit text-slate-900 dark:text-white leading-tight">{user?.name || user?.fullName || user?.firstName || 'Traveler'}</h3>
+          <div className="flex-1 z-10" style={{ overflow: 'hidden' }}>
+            <h3 className="text-lg font-bold font-outfit text-slate-900 dark:text-white leading-tight truncate">{user?.name || user?.fullName || user?.firstName || 'Traveler'}</h3>
             <p className="text-[10px] text-[#10b981] font-bold uppercase tracking-widest mt-1">Elite Gold Member</p>
           </div>
-          <button className="z-10 p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 hover:text-red-500 transition-colors" onClick={onLogout} aria-label="Sign Out">
+          <button className="z-10 p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 hover:text-red-500 transition-colors shrink-0" onClick={onLogout} aria-label="Sign Out">
              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
           </button>
         </div>

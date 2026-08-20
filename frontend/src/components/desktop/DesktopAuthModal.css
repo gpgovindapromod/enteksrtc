@@ -14,20 +14,20 @@
   width: 850px;
   max-width: 95vw;
   height: 620px;
-  background: var(--surface-color, #1e293b);
+  background: var(--white);
   border-radius: 20px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
   position: relative;
   overflow: hidden;
   font-family: 'Inter', sans-serif;
-  color: var(--text-primary, #f8fafc);
+  color: var(--dark);
 }
 
 /* The perforation circles on top and bottom */
 .boarding-pass-divider {
   position: relative;
   width: 2px;
-  background-image: linear-gradient(to bottom, #334155 50%, transparent 50%);
+  background-image: linear-gradient(to bottom, var(--gray-border) 50%, transparent 50%);
   background-size: 2px 12px;
   background-repeat: repeat-y;
   z-index: 10;
@@ -64,7 +64,7 @@
 
 .bp-stub {
   flex: 0 0 32%;
-  background: var(--bg-color, #0f172a);
+  background: var(--light);
   padding: 40px 32px;
   display: flex;
   flex-direction: column;
@@ -80,14 +80,14 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--gray);
   margin-bottom: 4px;
 }
 
 .bp-title {
   font-size: 28px;
   font-weight: 800;
-  color: var(--text-primary, #f8fafc);
+  color: var(--dark);
   letter-spacing: -0.02em;
   margin-bottom: 8px;
 }
@@ -95,7 +95,7 @@
 .bp-airline {
   font-size: 14px;
   font-weight: 700;
-  color: #10b981;
+  color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.15em;
   display: flex;
@@ -108,13 +108,13 @@
   display: flex;
   gap: 24px;
   margin-bottom: 32px;
-  border-bottom: 2px solid #334155;
+  border-bottom: 2px solid var(--gray-border);
 }
 
 .bp-tab {
   padding: 8px 0;
   font-weight: 600;
-  color: var(--text-secondary, #94a3b8);
+  color: var(--gray);
   position: relative;
   cursor: pointer;
   background: none;
@@ -126,7 +126,7 @@
 }
 
 .bp-tab.active {
-  color: var(--text-primary, #f8fafc);
+  color: var(--dark);
 }
 
 .bp-tab.active::after {
@@ -136,7 +136,7 @@
   left: 0;
   width: 100%;
   height: 2px;
-  background: #10b981;
+  background: var(--primary);
 }
 
 /* Form Styles */
@@ -161,28 +161,28 @@
 .bp-input {
   width: 100%;
   border: none;
-  border-bottom: 2px solid #334155;
+  border-bottom: 2px solid var(--gray-border);
   padding: 8px 0;
   font-size: 16px;
   font-weight: 600;
-  color: var(--text-primary, #f8fafc);
+  color: var(--dark);
   background: transparent;
   transition: border-color 0.3s;
 }
 
 .bp-input:focus {
   outline: none;
-  border-bottom-color: #10b981;
+  border-bottom-color: var(--primary);
 }
 
 .bp-input::placeholder {
-  color: #475569;
+  color: var(--gray);
   font-weight: 400;
 }
 
 .bp-button {
-  background: #10b981;
-  color: #0f172a;
+  background: var(--primary);
+  color: var(--white);
   border: none;
   padding: 16px;
   border-radius: 8px;
@@ -196,7 +196,7 @@
 }
 
 .bp-button:hover {
-  background: #34d399;
+  background: var(--primary-hover);
   transform: translateY(-2px);
 }
 
@@ -211,16 +211,16 @@
   height: 60px;
   background: repeating-linear-gradient(
     90deg,
-    #94a3b8,
-    #94a3b8 2px,
+    var(--gray),
+    var(--gray) 2px,
     transparent 2px,
     transparent 6px,
-    #94a3b8 6px,
-    #94a3b8 10px,
+    var(--gray) 6px,
+    var(--gray) 10px,
     transparent 10px,
     transparent 12px,
-    #94a3b8 12px,
-    #94a3b8 14px,
+    var(--gray) 12px,
+    var(--gray) 14px,
     transparent 14px,
     transparent 20px
   );
@@ -232,7 +232,7 @@
   font-family: 'JetBrains Mono', 'Courier New', monospace;
   font-size: 12px;
   letter-spacing: 0.4em;
-  color: #94a3b8;
+  color: var(--gray);
   font-weight: bold;
 }
 
@@ -240,8 +240,8 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
-  border-top: 1px dashed #334155;
-  border-bottom: 1px dashed #334155;
+  border-top: 1px dashed var(--gray-border);
+  border-bottom: 1px dashed var(--gray-border);
   padding: 16px 0;
   margin-bottom: 24px;
 }
@@ -253,7 +253,7 @@
 .bp-flight-info .val {
   font-size: 20px;
   font-weight: 800;
-  color: var(--text-primary, #f8fafc);
+  color: var(--dark);
 }
 
 .bp-close {
@@ -262,19 +262,19 @@
   right: 24px;
   background: none;
   border: none;
-  color: #94a3b8;
+  color: var(--gray);
   cursor: pointer;
   transition: color 0.2s;
   z-index: 20;
 }
 
 .bp-close:hover {
-  color: #ef4444;
+  color: var(--secondary);
 }
 
 .bp-subtext {
   font-size: 12px;
-  color: #64748b;
+  color: var(--gray);
   margin-top: 16px;
   text-align: center;
 }

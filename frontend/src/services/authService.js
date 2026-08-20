@@ -18,6 +18,15 @@ export const sendOtp = async (phone) => {
   }
 };
 
+export const verifyOtp = async (phone, otp) => {
+  try {
+    const response = await apiClient.post('/api/auth/verify-otp', { phone, otp });
+    return response.data;
+  } catch (error) {
+    createServiceError(error, 'OTP verification failed.');
+  }
+};
+
 export const loginUser = async (payload) => {
   try {
     const response = await apiClient.post('/api/auth/login', payload);

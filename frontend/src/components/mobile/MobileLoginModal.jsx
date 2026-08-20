@@ -1,83 +1,31 @@
-import React, { useState } from 'react';
-import { X, Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { loginUser, registerUser, sendOtp } from '../../services/authService';
+import React from 'react';
+import { X, Mail, Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { useAuthForm } from '../../hooks/useAuthForm';
 
 const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess }) => {
-  const [authMode, setAuthMode] = useState('login');
-  const [showPassword, setShowPassword] = useState(false);
-  const [signupTab, setSignupTab] = useState('mandatory');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [authError, setAuthError] = useState('');
-
-  const [loginForm, setLoginForm] = useState({
-    email: '',
-    password: '',
-  });
-
-  const [signupForm, setSignupForm] = useState({
-    fullName: '',
-    age: '',
-    email: '',
-    phone: '',
-    otp: '',
-    gender: 'Male',
-    password: '',
-  });
-
-  const [otpSent, setOtpSent] = useState(false);
-  const [sendingOtp, setSendingOtp] = useState(false);
-
-  const handleSendOtp = async () => {
-    if (!signupForm.phone) {
-      setAuthError('Please enter your mobile number first.');
-      return;
-    }
-    setAuthError('');
-    setSendingOtp(true);
-    try {
-      await sendOtp(signupForm.phone);
-      setOtpSent(true);
-    } catch (error) {
-      setAuthError(error.message || 'Failed to send OTP');
-    } finally {
-      setSendingOtp(false);
-    }
-  };
+  const {
+    authMode,
+    setAuthMode,
+    showPassword,
+    setShowPassword,
+    signupTab,
+    setSignupTab,
+    isSubmitting,
+    authError,
+    loginForm,
+    setLoginForm,
+    signupForm,
+    setSignupForm,
+    otpSent,
+    sendingOtp,
+    otpVerified,
+    verifyingOtp,
+    handleSendOtp,
+    handleVerifyOtp,
+    handleSubmit
+  } = useAuthForm(onLoginSuccess, () => setShowLoginModal(false));
 
   if (!showLoginModal) return null;
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setAuthError('');
-    setIsSubmitting(true);
-
-    try {
-      if (authMode === 'login') {
-        const result = await loginUser({
-          email: loginForm.email,
-          password: loginForm.password,
-        });
-        onLoginSuccess?.(result.user, result.token);
-      } else {
-        const result = await registerUser({
-          fullName: signupForm.fullName,
-          age: signupForm.age ? Number(signupForm.age) : undefined,
-          email: signupForm.email,
-          phone: signupForm.phone,
-          otp: signupForm.otp,
-          gender: signupForm.gender,
-          password: signupForm.password,
-        });
-        onLoginSuccess?.(result.user, result.token);
-      }
-
-      setShowLoginModal(false);
-    } catch (error) {
-      setAuthError(error.message);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className="mobile-sheet-overlay" onClick={() => setShowLoginModal(false)}>
@@ -152,21 +100,8 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                           required
                         />
                       </div>
-                      <div className="input-group">
-                        <input
-                          type={showPassword ? 'text' : 'password'}
-                          aria-label="Password"
-                          placeholder="Password"
-                          value={signupForm.password}
-                          onChange={(e) => setSignupForm((prev) => ({ ...prev, password: e.target.value }))}
-                          required
-                        />
-                        <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
-                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                      </div>
 
-                      <div className="input-group" style={{ display: 'flex', gap: '8px', background: 'transparent', padding: 0 }}>
+                      <div className="input-group" style={{ display: 'flex', gap: '8px', background: 'transparent', padding: 0, alignItems: 'center' }}>
                         <input
                           type="tel"
                           aria-label="Mobile Number"
@@ -175,26 +110,73 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                           onChange={(e) => setSignupForm((prev) => ({ ...prev, phone: e.target.value }))}
                           required
                           style={{ flex: 1 }}
+                          disabled={otpVerified}
                         />
-                        <button
-                          type="button"
-                          className="btn-primary"
-                          style={{ padding: '0 16px', fontSize: '12px', flex: 'none', background: otpSent ? '#334155' : '#10b981', height: '48px', borderRadius: '12px' }}
-                          onClick={handleSendOtp}
-                          disabled={sendingOtp || otpSent}
-                        >
-                          {sendingOtp ? 'Sending...' : otpSent ? 'Sent' : 'Send OTP'}
-                        </button>
+                        {!otpVerified && (
+                          <button
+                            type="button"
+                            className="btn-primary"
+                            style={{ padding: '0 16px', fontSize: '12px', flex: 'none', background: otpSent ? 'var(--gray)' : 'var(--primary)', color: 'var(--white)', height: '48px', borderRadius: '12px' }}
+                            onClick={handleSendOtp}
+                            disabled={sendingOtp || (otpSent && !authError)}
+                          >
+                            {sendingOtp ? 'Sending...' : otpSent ? 'Sent' : 'Send OTP'}
+                          </button>
+                        )}
+                        {otpVerified && (
+                           <div style={{ display: 'flex', alignItems: 'center', color: 'var(--primary)', padding: '0 8px' }}>
+                             <CheckCircle size={20} />
+                           </div>
+                        )}
                       </div>
 
-                      {otpSent && (
-                        <div className="input-group fade-in">
+                      {otpSent && !otpVerified && (
+                        <div className="input-group fade-in" style={{ display: 'flex', gap: '8px', background: 'transparent', padding: 0 }}>
                           <input
                             type="text"
                             aria-label="OTP"
                             placeholder="ENTER 6-DIGIT OTP"
                             value={signupForm.otp}
                             onChange={(e) => setSignupForm((prev) => ({ ...prev, otp: e.target.value }))}
+                            required
+                            style={{ flex: 1 }}
+                          />
+                          <button
+                            type="button"
+                            className="btn-primary"
+                            style={{ padding: '0 16px', fontSize: '12px', flex: 'none', background: 'var(--primary)', color: 'var(--white)', height: '48px', borderRadius: '12px' }}
+                            onClick={handleVerifyOtp}
+                            disabled={verifyingOtp}
+                          >
+                            {verifyingOtp ? 'Verifying...' : 'Verify'}
+                          </button>
+                        </div>
+                      )}
+
+                      {otpVerified && (
+                        <div className="input-group fade-in">
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            aria-label="Password"
+                            placeholder="Password"
+                            value={signupForm.password}
+                            onChange={(e) => setSignupForm((prev) => ({ ...prev, password: e.target.value }))}
+                            required
+                          />
+                          <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+                      )}
+                      
+                      {otpVerified && (
+                        <div className="input-group fade-in">
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            aria-label="Confirm Password"
+                            placeholder="Confirm Password"
+                            value={signupForm.confirmPassword}
+                            onChange={(e) => setSignupForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
                             required
                           />
                         </div>
