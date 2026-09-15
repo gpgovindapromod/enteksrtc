@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Bus, ArrowRight, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { useAuthForm } from '../../hooks/useAuthForm';
+import PhoneEmailSignIn from '../auth/PhoneEmailSignIn';
 import './DesktopAuthModal.css';
 
 const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
@@ -23,6 +24,7 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
     verifyingOtp,
     handleSendOtp,
     handleVerifyOtp,
+    handlePhoneEmailSuccess,
     handleSubmit
   } = useAuthForm(onLoginSuccess, onClose);
 
@@ -157,62 +159,31 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                     <div className="bp-input-row">
                       <div className="bp-input-group" style={{ flex: 1 }}>
                         <label className="bp-label">Mobile Number</label>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <input
-                            type="tel"
-                            className="bp-input"
-                            placeholder="MOBILE NUMBER"
-                            value={signupForm.phone}
-                            onChange={(e) => setSignupForm((prev) => ({ ...prev, phone: e.target.value }))}
-                            required
-                            disabled={otpVerified}
-                          />
-                          {!otpVerified && (
-                            <button
-                              type="button"
-                              className="bp-button"
-                              style={{ padding: '8px 12px', fontSize: '12px', flex: 'none', background: otpSent ? 'var(--gray)' : 'var(--primary)', color: 'var(--white)' }}
-                              onClick={handleSendOtp}
-                              disabled={sendingOtp || (otpSent && !authError)}
-                            >
-                              {sendingOtp ? 'Sending...' : otpSent ? 'Sent' : 'Send OTP'}
-                            </button>
-                          )}
-                          {otpVerified && (
-                             <div style={{ display: 'flex', alignItems: 'center', color: 'var(--primary)', padding: '0 8px' }}>
-                               <CheckCircle size={20} />
-                             </div>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          {!otpVerified ? (
+                            <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                              <PhoneEmailSignIn onSuccess={handlePhoneEmailSuccess} />
+                            </div>
+                          ) : (
+                            <>
+                              <input
+                                type="tel"
+                                className="bp-input"
+                                value={signupForm.phone}
+                                readOnly
+                                disabled
+                                style={{ flex: 1, backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: 'var(--primary)', color: 'var(--white)' }}
+                              />
+                              <div style={{ display: 'flex', alignItems: 'center', color: 'var(--primary)', padding: '0 8px' }}>
+                                <CheckCircle size={20} />
+                              </div>
+                            </>
                           )}
                         </div>
                       </div>
                     </div>
 
-                    {otpSent && !otpVerified && (
-                      <div className="bp-input-row fade-in">
-                        <div className="bp-input-group">
-                          <label className="bp-label">OTP Verification</label>
-                          <div style={{ display: 'flex', gap: '8px' }}>
-                            <input
-                              type="text"
-                              className="bp-input"
-                              placeholder="ENTER 6-DIGIT OTP"
-                              value={signupForm.otp}
-                              onChange={(e) => setSignupForm((prev) => ({ ...prev, otp: e.target.value }))}
-                              required
-                            />
-                            <button
-                              type="button"
-                              className="bp-button"
-                              style={{ padding: '8px 12px', fontSize: '12px', flex: 'none', background: 'var(--primary)', color: 'var(--white)' }}
-                              onClick={handleVerifyOtp}
-                              disabled={verifyingOtp}
-                            >
-                              {verifyingOtp ? 'Verifying...' : 'Verify'}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+
 
                     {otpVerified && (
                       <div className="bp-input-row fade-in">

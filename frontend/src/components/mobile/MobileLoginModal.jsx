@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Mail, Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { useAuthForm } from '../../hooks/useAuthForm';
+import PhoneEmailSignIn from '../auth/PhoneEmailSignIn';
 
 const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess }) => {
   const {
@@ -22,6 +23,7 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
     verifyingOtp,
     handleSendOtp,
     handleVerifyOtp,
+    handlePhoneEmailSuccess,
     handleSubmit
   } = useAuthForm(onLoginSuccess, () => setShowLoginModal(false));
 
@@ -101,57 +103,29 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                         />
                       </div>
 
-                      <div className="input-group" style={{ display: 'flex', gap: '8px', background: 'transparent', padding: 0, alignItems: 'center' }}>
-                        <input
-                          type="tel"
-                          aria-label="Mobile Number"
-                          placeholder="MOBILE NUMBER"
-                          value={signupForm.phone}
-                          onChange={(e) => setSignupForm((prev) => ({ ...prev, phone: e.target.value }))}
-                          required
-                          style={{ flex: 1 }}
-                          disabled={otpVerified}
-                        />
-                        {!otpVerified && (
-                          <button
-                            type="button"
-                            className="btn-primary"
-                            style={{ padding: '0 16px', fontSize: '12px', flex: 'none', background: otpSent ? 'var(--gray)' : 'var(--primary)', color: 'var(--white)', height: '48px', borderRadius: '12px' }}
-                            onClick={handleSendOtp}
-                            disabled={sendingOtp || (otpSent && !authError)}
-                          >
-                            {sendingOtp ? 'Sending...' : otpSent ? 'Sent' : 'Send OTP'}
-                          </button>
-                        )}
-                        {otpVerified && (
-                           <div style={{ display: 'flex', alignItems: 'center', color: 'var(--primary)', padding: '0 8px' }}>
-                             <CheckCircle size={20} />
-                           </div>
+                      <div className="input-group" style={{ display: 'flex', gap: '8px', background: 'transparent', padding: 0, alignItems: 'center', minHeight: '48px' }}>
+                        {!otpVerified ? (
+                          <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                            <PhoneEmailSignIn onSuccess={handlePhoneEmailSuccess} />
+                          </div>
+                        ) : (
+                          <>
+                            <input
+                              type="tel"
+                              aria-label="Mobile Number"
+                              value={signupForm.phone}
+                              readOnly
+                              disabled
+                              style={{ flex: 1, backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: 'var(--primary)', color: 'var(--text)' }}
+                            />
+                            <div style={{ display: 'flex', alignItems: 'center', color: 'var(--primary)', padding: '0 8px' }}>
+                              <CheckCircle size={20} />
+                            </div>
+                          </>
                         )}
                       </div>
 
-                      {otpSent && !otpVerified && (
-                        <div className="input-group fade-in" style={{ display: 'flex', gap: '8px', background: 'transparent', padding: 0 }}>
-                          <input
-                            type="text"
-                            aria-label="OTP"
-                            placeholder="ENTER 6-DIGIT OTP"
-                            value={signupForm.otp}
-                            onChange={(e) => setSignupForm((prev) => ({ ...prev, otp: e.target.value }))}
-                            required
-                            style={{ flex: 1 }}
-                          />
-                          <button
-                            type="button"
-                            className="btn-primary"
-                            style={{ padding: '0 16px', fontSize: '12px', flex: 'none', background: 'var(--primary)', color: 'var(--white)', height: '48px', borderRadius: '12px' }}
-                            onClick={handleVerifyOtp}
-                            disabled={verifyingOtp}
-                          >
-                            {verifyingOtp ? 'Verifying...' : 'Verify'}
-                          </button>
-                        </div>
-                      )}
+
 
                       {otpVerified && (
                         <div className="input-group fade-in">

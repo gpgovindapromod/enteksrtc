@@ -526,6 +526,7 @@ button {
     grid-row: span 1;
   }
 }
+
 @media (max-width: 768px) {
 
 
@@ -2484,4 +2485,15 @@ h6,
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Phone.email custom button */
+.pe_signin_button button {
+  font-size: 0 !important;
+}
+
+.pe_signin_button button::after {
+  content: "Verify your number with One time Password";
+  font-size: 16px;
+  font-weight: 600;
 }

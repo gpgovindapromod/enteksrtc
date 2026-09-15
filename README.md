@@ -56,5 +56,5 @@ You can set `VITE_API_BASE_URL` in `frontend/.env` if your API is hosted on a di
 
 ## Project structure
 
-- `backend/` - Express API server
-- `frontend/` - React client app
+- `backend/` - Express API server (Uses `jsonwebtoken` for authentication)
+- `frontend/` - React client app (Uses `react-router-dom` for navigation)

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { loginUser, registerUser, sendOtp, verifyOtp } from '../services/authService';
+import { loginUser, registerUser, sendOtp, verifyOtp, verifyPhoneEmail } from '../services/authService';
 
 export const useAuthForm = (onLoginSuccess, onClose) => {
   const [authMode, setAuthMode] = useState('login');
@@ -55,6 +55,26 @@ export const useAuthForm = (onLoginSuccess, onClose) => {
       setAuthError('');
     } catch (error) {
       setAuthError(error.message || 'Invalid or expired OTP');
+      setOtpVerified(false);
+    } finally {
+      setVerifyingOtp(false);
+    }
+  };
+
+  const handlePhoneEmailSuccess = async (user_json_url) => {
+    setAuthError('');
+    setVerifyingOtp(true);
+    try {
+      const response = await verifyPhoneEmail(user_json_url);
+      setSignupForm(prev => ({
+        ...prev,
+        phone: response.phone,
+        otp: response.otp
+      }));
+      setOtpVerified(true);
+      setAuthError('');
+    } catch (error) {
+      setAuthError(error.message || 'Failed to verify phone number');
       setOtpVerified(false);
     } finally {
       setVerifyingOtp(false);
@@ -126,6 +146,7 @@ export const useAuthForm = (onLoginSuccess, onClose) => {
     verifyingOtp,
     handleSendOtp,
     handleVerifyOtp,
+    handlePhoneEmailSuccess,
     handleSubmit
   };
 };

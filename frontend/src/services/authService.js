@@ -18,6 +18,15 @@ export const sendOtp = async (phone) => {
   }
 };
 
+export const verifyPhoneEmail = async (user_json_url) => {
+  try {
+    const response = await apiClient.post('/api/auth/phone-email-verify', { user_json_url });
+    return response.data;
+  } catch (error) {
+    createServiceError(error, 'Phone verification failed.');
+  }
+};
+
 export const verifyOtp = async (phone, otp) => {
   try {
     const response = await apiClient.post('/api/auth/verify-otp', { phone, otp });

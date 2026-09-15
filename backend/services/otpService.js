@@ -4,8 +4,20 @@ import crypto from "crypto";
 // In-memory store: { "phone": { otp: "123456", expiresAt: 1620000000000 } }
 const otpStore = new Map();
 
-// Helper to clean phone numbers (e.g., +91 9876543210 -> +919876543210)
-const cleanPhone = (phone) => phone.replace(/\s+/g, "");
+// Helper to clean phone numbers and ensure E.164 format (+91 default for India)
+const cleanPhone = (phone) => {
+    let cleaned = phone.replace(/\s+/g, "");
+    if (!cleaned.startsWith("+")) {
+        // If it's just a 10 digit number, assume +91
+        if (cleaned.length === 10) {
+            cleaned = "+91" + cleaned;
+        } else {
+            // Otherwise just prepend + just in case (or maybe it already has country code but no +)
+            cleaned = "+" + cleaned;
+        }
+    }
+    return cleaned;
+};
 
 // Generate a random 6-digit OTP
 const generateOtp = () => {
@@ -85,4 +97,10 @@ export const verifyOtp = (phone, providedOtp, { markAsVerified = false, deleteAf
     }
 
     return false;
+};
+
+export const setVerifiedOtp = (phone, otp) => {
+    const cleanNumber = cleanPhone(phone);
+    const expiresAt = Date.now() + 15 * 60 * 1000; // 15 mins
+    otpStore.set(cleanNumber, { otp, expiresAt, verified: true });
 };
