@@ -103,27 +103,65 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                         />
                       </div>
 
-                      <div className="input-group" style={{ display: 'flex', gap: '8px', background: 'transparent', padding: 0, alignItems: 'center', minHeight: '48px' }}>
-                        {!otpVerified ? (
-                          <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                            <PhoneEmailSignIn onSuccess={handlePhoneEmailSuccess} />
-                          </div>
-                        ) : (
-                          <>
+                      {!otpVerified ? (
+                        <>
+                          <div className="input-group" style={{ display: 'flex', gap: '8px', background: 'transparent', padding: 0, alignItems: 'center', minHeight: '48px' }}>
                             <input
                               type="tel"
                               aria-label="Mobile Number"
+                              placeholder="MOBILE NUMBER"
                               value={signupForm.phone}
-                              readOnly
-                              disabled
-                              style={{ flex: 1, backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: 'var(--primary)', color: 'var(--text)' }}
+                              onChange={(e) => setSignupForm((prev) => ({ ...prev, phone: e.target.value }))}
+                              disabled={otpSent}
+                              required
                             />
-                            <div style={{ display: 'flex', alignItems: 'center', color: 'var(--primary)', padding: '0 8px' }}>
-                              <CheckCircle size={20} />
+                            <button
+                              type="button"
+                              className="btn-primary"
+                              onClick={handleSendOtp}
+                              disabled={sendingOtp || !signupForm.phone || otpSent}
+                              style={{ padding: '0 16px', height: '48px', whiteSpace: 'nowrap', borderRadius: '8px' }}
+                            >
+                              {sendingOtp ? '...' : otpSent ? 'Sent' : 'Send OTP'}
+                            </button>
+                          </div>
+                          {otpSent && (
+                            <div className="input-group fade-in" style={{ display: 'flex', gap: '8px', background: 'transparent', padding: 0, alignItems: 'center', minHeight: '48px', marginTop: '16px' }}>
+                              <input
+                                type="text"
+                                aria-label="OTP"
+                                placeholder="ENTER OTP"
+                                value={signupForm.otp}
+                                onChange={(e) => setSignupForm((prev) => ({ ...prev, otp: e.target.value }))}
+                                required
+                              />
+                              <button
+                                type="button"
+                                className="btn-primary"
+                                onClick={handleVerifyOtp}
+                                disabled={verifyingOtp || !signupForm.otp}
+                                style={{ padding: '0 16px', height: '48px', whiteSpace: 'nowrap', borderRadius: '8px' }}
+                              >
+                                {verifyingOtp ? '...' : 'Verify'}
+                              </button>
                             </div>
-                          </>
-                        )}
-                      </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="input-group" style={{ display: 'flex', gap: '8px', background: 'transparent', padding: 0, alignItems: 'center', minHeight: '48px' }}>
+                          <input
+                            type="tel"
+                            aria-label="Mobile Number"
+                            value={signupForm.phone}
+                            readOnly
+                            disabled
+                            style={{ flex: 1, backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: 'var(--primary)', color: 'var(--text)' }}
+                          />
+                          <div style={{ display: 'flex', alignItems: 'center', color: 'var(--primary)', padding: '0 8px' }}>
+                            <CheckCircle size={20} />
+                          </div>
+                        </div>
+                      )}
 
 
 

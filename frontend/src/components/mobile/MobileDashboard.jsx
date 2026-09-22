@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { User, Sun, Moon, Compass, Shield, RotateCcw, ChevronRight, ChevronDown, Phone, Star, Bus, Coffee, CreditCard } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
-import { getDashboardData } from '../../services/dashboardService';
+import { useDashboardData } from '../../hooks/useDashboardData';
+import MobilePassengerDashboardWidgets from './MobilePassengerDashboardWidgets';
+import AdminDashboardWidgets from '../desktop/dashboards/AdminDashboardWidgets';
+import StationMasterDashboard from '../desktop/dashboards/StationMasterDashboard';
+import ConductorDashboard from '../desktop/dashboards/ConductorDashboard';
+import SupportDashboard from '../desktop/dashboards/SupportDashboard';
+import { ROLES, normalizeRole } from '../../utils/roleUtils';
 
 const MobileDashboard = ({
   theme,
@@ -16,18 +22,19 @@ const MobileDashboard = ({
   t
 }) => {
   const { user } = useAuthStore();
-  const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { dashboardData, loading } = useDashboardData();
 
-  useEffect(() => {
-    setLoading(true);
-    getDashboardData().then(res => {
-      if (res?.success) {
-        setDashboardData(res.data);
-      }
-      setLoading(false);
-    }).catch(() => setLoading(false));
-  }, []);
+  const activeRole = normalizeRole(user?.role);
+
+  const ROLE_COMPONENTS = {
+    passenger: MobilePassengerDashboardWidgets,
+    admin: AdminDashboardWidgets,
+    stationMaster: StationMasterDashboard,
+    conductor: ConductorDashboard,
+    support: SupportDashboard,
+  };
+
+  const ActiveDashboardComponent = ROLE_COMPONENTS[activeRole] || MobilePassengerDashboardWidgets;
 
   return (
     <div className="animate-fade-in-up bg-slate-50 dark:bg-slate-950 min-h-full pb-8">
@@ -42,54 +49,22 @@ const MobileDashboard = ({
           </div>
           <div className="flex-1 z-10" style={{ overflow: 'hidden' }}>
             <h3 className="text-lg font-bold font-outfit text-slate-900 dark:text-white leading-tight truncate">{user?.name || user?.fullName || user?.firstName || 'Traveler'}</h3>
-            <p className="text-[10px] text-[#10b981] font-bold uppercase tracking-widest mt-1">Elite Gold Member</p>
+            {activeRole === ROLES.PASSENGER && (
+              <p className="text-[10px] text-[#10b981] font-bold uppercase tracking-widest mt-1">Elite Gold Member</p>
+            )}
+            {activeRole !== ROLES.PASSENGER && (
+              <p className="text-[10px] text-[#10b981] font-bold uppercase tracking-widest mt-1">{activeRole}</p>
+            )}
           </div>
           <button className="z-10 p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 hover:text-red-500 transition-colors shrink-0" onClick={onLogout} aria-label="Sign Out">
              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
           </button>
         </div>
 
-        {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm">
-            <Star className="text-[#10b981] mb-3" size={18} />
-            <p className="text-2xl font-bold font-outfit text-slate-900 dark:text-white">{loading ? '...' : dashboardData?.loyaltyPoints || 0}</p>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mt-1">Loyalty Points</p>
-          </div>
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl shadow-sm">
-            <Bus className="text-[#10b981] mb-3" size={18} />
-            <p className="text-2xl font-bold font-outfit text-slate-900 dark:text-white">{loading ? '...' : dashboardData?.totalTrips || 0}</p>
-            <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mt-1">Total Trips</p>
-          </div>
+        {/* Dynamic Role-Based Main Content */}
+        <div className="mb-8">
+          <ActiveDashboardComponent data={dashboardData} loading={loading} user={user} activeTab="Overview" />
         </div>
-
-        {/* Travel Credits */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl flex items-center justify-between mb-6 shadow-sm">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <CreditCard size={14} className="text-[#10b981]" />
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Travel Credits</p>
-            </div>
-            <p className="text-2xl font-bold font-outfit text-slate-900 dark:text-white">₹{loading ? '...' : dashboardData?.travelCredits || 0}</p>
-          </div>
-          <button className="px-5 py-2 bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/30 rounded-xl text-xs font-bold hover:bg-[#10b981] hover:text-white transition-all active:scale-95">
-            Redeem
-          </button>
-        </div>
-
-        {/* Lounge Access Card */}
-        <button className="w-full bg-white dark:bg-slate-900 border border-[#10b981]/30 rounded-2xl p-4 flex items-center justify-between group hover:border-[#10b981] transition-all mb-8 shadow-sm">
-          <div className="flex items-center gap-4 text-left">
-            <div className="w-10 h-10 bg-[#10b981]/10 text-[#10b981] rounded-xl flex items-center justify-center shrink-0">
-              <Coffee size={20} />
-            </div>
-            <div>
-              <h4 className="font-bold text-sm text-slate-900 dark:text-white">Exclusive Lounge Access</h4>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Complimentary refreshments on your trip.</p>
-            </div>
-          </div>
-          <ChevronRight size={18} className="text-slate-400 group-hover:text-[#10b981] transition-colors" />
-        </button>
 
         {/* Preferences Section */}
         <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3 px-1">Preferences</h3>

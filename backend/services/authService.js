@@ -86,7 +86,7 @@ export const registerUser = async (payload = {}) => {
     }
 
     const user = await User.create({
-        role: payload.role || "USER",
+        role: "passenger", // HARDCODED: Prevent privilege escalation
         depotId: payload.depotId || undefined,
         fullName: payload.fullName || parsedName.fullName || `${firstName} ${lastName}`.trim(),
         firstName,
@@ -122,7 +122,7 @@ export const loginUser = async (payload = {}) => {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-        const error = new Error("Invalid email or password.");
+        const error = new Error("Invalid credentials");
         error.statusCode = 401;
         throw error;
     }
@@ -135,7 +135,7 @@ export const loginUser = async (payload = {}) => {
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-        const error = new Error("Invalid email or password.");
+        const error = new Error("Invalid credentials");
         error.statusCode = 401;
         throw error;
     }

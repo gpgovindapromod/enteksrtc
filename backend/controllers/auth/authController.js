@@ -2,8 +2,8 @@ import {
     getCurrentUser,
     loginUser,
     registerUser
-} from "../services/authService.js";
-import { generateAndSendOtp, setVerifiedOtp } from "../services/otpService.js";
+} from "../../services/authService.js";
+import { generateAndSendOtp, setVerifiedOtp } from "../../services/otpService.js";
 import crypto from "crypto";
 
 const setAuthCookie = (res, token) => {

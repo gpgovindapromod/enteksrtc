@@ -1,11 +1,9 @@
 import express from "express";
-import { getUserDashboardData } from "../controllers/userController.js";
+import { getUserDashboardData } from "../controllers/user/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.use(protect); // Apply authentication middleware to all routes below
-
-router.get("/dashboard", getUserDashboardData);
+router.use(protect);
 
 export default router;

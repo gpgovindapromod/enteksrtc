@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Clock, Bus, MapPin, Filter, X, ArrowLeftRight, Calendar, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, ArrowDownWideNarrow, RotateCcw, CheckCircle2, Moon, Sun } from 'lucide-react';
 import { getFilteredAndSortedBuses, generateSeatLayoutData } from '../../services/busService';
 import { useBusSearch } from '../../hooks/useBusSearch';
+import SeatGrid from '../shared/SeatGrid';
 
 const DesktopSearchResults = ({
   onBack,
@@ -73,63 +74,7 @@ const DesktopSearchResults = ({
     }
   };
 
-  const renderSeatGrid = () => {
-    return seatGridData.map((row) => (
-      <div key={row.rowId} className="seat-row" style={{ display: 'flex', gap: '8px', marginBottom: '8px', justifyContent: 'center' }}>
-        {row.seats.map((seat, idx) => {
-          if (seat.isAisle) {
-            return <div key={seat.key} className="seat-aisle" style={{ width: '20px' }}></div>;
-          }
-          const isSelected = selectedSeats.includes(seat.seatLabel);
-          let seatBg = 'var(--white)';
-          let seatColor = 'var(--dark)';
-          let seatBorder = '1px solid var(--gray-light)';
 
-          if (seat.isBooked) {
-            seatBg = 'var(--gray-light)';
-            seatColor = 'var(--gray)';
-          } else if (isSelected) {
-            seatBg = 'var(--primary)';
-            seatColor = 'white';
-            seatBorder = '1px solid var(--primary)';
-          }
-
-          return (
-            <button
-              key={seat.seatId}
-              disabled={seat.isBooked}
-              onClick={() => {
-                if (isSelected) {
-                  setSelectedSeats(selectedSeats.filter(s => s !== seat.seatLabel));
-                } else {
-                  setSelectedSeats([...selectedSeats, seat.seatLabel]);
-                }
-              }}
-              style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '8px',
-                border: seatBorder,
-                background: seatBg,
-                color: seatColor,
-                fontWeight: 'bold',
-                fontSize: '0.85rem',
-                cursor: seat.isBooked ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.2s ease',
-                transform: isSelected ? 'scale(1.05)' : 'scale(1)',
-              }}
-              className={!seat.isBooked ? "hover:border-emerald-500" : ""}
-            >
-              {seat.seatLabel}
-            </button>
-          );
-        })}
-      </div>
-    ));
-  };
 
   return (
     <div className={`min-h-screen font-inter ${theme === 'dark' ? 'dark bg-slate-950 text-white' : 'bg-white text-slate-900'}`}>
@@ -344,15 +289,30 @@ const DesktopSearchResults = ({
                 <div className="flex flex-col lg:flex-row gap-8">
                   {/* Left Column: Seat Grid */}
                   <div className="flex-1 bg-gray-50 dark:bg-slate-950 p-6 rounded-2xl border border-gray-200 dark:border-white/5">
-                    <div className="flex justify-center gap-6 mb-6 text-xs font-bold text-gray-600 dark:text-gray-300">
-                      <div className="flex items-center gap-2"><div className="w-4 h-4 bg-white dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded"></div> Available</div>
-                      <div className="flex items-center gap-2"><div className="w-4 h-4 bg-emerald-500 rounded"></div> Selected</div>
-                      <div className="flex items-center gap-2"><div className="w-4 h-4 bg-gray-300 dark:bg-slate-700 rounded"></div> Booked</div>
-                    </div>
-
-                    <div className="border-2 border-gray-200 dark:border-white/10 rounded-3xl p-6 bg-white dark:bg-slate-900 relative max-w-sm mx-auto shadow-inner">
-                      <div className="text-right mb-4 text-[10px] font-black text-gray-400 dark:text-gray-500 tracking-widest">STEERING ☸</div>
-                      {renderSeatGrid()}
+                    <div className="flex-1 overflow-x-auto p-4 border border-gray-200 dark:border-white/10 rounded-2xl bg-gray-50 dark:bg-slate-900/50">
+                      <div className="flex justify-between items-center mb-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-8 h-8 border border-gray-300 dark:border-white/20 rounded-lg flex items-center justify-center">
+                            <ArrowLeft size={16} />
+                          </div>
+                          <span className="text-xs font-bold uppercase tracking-widest opacity-60">Front</span>
+                        </div>
+                        <div className="flex gap-4 text-xs font-bold">
+                          <div className="flex items-center gap-2"><div className="w-3 h-3 bg-white dark:bg-slate-800 border border-gray-300 dark:border-white/20 rounded"></div> Available</div>
+                          <div className="flex items-center gap-2"><div className="w-3 h-3 bg-gray-200 dark:bg-white/10 rounded"></div> Booked</div>
+                          <div className="flex items-center gap-2"><div className="w-3 h-3 bg-emerald-500 rounded"></div> Selected</div>
+                        </div>
+                      </div>
+                      
+                      <div className="min-w-[400px]">
+                        <SeatGrid 
+                          seatGridData={seatGridData} 
+                          selectedSeats={selectedSeats} 
+                          setSelectedSeats={setSelectedSeats} 
+                          seatSizeClass="w-[38px] h-[38px]"
+                          gapClass="gap-[8px] mb-[8px]"
+                        />
+                      </div>
                     </div>
                   </div>
 

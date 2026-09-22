@@ -27,7 +27,7 @@ export const protect = async (req, res, next) => {
 
         req.user = {
             id: user._id.toString(),
-            role: user.role || "USER",
+            role: user.role || "passenger",
             email: user.email
         };
         next();
@@ -39,4 +39,16 @@ export const protect = async (req, res, next) => {
     }
 };
 
-export default protect;
+export const requireRole = (roles) => {
+    return (req, res, next) => {
+        if (!req.user || !roles.includes(req.user.role)) {
+            return res.status(403).json({
+                success: false,
+                message: "Forbidden: insufficient permissions."
+            });
+        }
+        next();
+    };
+};
+
+export default { protect, requireRole };

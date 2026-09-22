@@ -36,7 +36,7 @@ export const generateAndSendOtp = async (phone) => {
     
     // OTP expires in 5 minutes
     const expiresAt = Date.now() + 5 * 60 * 1000;
-    otpStore.set(cleanNumber, { otp, expiresAt });
+    otpStore.set(cleanNumber, { otp, expiresAt, attempts: 0 });
 
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -94,6 +94,13 @@ export const verifyOtp = (phone, providedOtp, { markAsVerified = false, deleteAf
             otpStore.delete(cleanNumber);
         }
         return true;
+    }
+
+    record.attempts = (record.attempts || 0) + 1;
+    if (record.attempts >= 3) {
+        otpStore.delete(cleanNumber); // Max attempts reached, invalidate OTP
+    } else {
+        otpStore.set(cleanNumber, record);
     }
 
     return false;

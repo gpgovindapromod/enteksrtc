@@ -62,10 +62,10 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                     type="button"
                     className="bp-subtab"
                     onClick={() => setSignupTab('mandatory')}
-                    style={{ 
-                      paddingBottom: '4px', 
-                      fontSize: '12px', 
-                      textTransform: 'uppercase', 
+                    style={{
+                      paddingBottom: '4px',
+                      fontSize: '12px',
+                      textTransform: 'uppercase',
                       letterSpacing: '0.05em',
                       fontWeight: signupTab === 'mandatory' ? 'bold' : 'normal',
                       color: signupTab === 'mandatory' ? 'var(--primary)' : 'var(--gray)',
@@ -83,10 +83,10 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                     type="button"
                     className="bp-subtab"
                     onClick={() => setSignupTab('optional')}
-                    style={{ 
-                      paddingBottom: '4px', 
-                      fontSize: '12px', 
-                      textTransform: 'uppercase', 
+                    style={{
+                      paddingBottom: '4px',
+                      fontSize: '12px',
+                      textTransform: 'uppercase',
                       letterSpacing: '0.05em',
                       fontWeight: signupTab === 'optional' ? 'bold' : 'normal',
                       color: signupTab === 'optional' ? 'var(--primary)' : 'var(--gray)',

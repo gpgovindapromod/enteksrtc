@@ -1,9 +1,9 @@
-import Booking from '../database/models/Booking.js';
-import Trip from '../database/models/Trip.js';
-import Route from '../database/models/Route.js';
-import Bus from '../database/models/Bus.js';
-import Stop from '../database/models/Stop.js';
-import User from '../database/models/User.js';
+import Booking from '../../database/models/Booking.js';
+import Trip from '../../database/models/Trip.js';
+import Route from '../../database/models/Route.js';
+import Bus from '../../database/models/Bus.js';
+import Stop from '../../database/models/Stop.js';
+import User from '../../database/models/User.js';
 
 export const getUserDashboardData = async (req, res, next) => {
     try {
