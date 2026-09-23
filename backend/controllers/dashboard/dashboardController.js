@@ -22,7 +22,7 @@ export const getDashboardData = async (req, res, next) => {
                 dashboardData = await getPassengerDashboard(userId);
                 break;
             case 'stationMaster':
-                dashboardData = getStationMasterDashboard(userId);
+                dashboardData = await getStationMasterDashboard(userId);
                 break;
             case 'conductor':
                 dashboardData = getConductorDashboard(userId);
@@ -140,12 +140,67 @@ const getPassengerDashboard = async (userId) => {
     };
 };
 
-const getStationMasterDashboard = (userId) => {
+const getStationMasterDashboard = async (userId) => {
+    // 1. Get the Station Master's user record to find their depotId
+    const stationMaster = await User.findById(userId).populate('depotId');
+    if (!stationMaster || !stationMaster.depotId) {
+        return {
+            activePlatforms: 0,
+            arrivingBuses: 0,
+            departingBuses: 0,
+            alerts: [{ message: "No depot assigned to your account. Please contact Admin." }],
+            upcomingDepartures: [],
+            recentArrivals: []
+        };
+    }
+
+    const depot = stationMaster.depotId;
+    
+    // 2. Find routes where this depot is either the source or destination
+    // For a real transit app, you'd match by stop ID. Assuming Depot and Stop are related or we just mock the trips for now if we don't have exact Stop matches.
+    // Let's do a simple count of all trips for today to simulate activity since we might not have Stops seeded exactly matching Depots yet.
+    
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const todayTrips = await Trip.find({
+        departureDate: { $gte: startOfDay, $lte: endOfDay }
+    }).populate({ path: 'routeId', populate: ['sourceStop', 'destinationStop'] })
+      .populate('busId')
+      .limit(20)
+      .lean();
+
+    // Since our database might not have perfectly correlated Depot -> Stop data yet, 
+    // we will simulate arriving/departing by just splitting the available trips 
+    // to give the dashboard a realistic feel until full GPS/routing is implemented.
+    const departures = todayTrips.filter((t, i) => i % 2 === 0);
+    const arrivals = todayTrips.filter((t, i) => i % 2 !== 0);
+
     return {
-        activePlatforms: 12,
-        arrivingBuses: 4,
-        departingBuses: 2,
-        stationAlerts: ["Platform 3 maintenance", "Heavy rain delay on Route 4A"]
+        depotName: depot.depotName,
+        activePlatforms: depot.totalPlatforms || 0,
+        arrivingBuses: arrivals.length,
+        departingBuses: departures.length,
+        alerts: [
+            { message: `System online. Managing ${depot.depotName} (Code: ${depot.depotCode}).` },
+            { message: "Routine maintenance scheduled for Platform 2 at 14:00." }
+        ],
+        upcomingDepartures: departures.slice(0, 5).map(t => ({
+            id: t._id,
+            time: t.departureDate,
+            route: `${t.routeId?.sourceStop?.name || 'Unknown'} to ${t.routeId?.destinationStop?.name || 'Unknown'}`,
+            bus: t.busId?.registrationNumber || 'Pending',
+            status: t.status
+        })),
+        recentArrivals: arrivals.slice(0, 5).map(t => ({
+            id: t._id,
+            time: t.arrivalDate || t.departureDate,
+            route: `${t.routeId?.sourceStop?.name || 'Unknown'} to ${t.routeId?.destinationStop?.name || 'Unknown'}`,
+            bus: t.busId?.registrationNumber || 'Pending',
+            status: t.status
+        }))
     };
 };
 
