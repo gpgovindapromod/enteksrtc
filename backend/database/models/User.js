@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema(
         roleId: { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
         role: {
             type: String,
-            enum: ["USER", "ADMIN", "DRIVER", "CONDUCTOR", "STAFF"],
+            enum: ["USER", "ADMIN", "DRIVER", "CONDUCTOR", "STATION_MASTER"],
             default: "USER",
             index: true
         },

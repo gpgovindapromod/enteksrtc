@@ -46,15 +46,26 @@ const seedMockUsers = async () => {
                 employeeId: "CON-2001"
             },
             {
-                firstName: "Sarah",
-                lastName: "Staff",
-                email: "staff@example.com",
-                phone: "1234567893",
+                firstName: "Tvm",
+                lastName: "StationMaster",
+                email: "tvm.master@example.com",
+                phone: "1234567895",
                 password: "password123",
-                role: "STAFF",
+                role: "STATION_MASTER",
                 isVerified: true,
                 isActive: true,
-                employeeId: "STF-3001"
+                employeeId: "SM-1001"
+            },
+            {
+                firstName: "Ekm",
+                lastName: "StationMaster",
+                email: "ekm.master@example.com",
+                phone: "1234567896",
+                password: "password123",
+                role: "STATION_MASTER",
+                isVerified: true,
+                isActive: true,
+                employeeId: "SM-1002"
             }
         ];
 
