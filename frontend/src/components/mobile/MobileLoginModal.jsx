@@ -1,7 +1,6 @@
 import React from 'react';
 import { X, Mail, Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { useAuthForm } from '../../hooks/useAuthForm';
-import PhoneEmailSignIn from '../auth/PhoneEmailSignIn';
 
 const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess }) => {
   const {
@@ -23,7 +22,6 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
     verifyingOtp,
     handleSendOtp,
     handleVerifyOtp,
-    handlePhoneEmailSuccess,
     handleSubmit
   } = useAuthForm(onLoginSuccess, () => setShowLoginModal(false));
 
@@ -327,4 +325,3 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
 };
 
 export default MobileLoginModal;
-

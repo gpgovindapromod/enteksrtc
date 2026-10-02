@@ -86,7 +86,7 @@ export const registerUser = async (payload = {}) => {
     }
 
     const user = await User.create({
-        role: "passenger", // HARDCODED: Prevent privilege escalation
+        role: "USER", // HARDCODED: Prevent privilege escalation
         depotId: payload.depotId || undefined,
         fullName: payload.fullName || parsedName.fullName || `${firstName} ${lastName}`.trim(),
         firstName,

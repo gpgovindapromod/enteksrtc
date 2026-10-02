@@ -32,6 +32,10 @@ TWILIO_PHONE_NUMBER=<your-twilio-phone-number>
 CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
+The signup flow sends a six-digit OTP through Twilio SMS. All three Twilio
+variables are required; the API returns an error instead of accepting or
+logging an OTP when delivery is not configured or fails.
+
 Start the backend:
 
 ```bash

@@ -1,6 +1,6 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
-import { login, logout, me, register, sendOtp, verifyOtpStep, verifyPhoneEmailUrl } from "../controllers/auth/authController.js";
+import { login, logout, me, register, sendOtp, verifyOtpStep } from "../controllers/auth/authController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { validateRequest } from "../middleware/validateRequest.js";
 import { registerSchema, loginSchema, sendOtpSchema, verifyOtpSchema } from "../validators/authValidators.js";
@@ -25,8 +25,5 @@ router.get("/me", protect, me);
 router.post("/logout", protect, logout);
 router.post("/send-otp", otpLimiter, validateRequest(sendOtpSchema), sendOtp);
 router.post("/verify-otp", validateRequest(verifyOtpSchema), verifyOtpStep);
-
-// This endpoint is unused/dummy. Let's comment it out or leave it disabled as per the plan
-// router.post("/phone-email-verify", verifyPhoneEmailUrl);
 
 export default router;

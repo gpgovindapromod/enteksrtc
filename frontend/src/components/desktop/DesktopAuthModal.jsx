@@ -1,7 +1,6 @@
 import React from 'react';
 import { X, Bus, ArrowRight, Eye, EyeOff, CheckCircle } from 'lucide-react';
 import { useAuthForm } from '../../hooks/useAuthForm';
-import PhoneEmailSignIn from '../auth/PhoneEmailSignIn';
 import './DesktopAuthModal.css';
 
 const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
@@ -24,7 +23,6 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
     verifyingOtp,
     handleSendOtp,
     handleVerifyOtp,
-    handlePhoneEmailSuccess,
     handleSubmit
   } = useAuthForm(onLoginSuccess, onClose);
 
@@ -160,28 +158,59 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                       <div className="bp-input-group" style={{ flex: 1 }}>
                         <label className="bp-label">Mobile Number</label>
                         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                          {!otpVerified ? (
-                            <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                              <PhoneEmailSignIn onSuccess={handlePhoneEmailSuccess} />
-                            </div>
-                          ) : (
-                            <>
-                              <input
-                                type="tel"
-                                className="bp-input"
-                                value={signupForm.phone}
-                                readOnly
-                                disabled
-                                style={{ flex: 1, backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: 'var(--primary)', color: 'var(--white)' }}
-                              />
-                              <div style={{ display: 'flex', alignItems: 'center', color: 'var(--primary)', padding: '0 8px' }}>
-                                <CheckCircle size={20} />
-                              </div>
-                            </>
+                          <input
+                            type="tel"
+                            className="bp-input"
+                            placeholder="MOBILE NUMBER"
+                            value={signupForm.phone}
+                            onChange={(e) => setSignupForm((prev) => ({ ...prev, phone: e.target.value }))}
+                            disabled={otpSent || otpVerified}
+                            required
+                          />
+                          {!otpVerified && (
+                            <button
+                              type="button"
+                              className="btn-primary"
+                              onClick={handleSendOtp}
+                              disabled={sendingOtp || !signupForm.phone || otpSent}
+                              style={{ height: '42px', whiteSpace: 'nowrap' }}
+                            >
+                              {sendingOtp ? 'Sending...' : otpSent ? 'Sent' : 'Send OTP'}
+                            </button>
                           )}
+                          {otpVerified && <CheckCircle size={20} color="var(--primary)" />}
                         </div>
                       </div>
                     </div>
+
+                    {otpSent && !otpVerified && (
+                      <div className="bp-input-row fade-in">
+                        <div className="bp-input-group" style={{ flex: 1 }}>
+                          <label className="bp-label">OTP</label>
+                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              autoComplete="one-time-code"
+                              className="bp-input"
+                              placeholder="ENTER OTP"
+                              value={signupForm.otp}
+                              onChange={(e) => setSignupForm((prev) => ({ ...prev, otp: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
+                              required
+                            />
+                            <button
+                              type="button"
+                              className="btn-primary"
+                              onClick={handleVerifyOtp}
+                              disabled={verifyingOtp || signupForm.otp.length !== 6}
+                              style={{ height: '42px', whiteSpace: 'nowrap' }}
+                            >
+                              {verifyingOtp ? 'Verifying...' : 'Verify'}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
 
 
@@ -398,4 +427,3 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
 };
 
 export default DesktopAuthModal;
-

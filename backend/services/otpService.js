@@ -4,19 +4,22 @@ import crypto from "crypto";
 // In-memory store: { "phone": { otp: "123456", expiresAt: 1620000000000 } }
 const otpStore = new Map();
 
-// Helper to clean phone numbers and ensure E.164 format (+91 default for India)
-const cleanPhone = (phone) => {
-    let cleaned = phone.replace(/\s+/g, "");
-    if (!cleaned.startsWith("+")) {
-        // If it's just a 10 digit number, assume +91
-        if (cleaned.length === 10) {
-            cleaned = "+91" + cleaned;
-        } else {
-            // Otherwise just prepend + just in case (or maybe it already has country code but no +)
-            cleaned = "+" + cleaned;
-        }
+// Normalize Indian mobile numbers to E.164. International numbers must already
+// include a country code, for example +14155552671.
+export const cleanPhone = (phone) => {
+    const value = String(phone || "").trim().replace(/[\s()-]/g, "");
+
+    if (/^\d{10}$/.test(value)) {
+        return `+91${value}`;
     }
-    return cleaned;
+
+    if (/^\+\d{8,15}$/.test(value)) {
+        return value;
+    }
+
+    const error = new Error("Enter a valid mobile number with country code.");
+    error.statusCode = 400;
+    throw error;
 };
 
 // Generate a random 6-digit OTP
@@ -25,48 +28,52 @@ const generateOtp = () => {
 };
 
 export const generateAndSendOtp = async (phone) => {
-    if (!phone) {
-        const error = new Error("Phone number is required");
-        error.statusCode = 400;
-        throw error;
-    }
-
     const cleanNumber = cleanPhone(phone);
     const otp = generateOtp();
-    
-    // OTP expires in 5 minutes
-    const expiresAt = Date.now() + 5 * 60 * 1000;
-    otpStore.set(cleanNumber, { otp, expiresAt, attempts: 0 });
 
     const accountSid = process.env.TWILIO_ACCOUNT_SID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
     const twilioPhone = process.env.TWILIO_PHONE_NUMBER;
 
-    if (accountSid && authToken && twilioPhone) {
-        try {
-            const client = twilio(accountSid, authToken);
-            await client.messages.create({
-                body: `Your Ente KSRTC verification code is ${otp}. It expires in 5 minutes.`,
-                from: twilioPhone,
-                to: cleanNumber
-            });
-            console.log(`[OTP Sent via Twilio] to ${cleanNumber}`);
-        } catch (error) {
-            console.error("Twilio Error:", error.message || error);
-            console.warn(`[OTP Fallback] Twilio failed. OTP for ${cleanNumber} is: ${otp}`);
-        }
-    } else {
-        // Fallback for development/testing if Twilio is not configured
-        console.warn(`[OTP Fallback] Twilio not configured. OTP for ${cleanNumber} is: ${otp}`);
+    if (!accountSid || !authToken || !twilioPhone) {
+        const error = new Error("OTP service is not configured. Contact support.");
+        error.statusCode = 503;
+        throw error;
     }
 
-    return true;
+    try {
+        const client = twilio(accountSid, authToken);
+        await client.messages.create({
+            body: `Your Ente KSRTC verification code is ${otp}. It expires in 5 minutes.`,
+            from: twilioPhone,
+            to: cleanNumber
+        });
+    } catch (error) {
+        console.error("Twilio OTP delivery failed:", error.message || error);
+        const deliveryError = new Error("Unable to send OTP. Please try again.");
+        deliveryError.statusCode = 502;
+        throw deliveryError;
+    }
+
+    // Only make an OTP valid after the SMS provider confirms the message.
+    otpStore.set(cleanNumber, {
+        otp,
+        expiresAt: Date.now() + 5 * 60 * 1000,
+        attempts: 0
+    });
+
+    return { phone: cleanNumber };
 };
 
 export const verifyOtp = (phone, providedOtp, { markAsVerified = false, deleteAfterVerify = true } = {}) => {
     if (!phone || !providedOtp) return false;
 
-    const cleanNumber = cleanPhone(phone);
+    let cleanNumber;
+    try {
+        cleanNumber = cleanPhone(phone);
+    } catch {
+        return false;
+    }
     const record = otpStore.get(cleanNumber);
 
     if (!record) {
@@ -85,7 +92,7 @@ export const verifyOtp = (phone, providedOtp, { markAsVerified = false, deleteAf
         return true;
     }
 
-    if (record.otp === providedOtp) {
+    if (record.otp === String(providedOtp).trim()) {
         if (markAsVerified) {
             record.verified = true;
             otpStore.set(cleanNumber, record);
