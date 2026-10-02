@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/gpgovindapromod/enteksrtc/issues"
   },
-  "homepage": "https://github.com/gpgovindapromod/enteksrtc#readme"
+  "homepage": "https://github.com/gpgovindapromod/enteksrtc#readme",
+  "dependencies": {
+    "firebase": "^12.19.0"
+  }
 }

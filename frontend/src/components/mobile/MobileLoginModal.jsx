@@ -23,7 +23,7 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
     handleSendOtp,
     handleVerifyOtp,
     handleSubmit
-  } = useAuthForm(onLoginSuccess, () => setShowLoginModal(false));
+  } = useAuthForm(onLoginSuccess, () => setShowLoginModal(false), 'mobile-recaptcha-container');
 
   if (!showLoginModal) return null;
 
@@ -49,6 +49,7 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
             </div>
 
             <form onSubmit={handleSubmit} className="modern-auth-form mobile-form">
+              <div id="mobile-recaptcha-container" />
               {authMode === 'signup' && (
                 <>
                   <div className="signup-sub-tabs">

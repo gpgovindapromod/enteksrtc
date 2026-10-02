@@ -24,7 +24,7 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
     handleSendOtp,
     handleVerifyOtp,
     handleSubmit
-  } = useAuthForm(onLoginSuccess, onClose);
+  } = useAuthForm(onLoginSuccess, onClose, 'desktop-recaptcha-container');
 
   if (!show) return null;
 
@@ -53,6 +53,7 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="bp-form">
+            <div id="desktop-recaptcha-container" />
             {authMode === 'signup' && (
               <>
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>

@@ -9,21 +9,12 @@ export const registerUser = async (payload) => {
   }
 };
 
-export const sendOtp = async (phone) => {
+export const verifyOtp = async (idToken) => {
   try {
-    const response = await apiClient.post('/api/auth/send-otp', { phone });
+    const response = await apiClient.post('/api/auth/verify-otp', { idToken });
     return response.data;
   } catch (error) {
-    createServiceError(error, 'Failed to send OTP.');
-  }
-};
-
-export const verifyOtp = async (phone, otp) => {
-  try {
-    const response = await apiClient.post('/api/auth/verify-otp', { phone, otp });
-    return response.data;
-  } catch (error) {
-    createServiceError(error, 'OTP verification failed.');
+    createServiceError(error, 'Phone verification failed.');
   }
 };
 

@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { loginUser, registerUser, sendOtp, verifyOtp } from '../services/authService';
+import { loginUser, registerUser, verifyOtp } from '../services/authService';
+import { confirmPhoneOtp, sendPhoneOtp } from '../services/firebaseAuth';
 
-export const useAuthForm = (onLoginSuccess, onClose) => {
+export const useAuthForm = (onLoginSuccess, onClose, recaptchaContainerId) => {
   const [authMode, setAuthMode] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
   const [signupTab, setSignupTab] = useState('mandatory');
@@ -15,6 +16,7 @@ export const useAuthForm = (onLoginSuccess, onClose) => {
     email: '',
     phone: '',
     otp: '',
+    firebaseIdToken: '',
     gender: 'Male',
     password: '',
     confirmPassword: '',
@@ -24,6 +26,7 @@ export const useAuthForm = (onLoginSuccess, onClose) => {
   const [sendingOtp, setSendingOtp] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
+  const [confirmationResult, setConfirmationResult] = useState(null);
 
   const handleSendOtp = async () => {
     if (!signupForm.phone) {
@@ -33,8 +36,9 @@ export const useAuthForm = (onLoginSuccess, onClose) => {
     setAuthError('');
     setSendingOtp(true);
     try {
-      const response = await sendOtp(signupForm.phone);
-      setSignupForm((prev) => ({ ...prev, phone: response.phone || prev.phone }));
+      const response = await sendPhoneOtp(signupForm.phone, recaptchaContainerId);
+      setSignupForm((prev) => ({ ...prev, phone: response.phone }));
+      setConfirmationResult(response.confirmationResult);
       setOtpSent(true);
     } catch (error) {
       setAuthError(error.message || 'Failed to send OTP');
@@ -51,7 +55,9 @@ export const useAuthForm = (onLoginSuccess, onClose) => {
     setAuthError('');
     setVerifyingOtp(true);
     try {
-      await verifyOtp(signupForm.phone, signupForm.otp);
+      const idToken = await confirmPhoneOtp(confirmationResult, signupForm.otp);
+      await verifyOtp(idToken);
+      setSignupForm((prev) => ({ ...prev, firebaseIdToken: idToken }));
       setOtpVerified(true);
       setAuthError('');
     } catch (error) {
@@ -92,7 +98,7 @@ export const useAuthForm = (onLoginSuccess, onClose) => {
           age: signupForm.age ? Number(signupForm.age) : undefined,
           email: signupForm.email,
           phone: signupForm.phone,
-          otp: signupForm.otp,
+          firebaseIdToken: signupForm.firebaseIdToken,
           gender: signupForm.gender,
           password: signupForm.password,
         });

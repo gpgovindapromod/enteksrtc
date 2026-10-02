@@ -1,8 +1,12 @@
 import jwt from "jsonwebtoken";
 import User from "../database/models/User.js";
-import { verifyOtp } from "./otpService.js";
+import { verifyFirebaseIdToken } from "./firebaseAdmin.js";
 
 const normalizeEmail = (value) => (value ? String(value).trim().toLowerCase() : "");
+const normalizePhone = (value) => {
+    const phone = String(value || "").trim().replace(/[\s()-]/g, "");
+    return /^\d{10}$/.test(phone) ? `+91${phone}` : phone;
+};
 
 const splitName = (value) => {
     const name = String(value || "").trim().replace(/\s+/g, " ");
@@ -45,8 +49,8 @@ const signToken = (user) =>
 export const registerUser = async (payload = {}) => {
     const email = normalizeEmail(payload.email);
     const password = payload.password;
-    const phone = payload.phone;
-    const otp = payload.otp;
+    const phone = normalizePhone(payload.phone);
+    const firebaseIdToken = payload.firebaseIdToken;
 
     if (!email || !password || !phone) {
         const error = new Error("Email, password, and mobile number are required.");
@@ -54,15 +58,15 @@ export const registerUser = async (payload = {}) => {
         throw error;
     }
 
-    if (!otp) {
-        const error = new Error("OTP verification code is required.");
+    if (!firebaseIdToken) {
+        const error = new Error("Firebase phone verification is required.");
         error.statusCode = 400;
         throw error;
     }
 
-    const isValidOtp = verifyOtp(phone, otp);
-    if (!isValidOtp) {
-        const error = new Error("Invalid or expired OTP.");
+    const decodedToken = await verifyFirebaseIdToken(firebaseIdToken);
+    if (!decodedToken.phone_number || decodedToken.phone_number !== phone) {
+        const error = new Error("The verified phone number does not match the registration number.");
         error.statusCode = 400;
         throw error;
     }
@@ -92,14 +96,14 @@ export const registerUser = async (payload = {}) => {
         firstName,
         lastName: lastName || undefined,
         email,
-        phone: payload.phone || undefined,
+        phone: decodedToken.phone_number,
         password,
         age: payload.age || undefined,
         employeeId: payload.employeeId || undefined,
         gender: payload.gender || undefined,
         dob: payload.dob || payload.dateOfBirth || undefined,
         profileImage: payload.profileImage || undefined,
-        isVerified: payload.isVerified ?? false,
+        isVerified: true,
         isActive: payload.isActive ?? true
     });
 

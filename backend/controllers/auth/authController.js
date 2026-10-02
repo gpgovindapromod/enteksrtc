@@ -3,7 +3,7 @@ import {
     loginUser,
     registerUser
 } from "../../services/authService.js";
-import { generateAndSendOtp, verifyOtp } from "../../services/otpService.js";
+import { verifyFirebaseIdToken } from "../../services/firebaseAdmin.js";
 
 const setAuthCookie = (res, token) => {
     res.cookie("jwt", token, {
@@ -67,34 +67,23 @@ export const logout = async (req, res) => {
     });
 };
 
-export const sendOtp = async (req, res, next) => {
-    try {
-        const { phone } = req.body;
-        const result = await generateAndSendOtp(phone);
-        res.status(200).json({
-            success: true,
-            message: "OTP sent successfully.",
-            phone: result.phone
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
 export const verifyOtpStep = async (req, res, next) => {
     try {
-        const { phone, otp } = req.body;
-        
-        if (!phone || !otp) {
-            return res.status(400).json({ success: false, message: "Phone and OTP are required." });
+        const { idToken } = req.body;
+        const decodedToken = await verifyFirebaseIdToken(idToken);
+
+        if (!decodedToken.phone_number) {
+            return res.status(401).json({
+                success: false,
+                message: "The Firebase account is not linked to a phone number."
+            });
         }
 
-        const isValid = verifyOtp(phone, otp, { markAsVerified: true, deleteAfterVerify: false });
-        if (!isValid) {
-            return res.status(400).json({ success: false, message: "Invalid or expired OTP." });
-        }
-
-        res.status(200).json({ success: true, message: "OTP verified successfully." });
+        res.status(200).json({
+            success: true,
+            message: "Phone number verified successfully.",
+            phone: decodedToken.phone_number
+        });
     } catch (error) {
         next(error);
     }
@@ -105,6 +94,5 @@ export default {
     login,
     me,
     logout,
-    sendOtp,
     verifyOtpStep
 };
