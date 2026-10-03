@@ -7,6 +7,7 @@ export const useBookingStore = create((set) => ({
   tripType: 'one-way',
   selectedBus: null,
   selectedSeats: [],
+  passengerDetails: {},
   activeBookings: [
     {
       id: 'KSRTC-9481023',
@@ -28,8 +29,10 @@ export const useBookingStore = create((set) => ({
   setTripType: (tripType) => set({ tripType }),
   setSelectedBus: (selectedBus) => set({ selectedBus }),
   setSelectedSeats: (selectedSeats) => set({ selectedSeats }),
+  setPassengerDetails: (passengerDetails) => set({ passengerDetails }),
   setIsBookingSuccess: (isBookingSuccess) => set({ isBookingSuccess }),
   
   addActiveBooking: (booking) => set((state) => ({ activeBookings: [booking, ...state.activeBookings] })),
+  setActiveBookings: (bookings) => set({ activeBookings: bookings }),
   removeActiveBooking: (bookingId) => set((state) => ({ activeBookings: state.activeBookings.filter(b => b.id !== bookingId) })),
 }));

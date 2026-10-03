@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Bus, Ticket, MapPin, ArrowRightLeft, Calendar, Search } from 'lucide-react';
-import { filterCities } from '../../services/busService';
+import StopSearchAutocomplete from '../shared/StopSearchAutocomplete';
 
 const MobileBookingWidget = ({
   origin,
@@ -9,17 +9,11 @@ const MobileBookingWidget = ({
   setDestination,
   journeyDate,
   setJourneyDate,
-  tripType,
   setTripType,
   onSearch,
+  searchError,
   t
 }) => {
-  const [isOriginFocused, setIsOriginFocused] = useState(false);
-  const [isDestFocused, setIsDestFocused] = useState(false);
-
-  const filteredOriginCities = filterCities(origin);
-  const filteredDestCities = filterCities(destination);
-
   const getQuickDates = () => {
     const dates = [];
     const baseDate = new Date();
@@ -64,34 +58,16 @@ const MobileBookingWidget = ({
       <div className="flex flex-col gap-6 relative">
         {/* FROM Field */}
         <div className="relative border-b-2 border-gray-200 dark:border-white/20 pb-2 focus-within:border-emerald-500 transition-colors">
-          <label className="block text-[10px] text-gray-500 dark:text-white/50 uppercase tracking-widest mb-2 font-bold">From</label>
           <div className="flex items-center gap-2">
             <MapPin size={18} className="text-gray-400 dark:text-white/40" />
-            <input
-              id="mobile-origin-input"
-              aria-label="Departure City"
-              type="text"
+            <StopSearchAutocomplete
+              label="From"
               value={origin}
-              onChange={e => setOrigin(e.target.value)}
-              onFocus={() => setIsOriginFocused(true)}
-              onBlur={() => setTimeout(() => setIsOriginFocused(false), 200)}
+              onChange={(name) => setOrigin(name)}
               placeholder="Departure City"
               className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
             />
           </div>
-          {isOriginFocused && origin && filteredOriginCities.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-white/10 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto">
-              {filteredOriginCities.map(city => (
-                <div 
-                  key={city} 
-                  className="px-4 py-3 text-sm font-bold text-gray-700 dark:text-white border-b border-gray-100 dark:border-white/5 last:border-0 hover:bg-emerald-50 dark:hover:bg-slate-700 cursor-pointer transition-colors"
-                  onClick={() => { setOrigin(city); setIsOriginFocused(false); }}
-                >
-                  {city}
-                </div>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Swap Button (Absolute positioned between From and To for mobile) */}
@@ -111,34 +87,16 @@ const MobileBookingWidget = ({
 
         {/* TO Field */}
         <div className="relative border-b-2 border-gray-200 dark:border-white/20 pb-2 focus-within:border-emerald-500 transition-colors">
-          <label className="block text-[10px] text-gray-500 dark:text-white/50 uppercase tracking-widest mb-2 font-bold">To</label>
           <div className="flex items-center gap-2">
             <MapPin size={18} className="text-gray-400 dark:text-white/40" />
-            <input
-              id="mobile-destination-input"
-              aria-label="Destination City"
-              type="text"
+            <StopSearchAutocomplete
+              label="To"
               value={destination}
-              onChange={e => setDestination(e.target.value)}
-              onFocus={() => setIsDestFocused(true)}
-              onBlur={() => setTimeout(() => setIsDestFocused(false), 200)}
+              onChange={(name) => setDestination(name)}
               placeholder="Destination City"
               className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
             />
           </div>
-          {isDestFocused && destination && filteredDestCities.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-white/10 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto">
-              {filteredDestCities.map(city => (
-                <div 
-                  key={city} 
-                  className="px-4 py-3 text-sm font-bold text-gray-700 dark:text-white border-b border-gray-100 dark:border-white/5 last:border-0 hover:bg-emerald-50 dark:hover:bg-slate-700 cursor-pointer transition-colors"
-                  onClick={() => { setDestination(city); setIsDestFocused(false); }}
-                >
-                  {city}
-                </div>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* DATE Field */}
@@ -158,13 +116,20 @@ const MobileBookingWidget = ({
         </div>
 
         {/* Search Button */}
-        <button
-          onClick={onSearch}
-          className="bg-emerald-700 text-white h-14 px-8 rounded-xl font-bold text-base flex items-center justify-center gap-2 hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-emerald-700/30 group w-full mt-2"
-        >
-          <span>Search</span>
-          <Search size={20} className="group-hover:translate-x-1 transition-transform" />
-        </button>
+        <div className="flex flex-col relative w-full">
+          <button
+            onClick={onSearch}
+            className="bg-emerald-700 text-white h-14 px-8 rounded-xl font-bold text-base flex items-center justify-center gap-2 hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-emerald-700/30 group w-full mt-2"
+          >
+            <span>Search</span>
+            <Search size={20} className="group-hover:translate-x-1 transition-transform" />
+          </button>
+          {searchError && (
+            <div className="text-red-500 font-bold text-sm mt-3 text-center animate-fade-in-up">
+              {searchError}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

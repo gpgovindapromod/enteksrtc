@@ -12,6 +12,7 @@ import AdminDashboardWidgets from './dashboards/AdminDashboardWidgets';
 import PassengerDashboardWidgets from './dashboards/PassengerDashboardWidgets';
 import StationMasterDashboard from './dashboards/StationMasterDashboard';
 import ConductorDashboard from './dashboards/ConductorDashboard';
+import DriverDashboard from './dashboards/DriverDashboard';
 import SupportDashboard from './dashboards/SupportDashboard';
 import SettingsView from './dashboards/SettingsView';
 
@@ -27,6 +28,7 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
     admin: AdminDashboardWidgets,
     stationMaster: StationMasterDashboard,
     conductor: ConductorDashboard,
+    driver: DriverDashboard,
     support: SupportDashboard,
   };
 
@@ -64,6 +66,12 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
           { id: 'My Route', icon: Route, label: 'My Route' },
           { id: 'Manifest', icon: Users, label: 'Manifest' },
           { id: 'Scan Tickets', icon: Ticket, label: 'Scan Tickets' }
+        ];
+      case ROLES.DRIVER:
+        return [
+          { id: 'My Route', icon: Route, label: 'My Route' },
+          { id: 'Schedule', icon: Clock, label: 'Schedule' },
+          { id: 'Vehicle Alerts', icon: AlertTriangle, label: 'Alerts' }
         ];
       case ROLES.SUPPORT:
         return [
@@ -202,7 +210,7 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
           <div className="flex-1 transition-all duration-300">
             {activeTab === 'Settings' ? (
               <SettingsView />
-            ) : activeTab === 'Home' || activeTab === 'Overview' || activeTab === 'Tracking' || activeTab === 'My Route' || activeTab === 'Tickets' || activeTab === 'Stations' ? (
+            ) : activeTab === 'Home' || activeTab === 'Overview' || activeTab === 'Tracking' || activeTab === 'My Route' || activeTab === 'Tickets' || activeTab === 'Stations' || activeTab === 'Bookings' ? (
               <ActiveDashboardComponent data={dashboardData} loading={loading} user={user} activeTab={activeTab} />
             ) : (
               <div className="flex flex-col items-center justify-center h-[60vh] border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/50 rounded-3xl mt-12 w-full animate-fade-in-up">

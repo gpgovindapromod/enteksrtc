@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getFilteredAndSortedBuses, generateSeatLayoutData } from '../services/busService';
+import { fetchBuses, generateSeatLayoutData } from '../services/busService';
 
 export const useBusSearch = ({
   initialOrigin,
@@ -8,10 +8,13 @@ export const useBusSearch = ({
   setOrigin,
   setDestination,
   setJourneyDate,
+  onModify, // Added for URL syncing
   isSearching = true // Added this for mobile which only searches when isSearching is true
 }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [allBuses, setAllBuses] = useState([]);
   const [filteredBuses, setFilteredBuses] = useState([]);
+  const [availableBusTypes, setAvailableBusTypes] = useState([]);
 
   // Filter States
   const [selectedBusTypes, setSelectedBusTypes] = useState([]);
@@ -31,31 +34,64 @@ export const useBusSearch = ({
     setLocalDate(initialJourneyDate);
   }, [initialOrigin, initialDestination, initialJourneyDate]);
 
+  // Fetch buses once when route/date changes
   useEffect(() => {
-    const fetchBuses = async () => {
+    const fetchBusesData = async () => {
       if (!isSearching) return;
       
       setIsLoading(true);
       try {
-        const buses = await getFilteredAndSortedBuses({
-          selectedBusTypes,
-          selectedDepTimes,
-          sortBy,
+        const buses = await fetchBuses({
           origin: initialOrigin,
           destination: initialDestination,
           date: initialJourneyDate
         });
-        setFilteredBuses(buses);
+        setAllBuses(buses);
+        
+        // Extract unique bus types from the fetched data
+        const uniqueTypes = [...new Set(buses.map(bus => bus.type))].filter(Boolean);
+        setAvailableBusTypes(uniqueTypes);
       } catch (error) {
         console.error("Failed to fetch buses", error);
-        setFilteredBuses([]);
+        setAllBuses([]);
+        setAvailableBusTypes([]);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchBuses();
-  }, [isSearching, selectedBusTypes, selectedDepTimes, sortBy, initialOrigin, initialDestination, initialJourneyDate]);
+    fetchBusesData();
+  }, [isSearching, initialOrigin, initialDestination, initialJourneyDate]);
+
+  // Apply filters and sorting locally whenever filters or allBuses change
+  useEffect(() => {
+    let result = [...allBuses];
+
+    if (selectedBusTypes.length > 0) {
+      result = result.filter(bus => selectedBusTypes.includes(bus.type));
+    }
+
+    if (selectedDepTimes.length > 0) {
+      result = result.filter(bus => {
+        const hour = parseInt(bus.departure.split(':')[0], 10);
+        if (selectedDepTimes.includes('Before 6 AM') && hour < 6) return true;
+        if (selectedDepTimes.includes('6 AM to 12 PM') && hour >= 6 && hour < 12) return true;
+        if (selectedDepTimes.includes('12 PM to 6 PM') && hour >= 12 && hour < 18) return true;
+        if (selectedDepTimes.includes('After 6 PM') && hour >= 18) return true;
+        return false;
+      });
+    }
+
+    if (sortBy === 'Price: Low to High') {
+      result.sort((a, b) => a.fare - b.fare);
+    } else if (sortBy === 'Departure: Earliest First') {
+      result.sort((a, b) => a.departure.localeCompare(b.departure));
+    } else if (sortBy === 'Rating: High to Low') {
+      result.sort((a, b) => b.rating - a.rating);
+    }
+
+    setFilteredBuses(result);
+  }, [allBuses, selectedBusTypes, selectedDepTimes, sortBy]);
 
   const handleSwap = () => {
     const temp = localOrigin;
@@ -78,6 +114,10 @@ export const useBusSearch = ({
     setOrigin(localOrigin);
     setDestination(localDestination);
     setJourneyDate(localDate);
+    
+    if (onModify) {
+      onModify(localOrigin, localDestination, localDate);
+    }
   };
 
   const handleCheckboxChange = (setter, stateList, value) => {
@@ -99,6 +139,7 @@ export const useBusSearch = ({
   return {
     isLoading,
     filteredBuses,
+    availableBusTypes,
     selectedBusTypes,
     setSelectedBusTypes,
     selectedDepTimes,

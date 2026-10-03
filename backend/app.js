@@ -9,6 +9,9 @@ import errorMiddleware from "./middleware/errorMiddleware.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import tripRoutes from "./routes/tripRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
+import stopRoutes from "./routes/stopRoutes.js";
 
 const app = express();
 
@@ -55,7 +58,13 @@ app.use(helmet());
 
 app.use(morgan("dev"));
 
-app.use(express.json());
+// express.json() parses the body and attaches rawBody via the verify hook
+// so that webhook signature verification can use the original bytes.
+app.use(express.json({
+    verify: (req, res, buf) => {
+        req.rawBody = buf.toString('utf8');
+    }
+}));
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -74,6 +83,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/trips", tripRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/stops", stopRoutes);
 
 app.use(notFoundMiddleware);
 

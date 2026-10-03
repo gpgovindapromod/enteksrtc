@@ -11,6 +11,7 @@ import GallerySection from '../home/GallerySection';
 import TestimonialsSection from '../home/TestimonialsSection';
 import Marquee from '../home/Marquee';
 import { GalleryImages, TopRoutes, Testimonials } from '../../data/mockData';
+import StopSearchAutocomplete from '../shared/StopSearchAutocomplete';
 
 const DesktopHome = () => {
   const navigate = useNavigate();
@@ -121,13 +122,11 @@ const DesktopHome = () => {
                 <label htmlFor="origin-input" className="block text-[10px] text-gray-600 dark:text-gray-300 uppercase tracking-widest mb-2 font-bold">From</label>
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-gray-500 dark:text-gray-400" style={{ fontSize: '18px' }}>location_on</span>
-                  <input
-                    id="origin-input"
-                    className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
-                    placeholder="Departure City"
-                    type="text"
+                  <StopSearchAutocomplete
                     value={origin}
-                    onChange={(e) => setOrigin(e.target.value)}
+                    onChange={(name) => setOrigin(name)}
+                    placeholder="Departure City"
+                    className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
                   />
                 </div>
               </div>
@@ -145,13 +144,11 @@ const DesktopHome = () => {
                 <label htmlFor="destination-input" className="block text-[10px] text-gray-600 dark:text-gray-300 uppercase tracking-widest mb-2 font-bold">To</label>
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined text-gray-500 dark:text-gray-400" style={{ fontSize: '18px' }}>flag</span>
-                  <input
-                    id="destination-input"
-                    className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
-                    placeholder="Destination City"
-                    type="text"
+                  <StopSearchAutocomplete
                     value={destination}
-                    onChange={(e) => setDestination(e.target.value)}
+                    onChange={(name) => setDestination(name)}
+                    placeholder="Destination City"
+                    className="bg-transparent border-none w-full text-gray-900 dark:text-white text-base font-medium focus:ring-0 focus:outline-none placeholder:text-gray-500 dark:placeholder:text-gray-400 p-0"
                   />
                 </div>
               </div>

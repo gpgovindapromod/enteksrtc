@@ -21,55 +21,40 @@ export const MOCK_BUSES = [
 
 import apiClient from './apiClient';
 
-export const getFilteredAndSortedBuses = async ({ selectedBusTypes = [], selectedDepTimes = [], sortBy = 'Relevance', origin = '', destination = '', date = '' }) => {
-  let result = [];
+export const fetchBuses = async ({ origin = '', destination = '', date = '' }) => {
   try {
-    // Attempt to fetch from backend
-    const response = await apiClient.get('/api/buses', {
-      params: { origin, destination, date }
+    const response = await apiClient.get('/api/trips/search', {
+      params: { from: origin, to: destination, date }
     });
-    result = response.data.buses || response.data;
+    
+    return (response.data.trips || []).map(tripData => {
+      return {
+        id: tripData.tripId,
+        tripDetails: tripData,
+        name: tripData.bus.busType,
+        brand: tripData.bus.busNumber,
+        type: tripData.bus.category || tripData.bus.busType,
+        totalSeats: tripData.bus.totalSeats,
+        availableSeats: tripData.bus.availableSeats,
+        departure: new Date(tripData.boardingPoint.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+        arrival: new Date(tripData.droppingPoint.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+        duration: 'N/A', 
+        fare: tripData.fare,
+        rating: 4.5,
+        boardingSequence: tripData.boardingPoint.sequence,
+        droppingSequence: tripData.droppingPoint.sequence
+      };
+    });
   } catch (error) {
-    console.warn("Backend not reachable, falling back to mock data.");
-    result = [...MOCK_BUSES];
+    console.error("Backend fetch failed", error);
+    return [];
   }
-
-  if (selectedBusTypes.length > 0) {
-    result = result.filter(bus => {
-      if (selectedBusTypes.includes('AC Sleeper') && bus.type === 'AC Sleeper') return true;
-      if (selectedBusTypes.includes('Non-AC Sleeper') && bus.type === 'Non-AC Sleeper') return true;
-      if (selectedBusTypes.includes('AC Semi-Sleeper') && bus.type === 'AC Semi-Sleeper') return true;
-      if (selectedBusTypes.includes('Seater') && bus.type === 'Non-AC Semi-Sleeper') return true;
-      return false;
-    });
-  }
-
-  if (selectedDepTimes.length > 0) {
-    result = result.filter(bus => {
-      const hour = parseInt(bus.departure.split(':')[0], 10);
-      if (selectedDepTimes.includes('Before 6 AM') && hour < 6) return true;
-      if (selectedDepTimes.includes('6 AM to 12 PM') && hour >= 6 && hour < 12) return true;
-      if (selectedDepTimes.includes('12 PM to 6 PM') && hour >= 12 && hour < 18) return true;
-      if (selectedDepTimes.includes('After 6 PM') && hour >= 18) return true;
-      return false;
-    });
-  }
-
-  if (sortBy === 'Price: Low to High') {
-    result.sort((a, b) => a.fare - b.fare);
-  } else if (sortBy === 'Departure: Earliest First') {
-    result.sort((a, b) => a.departure.localeCompare(b.departure));
-  } else if (sortBy === 'Rating: High to Low') {
-    result.sort((a, b) => b.rating - a.rating);
-  }
-
-  return result;
 };
 
 export const generateSeatLayoutData = () => {
   const rows = 6;
   const cols = 5;
-  const preBooked = ['0-0', '1-3', '2-4', '3-0', '4-1', '5-3'];
+  const preBooked = []; // will be overridden by real data
   const grid = [];
 
   for (let r = 0; r < rows; r++) {
@@ -80,7 +65,8 @@ export const generateSeatLayoutData = () => {
         continue;
       }
       const seatId = `${r}-${c}`;
-      const seatLabel = `${String.fromCharCode(65 + r)}${c + 1}`;
+      // In real scenario, label is just 1, 2, 3.. or A1, B1
+      const seatLabel = `${(r * 4) + (c > 2 ? c : c + 1)}`;
       const isBooked = preBooked.includes(seatId);
       rowSeats.push({
         isAisle: false,
@@ -92,4 +78,16 @@ export const generateSeatLayoutData = () => {
     grid.push({ rowId: `row-${r}`, seats: rowSeats });
   }
   return grid;
+};
+
+export const getTripSeatAvailability = async (tripId, boardingSequence, droppingSequence) => {
+  try {
+    const response = await apiClient.get(`/api/trips/${tripId}/seats`, {
+      params: { boardingSequence, droppingSequence }
+    });
+    return response.data.seats;
+  } catch (error) {
+    console.error("Failed to fetch seats", error);
+    return [];
+  }
 };

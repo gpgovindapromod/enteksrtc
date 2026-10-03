@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Clock, Bus, MapPin, Filter, X, ArrowLeftRight, Calendar, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, ArrowDownWideNarrow, RotateCcw, CheckCircle2, Moon, Sun } from 'lucide-react';
-import { getFilteredAndSortedBuses, generateSeatLayoutData } from '../../services/busService';
+import { generateSeatLayoutData } from '../../services/busService';
 import { useBusSearch } from '../../hooks/useBusSearch';
 import SeatGrid from '../shared/SeatGrid';
+import StopSearchAutocomplete from '../shared/StopSearchAutocomplete';
+import { useBookingStore } from '../../store/useBookingStore';
 
 const DesktopSearchResults = ({
   onBack,
@@ -18,6 +21,8 @@ const DesktopSearchResults = ({
   setSelectedBus,
   selectedSeats,
   setSelectedSeats,
+  passengerDetails,
+  setPassengerDetails,
   isBookingSuccess,
   setIsBookingSuccess,
   handleCheckout,
@@ -26,6 +31,19 @@ const DesktopSearchResults = ({
   isUserLoggedIn,
   setShowLoginModal
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    const fromParam = searchParams.get('from');
+    const toParam = searchParams.get('to');
+    const dateParam = searchParams.get('date');
+    
+    if (fromParam && fromParam !== origin) setOrigin(fromParam);
+    if (toParam && toParam !== destination) setDestination(toParam);
+    if (dateParam && dateParam !== journeyDate) setJourneyDate(dateParam);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.toString()]);
+
   const {
     isLoading,
     filteredBuses,
@@ -46,16 +64,21 @@ const DesktopSearchResults = ({
     handleModify,
     handleCheckboxChange,
     clearAllFilters,
-    seatGridData
+    seatGridData,
+    availableBusTypes
   } = useBusSearch({
     initialOrigin: origin,
     initialDestination: destination,
     initialJourneyDate: journeyDate,
     setOrigin,
     setDestination,
-    setJourneyDate
+    setJourneyDate,
+    onModify: (o, d, jd) => {
+      setSearchParams({ from: o, to: d, date: jd });
+    }
   });
 
+  const activeBookings = useBookingStore((s) => s.activeBookings);
   const [pendingBusSelection, setPendingBusSelection] = useState(null);
 
   useEffect(() => {
@@ -97,27 +120,25 @@ const DesktopSearchResults = ({
           {/* Search Bar - Compact */}
           <div className="hidden lg:flex flex-col relative">
             <div className="flex items-center gap-2 bg-gray-100 dark:bg-white/5 p-1 rounded-full border border-gray-200 dark:border-white/10 relative z-10">
-              <div className="flex items-center gap-2 px-4 py-2 border-r border-gray-300 dark:border-white/10">
+              <div className="flex items-center gap-2 px-4 py-2 border-r border-gray-300 dark:border-white/10 w-40">
                 <span className="text-xs opacity-50 block uppercase tracking-wide">From</span>
-                <input
-                  aria-label="Origin City"
+                <StopSearchAutocomplete
                   value={localOrigin}
-                  onChange={(e) => setLocalOrigin(e.target.value)}
+                  onChange={(name) => setLocalOrigin(name)}
                   placeholder="Origin"
-                  className="bg-transparent border-none outline-none text-sm font-bold w-24 text-gray-900 dark:text-white"
+                  className="bg-transparent border-none outline-none text-sm font-bold w-full text-gray-900 dark:text-white"
                 />
               </div>
               <button onClick={handleSwap} aria-label="Swap origin and destination" className="p-2 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full transition-colors text-emerald-500">
                 <ArrowLeftRight size={16} />
               </button>
-              <div className="flex items-center gap-2 px-4 py-2 border-r border-gray-300 dark:border-white/10">
+              <div className="flex items-center gap-2 px-4 py-2 border-r border-gray-300 dark:border-white/10 w-40">
                 <span className="text-xs opacity-50 block uppercase tracking-wide">To</span>
-                <input
-                  aria-label="Destination City"
+                <StopSearchAutocomplete
                   value={localDestination}
-                  onChange={(e) => setLocalDestination(e.target.value)}
+                  onChange={(name) => setLocalDestination(name)}
                   placeholder="Destination"
-                  className="bg-transparent border-none outline-none text-sm font-bold w-24 text-gray-900 dark:text-white"
+                  className="bg-transparent border-none outline-none text-sm font-bold w-full text-gray-900 dark:text-white"
                 />
               </div>
               <div className="flex items-center gap-2 px-4 py-2 border-r border-gray-300 dark:border-white/10">
@@ -191,27 +212,29 @@ const DesktopSearchResults = ({
               </div>
 
               {/* Bus Type */}
-              <div>
-                <h3 className="text-sm font-bold text-gray-500 dark:text-white/50 mb-4 uppercase tracking-wider">Bus Type</h3>
-                <div className="space-y-3">
-                  {['AC Sleeper', 'Non-AC Sleeper', 'AC Semi-Sleeper', 'Seater'].map((type) => (
-                    <label key={type} className="flex items-center gap-3 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={selectedBusTypes.includes(type)}
-                        onChange={() => handleCheckboxChange(setSelectedBusTypes, selectedBusTypes, type)}
-                        className="w-4 h-4 rounded text-emerald-500 focus:ring-emerald-500 border-gray-300"
-                      />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-500 transition-colors">{type}</span>
-                    </label>
-                  ))}
+              {availableBusTypes && availableBusTypes.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-bold text-gray-500 dark:text-white/50 mb-4 uppercase tracking-wider">Bus Type</h3>
+                  <div className="space-y-3">
+                    {availableBusTypes.map((type) => (
+                      <label key={type} className="flex items-center gap-3 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={selectedBusTypes.includes(type)}
+                          onChange={() => handleCheckboxChange(setSelectedBusTypes, selectedBusTypes, type)}
+                          className="w-4 h-4 rounded text-emerald-500 focus:ring-emerald-500 border-gray-300"
+                        />
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-emerald-500 transition-colors">{type}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Promo Card */}
             <div className="mt-8 relative rounded-2xl overflow-hidden group cursor-pointer aspect-video lg:aspect-square shadow-lg">
-              <img src="/assets/images/premium_hero_1.jpg" alt="Explore Fleet" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <img src="/assets/images/premium_hero_1.webp" alt="Explore Fleet" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex items-end p-5">
                 <p className="font-bold text-sm text-white drop-shadow-md">Explore K-Swift Fleet</p>
               </div>
@@ -334,10 +357,44 @@ const DesktopSearchResults = ({
                       </div>
                     </div>
 
+                    <div>
+                      <h4 className="text-lg font-bold font-outfit text-gray-900 dark:text-white mb-4">Passenger Details</h4>
+                      {selectedSeats.map(seat => (
+                        <div key={seat} className="mb-4 p-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl">
+                          <p className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Seat {seat}</p>
+                          <input
+                            type="text"
+                            placeholder="Name"
+                            className="w-full mb-2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white"
+                            value={passengerDetails?.[seat]?.name || ''}
+                            onChange={e => setPassengerDetails({...passengerDetails, [seat]: {...passengerDetails?.[seat], name: e.target.value}})}
+                          />
+                          <div className="flex gap-2">
+                            <input
+                              type="number"
+                              placeholder="Age"
+                              className="w-1/2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white"
+                              value={passengerDetails?.[seat]?.age || ''}
+                              onChange={e => setPassengerDetails({...passengerDetails, [seat]: {...passengerDetails?.[seat], age: e.target.value}})}
+                            />
+                            <select
+                              className="w-1/2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white"
+                              value={passengerDetails?.[seat]?.gender || 'M'}
+                              onChange={e => setPassengerDetails({...passengerDetails, [seat]: {...passengerDetails?.[seat], gender: e.target.value}})}
+                            >
+                              <option value="Male">Male</option>
+                              <option value="Female">Female</option>
+                              <option value="Other">Other</option>
+                            </select>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
                     <button
-                      disabled={selectedSeats.length === 0}
+                      disabled={selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age)}
                       onClick={() => handleCheckout(selectedBus)}
-                      className={`w-full py-4 rounded-xl font-bold text-base mt-8 shadow-xl transition-all ${selectedSeats.length === 0
+                      className={`w-full py-4 rounded-xl font-bold text-base mt-4 shadow-xl transition-all ${selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age)
                           ? 'bg-gray-200 dark:bg-slate-800 text-gray-400 dark:text-gray-500 cursor-not-allowed shadow-none'
                           : 'bg-emerald-500 text-white hover:scale-105 active:scale-95 shadow-emerald-500/30'
                         }`}
@@ -347,33 +404,50 @@ const DesktopSearchResults = ({
                   </div>
                 </div>
               </div>
-            ) : (
-              /* Booking Confirmation Screen */
-              <div className="bg-white dark:bg-slate-900 p-12 rounded-2xl border border-gray-200 dark:border-white/10 text-center shadow-2xl max-w-2xl mx-auto animate-fade-in-up">
-                <CheckCircle2 size={80} className="text-emerald-500 mx-auto mb-6" />
-                <h2 className="text-3xl font-bold font-outfit text-gray-900 dark:text-white mb-2">Booking Confirmed!</h2>
-                <p className="text-gray-500 dark:text-gray-400 mb-8 text-lg">Your ticket has been booked successfully and added to <strong>My Tickets</strong>.</p>
-
-                <div className="max-w-md mx-auto mb-8 p-6 bg-gray-50 dark:bg-slate-950 rounded-2xl text-left border border-gray-200 dark:border-white/5 shadow-inner">
-                  <div className="flex justify-between mb-3 text-sm"><span className="text-gray-500 dark:text-gray-400">Bus</span><strong className="text-gray-900 dark:text-white text-right">{selectedBus.name}</strong></div>
-                  <div className="flex justify-between mb-3 text-sm"><span className="text-gray-500 dark:text-gray-400">Route</span><strong className="text-gray-900 dark:text-white text-right">{origin} → {destination}</strong></div>
-                  <div className="flex justify-between mb-4 text-sm"><span className="text-gray-500 dark:text-gray-400">Seats</span><strong className="text-gray-900 dark:text-white text-right">{selectedSeats.join(', ')}</strong></div>
-                  <div className="flex justify-between border-t border-gray-200 dark:border-white/10 pt-4 text-lg"><span className="font-bold text-gray-900 dark:text-white">Total Paid</span><strong className="text-emerald-500">₹{(selectedSeats.length * selectedBus.fare).toLocaleString()}</strong></div>
-                </div>
-
-                <button
-                  onClick={() => {
-                    setIsBookingSuccess(false);
-                    setSelectedBus(null);
-                    setSelectedSeats([]);
-                    setShowDesktopTicketsModal(true);
-                  }}
-                  className="px-8 py-4 bg-emerald-500 text-white rounded-xl font-bold text-base hover:scale-105 active:scale-95 transition-all shadow-xl shadow-emerald-500/30"
-                >
-                  View My Boarding Passes
-                </button>
-              </div>
-            )
+            ) : (() => {
+              const confirmed = activeBookings[0];
+              return (
+               <div className="bg-white dark:bg-slate-900 p-10 rounded-2xl border border-gray-200 dark:border-white/10 text-center shadow-2xl max-w-2xl mx-auto animate-fade-in-up">
+                 <CheckCircle2 size={72} className="text-emerald-500 mx-auto mb-5" />
+                 <h2 className="text-3xl font-bold font-outfit text-gray-900 dark:text-white mb-1">Booking Confirmed!</h2>
+                 <p className="text-gray-500 dark:text-gray-400 mb-2 text-sm">Your seat is reserved. View your boarding pass in My Tickets.</p>
+                 {confirmed && (
+                   <div className="text-xs font-mono text-emerald-500 mb-6 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-2 rounded-full inline-block">
+                     PNR: {confirmed.bookingNumber || confirmed.id}
+                   </div>
+                 )}
+                 <div className="max-w-md mx-auto mb-8 p-6 bg-gray-50 dark:bg-slate-950 rounded-2xl text-left border border-gray-200 dark:border-white/5 shadow-inner space-y-3 text-sm">
+                   <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Bus</span><strong className="text-gray-900 dark:text-white text-right">{selectedBus.name}</strong></div>
+                   <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Type</span><strong className="text-gray-900 dark:text-white text-right">{selectedBus.type || selectedBus.busType || '—'}</strong></div>
+                   <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Route</span><strong className="text-gray-900 dark:text-white text-right">{origin} → {destination}</strong></div>
+                   <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Departure</span><strong className="text-gray-900 dark:text-white text-right">{selectedBus.departure}</strong></div>
+                   <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Seats</span><strong className="text-gray-900 dark:text-white text-right">{selectedSeats.join(', ')}</strong></div>
+                   {confirmed?.distanceKm && <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Distance</span><strong className="text-gray-900 dark:text-white text-right">{confirmed.distanceKm} km</strong></div>}
+                   <div className="flex justify-between border-t border-gray-200 dark:border-white/10 pt-3 text-base">
+                     <span className="font-bold text-gray-900 dark:text-white">Total Paid</span>
+                     <strong className="text-emerald-500">{confirmed?.price || `₹${(selectedSeats.length * selectedBus.fare).toLocaleString()}`}</strong>
+                   </div>
+                   {confirmed?.paymentStatus && (
+                     <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Payment</span><strong className="text-emerald-600 dark:text-emerald-400 text-right">{confirmed.paymentStatus}</strong></div>
+                   )}
+                   {confirmed?.paymentTransactionId && (
+                     <div className="flex justify-between text-xs"><span className="text-gray-400">Ref</span><span className="font-mono text-gray-400 text-right">{confirmed.paymentTransactionId}</span></div>
+                   )}
+                 </div>
+                 <button
+                   onClick={() => {
+                     setIsBookingSuccess(false);
+                     setSelectedBus(null);
+                     setSelectedSeats([]);
+                     setShowDesktopTicketsModal(true);
+                   }}
+                   className="px-8 py-4 bg-emerald-500 text-white rounded-xl font-bold text-base hover:scale-105 active:scale-95 transition-all shadow-xl shadow-emerald-500/30"
+                 >
+                   View My Boarding Passes
+                 </button>
+               </div>
+              );
+            })()
           ) : (
             // Actual Buses List
             filteredBuses.length > 0 ? filteredBuses.map((bus) => (

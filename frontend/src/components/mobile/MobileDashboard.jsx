@@ -6,6 +6,7 @@ import MobilePassengerDashboardWidgets from './MobilePassengerDashboardWidgets';
 import AdminDashboardWidgets from '../desktop/dashboards/AdminDashboardWidgets';
 import StationMasterDashboard from '../desktop/dashboards/StationMasterDashboard';
 import ConductorDashboard from '../desktop/dashboards/ConductorDashboard';
+import DriverDashboard from '../desktop/dashboards/DriverDashboard';
 import SupportDashboard from '../desktop/dashboards/SupportDashboard';
 import { ROLES, normalizeRole } from '../../utils/roleUtils';
 
@@ -31,6 +32,7 @@ const MobileDashboard = ({
     admin: AdminDashboardWidgets,
     stationMaster: StationMasterDashboard,
     conductor: ConductorDashboard,
+    driver: DriverDashboard,
     support: SupportDashboard,
   };
 

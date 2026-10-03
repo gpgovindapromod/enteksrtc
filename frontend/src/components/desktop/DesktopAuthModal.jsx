@@ -59,43 +59,15 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                 <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
                   <button
                     type="button"
-                    className="bp-subtab"
+                    className={`bp-subtab ${signupTab === 'mandatory' ? 'active' : ''}`}
                     onClick={() => setSignupTab('mandatory')}
-                    style={{
-                      paddingBottom: '4px',
-                      fontSize: '12px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      fontWeight: signupTab === 'mandatory' ? 'bold' : 'normal',
-                      color: signupTab === 'mandatory' ? 'var(--primary)' : 'var(--gray)',
-                      borderBottom: signupTab === 'mandatory' ? '2px solid var(--primary)' : '2px solid transparent',
-                      background: 'none',
-                      borderTop: 'none',
-                      borderLeft: 'none',
-                      borderRight: 'none',
-                      cursor: 'pointer'
-                    }}
                   >
                     Mandatory Info
                   </button>
                   <button
                     type="button"
-                    className="bp-subtab"
+                    className={`bp-subtab ${signupTab === 'optional' ? 'active' : ''}`}
                     onClick={() => setSignupTab('optional')}
-                    style={{
-                      paddingBottom: '4px',
-                      fontSize: '12px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      fontWeight: signupTab === 'optional' ? 'bold' : 'normal',
-                      color: signupTab === 'optional' ? 'var(--primary)' : 'var(--gray)',
-                      borderBottom: signupTab === 'optional' ? '2px solid var(--primary)' : '2px solid transparent',
-                      background: 'none',
-                      borderTop: 'none',
-                      borderLeft: 'none',
-                      borderRight: 'none',
-                      cursor: 'pointer'
-                    }}
                   >
                     Optional Info
                   </button>

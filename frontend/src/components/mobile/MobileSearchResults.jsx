@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ArrowLeft, RotateCcw, CheckCircle2, Info, SlidersHorizontal, ArrowDownWideNarrow, X, ChevronDown, ChevronUp, Clock } from 'lucide-react';
 import MobileBookingWidget from './MobileBookingWidget';
 import { useBusSearch } from '../../hooks/useBusSearch';
@@ -18,6 +19,8 @@ const MobileSearchResults = ({
   setSelectedBus,
   selectedSeats,
   setSelectedSeats,
+  passengerDetails,
+  setPassengerDetails,
   isBookingSuccess,
   setIsBookingSuccess,
   handleCheckout,
@@ -27,6 +30,19 @@ const MobileSearchResults = ({
   isUserLoggedIn,
   setShowLoginModal
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  React.useEffect(() => {
+    const fromParam = searchParams.get('from');
+    const toParam = searchParams.get('to');
+    const dateParam = searchParams.get('date');
+    
+    if (fromParam && fromParam !== origin) setOrigin(fromParam);
+    if (toParam && toParam !== destination) setDestination(toParam);
+    if (dateParam && dateParam !== journeyDate) setJourneyDate(dateParam);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams.toString()]);
+
   const { theme } = useTheme();
   
   const {
@@ -40,7 +56,8 @@ const MobileSearchResults = ({
     setSortBy,
     handleCheckboxChange,
     clearAllFilters,
-    seatGridData
+    seatGridData,
+    availableBusTypes
   } = useBusSearch({
     initialOrigin: origin,
     initialDestination: destination,
@@ -121,6 +138,7 @@ const MobileSearchResults = ({
               setTripType={setTripType}
               onSearch={() => {
                 setIsModifyOpen(false);
+                setSearchParams({ from: origin, to: destination, date: journeyDate });
               }}
               t={t}
             />
@@ -259,13 +277,47 @@ const MobileSearchResults = ({
               </div>
 
               <div className="p-6 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-white/10 shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
+                <div className="mb-4 max-h-[150px] overflow-y-auto pr-2">
+                  <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-2">Passenger Details</h4>
+                  {selectedSeats.map(seat => (
+                    <div key={seat} className="mb-3 p-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg">
+                      <p className="text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Seat {seat}</p>
+                      <input
+                        type="text"
+                        placeholder="Name"
+                        className="w-full mb-2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white"
+                        value={passengerDetails?.[seat]?.name || ''}
+                        onChange={e => setPassengerDetails({...passengerDetails, [seat]: {...passengerDetails?.[seat], name: e.target.value}})}
+                      />
+                      <div className="flex gap-2">
+                        <input
+                          type="number"
+                          placeholder="Age"
+                          className="w-1/2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white"
+                          value={passengerDetails?.[seat]?.age || ''}
+                          onChange={e => setPassengerDetails({...passengerDetails, [seat]: {...passengerDetails?.[seat], age: e.target.value}})}
+                        />
+                        <select
+                          className="w-1/2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-xs text-gray-900 dark:text-white"
+                          value={passengerDetails?.[seat]?.gender || 'M'}
+                          onChange={e => setPassengerDetails({...passengerDetails, [seat]: {...passengerDetails?.[seat], gender: e.target.value}})}
+                        >
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Price</span>
                   <span className="text-2xl font-bold text-emerald-500 font-outfit">₹{(selectedSeats.length * selectedBus.fare).toLocaleString()}</span>
                 </div>
                 <button
-                  className={`w-full py-4 rounded-xl font-bold text-base transition-all ${selectedSeats.length === 0 ? 'bg-gray-200 dark:bg-slate-800 text-gray-400 dark:text-gray-500 cursor-not-allowed' : 'bg-emerald-500 text-white active:scale-95 shadow-xl shadow-emerald-500/30'}`}
-                  disabled={selectedSeats.length === 0}
+                  className={`w-full py-4 rounded-xl font-bold text-base transition-all ${selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age) ? 'bg-gray-200 dark:bg-slate-800 text-gray-400 dark:text-gray-500 cursor-not-allowed' : 'bg-emerald-500 text-white active:scale-95 shadow-xl shadow-emerald-500/30'}`}
+                  disabled={selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age)}
                   onClick={() => handleCheckout(selectedBus)}
                 >
                   Confirm & Pay ₹{(selectedSeats.length * selectedBus.fare).toLocaleString()}
@@ -345,17 +397,19 @@ const MobileSearchResults = ({
                   ))}
                 </div>
               </div>
-              <div>
-                <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4">Bus Type</h4>
-                <div className="space-y-3">
-                  {['AC Sleeper', 'Non-AC Sleeper', 'AC Semi-Sleeper', 'Seater'].map(type => (
-                    <label key={type} className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-slate-800/50 cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-white/10">
-                      <span className="text-sm font-medium text-gray-700 dark:text-white">{type}</span>
-                      <input type="checkbox" checked={selectedBusTypes.includes(type)} onChange={() => handleCheckboxChange(setSelectedBusTypes, selectedBusTypes, type)} className="w-5 h-5 rounded text-emerald-500 focus:ring-emerald-500 border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-900" />
-                    </label>
-                  ))}
+              {availableBusTypes && availableBusTypes.length > 0 && (
+                <div>
+                  <h4 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4">Bus Type</h4>
+                  <div className="space-y-3">
+                    {availableBusTypes.map(type => (
+                      <label key={type} className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-slate-800/50 cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-white/10">
+                        <span className="text-sm font-medium text-gray-700 dark:text-white">{type}</span>
+                        <input type="checkbox" checked={selectedBusTypes.includes(type)} onChange={() => handleCheckboxChange(setSelectedBusTypes, selectedBusTypes, type)} className="w-5 h-5 rounded text-emerald-500 focus:ring-emerald-500 border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-900" />
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
             
             <div className="pt-6 border-t border-gray-200 dark:border-white/10 flex gap-4 mt-4">

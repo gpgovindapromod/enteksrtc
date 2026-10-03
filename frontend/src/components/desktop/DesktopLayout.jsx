@@ -24,6 +24,7 @@ const DesktopLayout = () => {
     journeyDate, setJourneyDate,
     selectedBus, setSelectedBus,
     selectedSeats, setSelectedSeats,
+    passengerDetails, setPassengerDetails,
     isBookingSuccess, setIsBookingSuccess,
     activeBookings
   } = useBookingStore();
@@ -53,6 +54,7 @@ const DesktopLayout = () => {
         
         <Route path="/search" element={
           <DesktopSearchResults
+            onBack={() => navigate(isUserLoggedIn ? '/dashboard' : '/')}
             theme={theme}
             toggleTheme={toggleTheme}
             origin={origin}
@@ -65,6 +67,8 @@ const DesktopLayout = () => {
             setSelectedBus={setSelectedBus}
             selectedSeats={selectedSeats}
             setSelectedSeats={setSelectedSeats}
+            passengerDetails={passengerDetails}
+            setPassengerDetails={setPassengerDetails}
             isBookingSuccess={isBookingSuccess}
             setIsBookingSuccess={setIsBookingSuccess}
             handleCheckout={handleCheckout}

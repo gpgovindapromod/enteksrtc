@@ -1,0 +1,8 @@
+Trip Search Tests
+Trivandrum → Kottayam : ✅ Found 3 trips (Shows all 3 buses operating on this route)
+Trivandrum → Adoor : ✅ Found 3 trips
+Adoor → Changanassery : ✅ Found 3 trips
+Kottayam → Trivandrum : ✅ Found 0 trips (Correctly rejects backward routing sequence)
+Kottayam → Adoor : ✅ Found 0 trips
+Adoor → Adoor : ✅ Rejected (Source and destination cannot be the same)
+Unknown → Kottayam : ✅ Rejected

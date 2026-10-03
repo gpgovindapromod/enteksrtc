@@ -14,6 +14,7 @@ const MobileHomeTab = ({
   tripType,
   setTripType,
   onSearch,
+  searchError,
   onBookRoute,
   t,
   TopRoutesSection,
@@ -114,6 +115,7 @@ const MobileHomeTab = ({
             tripType={tripType}
             setTripType={setTripType}
             onSearch={onSearch}
+            searchError={searchError}
             t={t}
           />
         </div>

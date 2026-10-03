@@ -10,8 +10,18 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-const firebaseApp = initializeApp(firebaseConfig);
-const auth = getAuth(firebaseApp);
+const hasFirebaseConfig = Boolean(import.meta.env.VITE_FIREBASE_API_KEY);
+
+let firebaseApp;
+let auth;
+
+if (hasFirebaseConfig) {
+  firebaseApp = initializeApp(firebaseConfig);
+  auth = getAuth(firebaseApp);
+} else {
+  console.warn("Firebase config is missing from .env. Firebase Auth is mocked.");
+  auth = null;
+}
 let recaptchaVerifier;
 
 const cleanPhone = (phone) => {
@@ -61,6 +71,11 @@ export const sendPhoneOtp = async (phone, recaptchaContainerId) => {
     size: 'invisible',
   });
 
+  if (!hasFirebaseConfig || !auth) {
+    console.warn("Mocking sendPhoneOtp due to missing Firebase config");
+    return { confirmationResult: { mock: true }, phone: normalizedPhone };
+  }
+
   try {
     const confirmationResult = await signInWithPhoneNumber(auth, normalizedPhone, recaptchaVerifier);
     return { confirmationResult, phone: normalizedPhone };
@@ -74,6 +89,12 @@ export const sendPhoneOtp = async (phone, recaptchaContainerId) => {
 export const confirmPhoneOtp = async (confirmationResult, otp) => {
   if (!confirmationResult) {
     throw new Error('Request an OTP before verifying it.');
+  }
+
+  if (!hasFirebaseConfig || !auth) {
+    console.warn("Mocking confirmPhoneOtp due to missing Firebase config");
+    // Return a mock token string if using dev environment without real keys
+    return "mock_firebase_id_token";
   }
 
   try {

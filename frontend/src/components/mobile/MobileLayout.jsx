@@ -35,6 +35,7 @@ const MobileLayout = () => {
     tripType, setTripType,
     selectedBus, setSelectedBus,
     selectedSeats, setSelectedSeats,
+    passengerDetails, setPassengerDetails,
     isBookingSuccess, setIsBookingSuccess,
     activeBookings
   } = useBookingStore();
@@ -54,7 +55,7 @@ const MobileLayout = () => {
     isUserLoggedIn, showLoginModal, setShowLoginModal, setAuthSession, clearAuthSession
   } = useAuthStore();
   
-  const { handleSearchClick, handleCheckout, handleCancelBooking, handleBookRoute } = useAppLogic();
+  const { searchError, handleSearchClick, handleCheckout, handleCancelBooking, handleBookRoute } = useAppLogic();
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -98,8 +99,9 @@ const MobileLayout = () => {
               setTripType={setTripType}
               onSearch={() => {
                 setSelectedSeats([]);
-                navigate('/search');
+                handleSearchClick();
               }}
+              searchError={searchError}
               onBookRoute={handleBookRoute}
               t={t}
               TopRoutesSection={TopRoutesSection}
@@ -236,6 +238,8 @@ const MobileLayout = () => {
         setSelectedBus={setSelectedBus}
         selectedSeats={selectedSeats}
         setSelectedSeats={setSelectedSeats}
+        passengerDetails={passengerDetails}
+        setPassengerDetails={setPassengerDetails}
         isBookingSuccess={isBookingSuccess}
         setIsBookingSuccess={setIsBookingSuccess}
         handleCheckout={handleCheckout}
