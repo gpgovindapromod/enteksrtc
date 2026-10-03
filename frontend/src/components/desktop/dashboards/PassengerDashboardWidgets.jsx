@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bus, MapPin, Calendar, ArrowRightLeft, Star, CreditCard, ChevronRight, Coffee, Ticket } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useBookingStore } from '../../../store/useBookingStore';
@@ -13,7 +13,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home' }) 
 
   useEffect(() => {
     if (activeTab === 'Bookings' || activeTab === 'Home') {
-      getMyBookings().then(setActiveBookings).catch(console.error);
+      getMyBookings().then(res => setActiveBookings(res || [])).catch(console.error);
     }
   }, [activeTab]);
   
