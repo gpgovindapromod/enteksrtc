@@ -30,6 +30,9 @@ export const fetchBuses = async ({ origin = '', destination = '', date = '' }) =
     return (response.data.trips || []).map(tripData => {
       return {
         id: tripData.tripId,
+        tripId: tripData.tripId,
+        boardingStopId: tripData.boardingPoint?.stop?._id,
+        droppingStopId: tripData.droppingPoint?.stop?._id,
         tripDetails: tripData,
         name: tripData.bus.busType,
         brand: tripData.bus.busNumber,

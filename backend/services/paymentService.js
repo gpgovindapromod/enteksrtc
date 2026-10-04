@@ -18,6 +18,8 @@
  */
 
 import crypto from 'crypto';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const PROVIDER = (process.env.PAYMENT_PROVIDER || 'SIMULATED').toUpperCase();
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || null;
