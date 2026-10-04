@@ -63,6 +63,11 @@ const getPhoneAuthError = (error) => {
 export const sendPhoneOtp = async (phone, recaptchaContainerId) => {
   const normalizedPhone = cleanPhone(phone);
 
+  if (!hasFirebaseConfig || !auth) {
+    console.warn("Mocking sendPhoneOtp due to missing Firebase config");
+    return { confirmationResult: { mock: true }, phone: normalizedPhone };
+  }
+
   if (recaptchaVerifier) {
     recaptchaVerifier.clear();
   }
@@ -70,11 +75,6 @@ export const sendPhoneOtp = async (phone, recaptchaContainerId) => {
   recaptchaVerifier = new RecaptchaVerifier(auth, recaptchaContainerId, {
     size: 'invisible',
   });
-
-  if (!hasFirebaseConfig || !auth) {
-    console.warn("Mocking sendPhoneOtp due to missing Firebase config");
-    return { confirmationResult: { mock: true }, phone: normalizedPhone };
-  }
 
   try {
     const confirmationResult = await signInWithPhoneNumber(auth, normalizedPhone, recaptchaVerifier);

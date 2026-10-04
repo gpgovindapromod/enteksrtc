@@ -1,24 +1,31 @@
 /**
  * useAppLogic
  * -----------
- * Coordinates booking flow through the payment-ready architecture:
+ * Coordinates the complete booking payment flow:
  *
  *   handleCheckout(selectedBusObj)
  *     1. Calls POST /bookings/checkout   → seat hold + payment order created
- *     2. Calls the payment provider (SIMULATED in dev) to process payment
+ *     2a. [SIMULATED] Auto-succeeds for dev/testing
+ *     2b. [RAZORPAY]  Opens Razorpay Checkout widget; waits for user
  *     3. Calls POST /bookings/verify-payment  → backend verifies + confirms
- *     4. Updates Zustand store with confirmed booking
- *
- * In simulation mode the "payment" step auto-succeeds so the UX is seamless
- * during development. A real provider (Razorpay) would open its SDK widget here.
+ *     4. Updates Zustand store with confirmed booking from backend
  *
  * Security:
  *   - Payment amount is NEVER sent from the frontend.
- *   - Only orderId/paymentId/signature are relayed back to backend.
+ *   - Only orderId/paymentId/signature are relayed back to backend for verification.
  *   - Booking status comes from the backend response, not a frontend flag.
+ *   - RAZORPAY_KEY_SECRET is never in frontend code.
+ *
+ * UX states handled:
+ *   - Payment success
+ *   - Payment failed
+ *   - Payment cancelled (modal dismissed)
+ *   - Network error after payment (recovery via My Bookings)
+ *   - Webhook races (backend idempotency handles this)
+ *   - Hold expired
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useBookingStore } from '../store/useBookingStore';
 import { useAuthStore } from '../store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
@@ -27,12 +34,13 @@ import {
   verifyPayment as apiVerifyPayment,
   cancelBooking as apiCancelBooking,
   getMyBookings,
+  loadRazorpayScript,
+  openRazorpayCheckout,
 } from '../services/bookingService';
 
-// ── Simple simulated payment ──────────────────────────────────────────────────
-// In dev mode: instantly "pays" by forwarding the orderId back to verify-payment.
-// The backend's SIMULATED provider accepts any non-empty paymentId.
-// Replace this function with the real Razorpay SDK call for production.
+// ── Simulated payment (SIMULATED gateway only) ────────────────────────────────
+// In dev mode with PAYMENT_PROVIDER=SIMULATED: instantly "pays" by forwarding
+// the orderId back. The backend SIMULATED provider accepts any non-empty paymentId.
 const runSimulatedPayment = async (orderData) => {
   const { orderId } = orderData;
   const simulatedPaymentId = `SIM_PAY_${Date.now()}`;
@@ -58,14 +66,16 @@ export function useAppLogic() {
     passengerDetails,
     setPassengerDetails,
   } = useBookingStore();
-  const { isUserLoggedIn } = useAuthStore();
+  const { isUserLoggedIn, user } = useAuthStore();
 
   const [searchError, setSearchError] = useState('');
   const [checkoutError, setCheckoutError] = useState('');
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [paymentStep, setPaymentStep] = useState('idle');
+  // paymentStep: 'idle' | 'creating_order' | 'awaiting_payment' | 'verifying' | 'confirmed' | 'failed' | 'cancelled'
 
   // ── Map a backend booking object to the store shape ──────────────────────
-  const mapBooking = (b) => ({
+  const mapBooking = useCallback((b) => ({
     id: b.bookingNumber || b._id,
     _id: b._id,
     bookingNumber: b.bookingNumber,
@@ -90,21 +100,21 @@ export function useAppLogic() {
     paymentGateway: b.paymentGateway,
     paymentTransactionId: b.paymentTransactionId,
     qrCode: b.bookingNumber || b._id,
-  });
+  }), []);
 
   // ── Fetch all bookings from backend ─────────────────────────────────────
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     try {
       const resBookings = await getMyBookings();
       setActiveBookings(resBookings.map(mapBooking));
     } catch (e) {
       console.error('fetchBookings error:', e);
     }
-  };
+  }, [mapBooking, setActiveBookings]);
 
   useEffect(() => {
     if (isUserLoggedIn) fetchBookings();
-  }, [isUserLoggedIn]);
+  }, [isUserLoggedIn, fetchBookings]);
 
   // ── Search ───────────────────────────────────────────────────────────────
   const handleSearchClick = () => {
@@ -132,6 +142,10 @@ export function useAppLogic() {
     if (selectedSeats.length === 0 || !selectedBusObj) return;
     setCheckoutError('');
     setIsCheckingOut(true);
+    setPaymentStep('creating_order');
+
+    let bookingId = null;
+    let payment = null;
 
     try {
       // Step 1: Build seat data
@@ -146,6 +160,7 @@ export function useAppLogic() {
       });
 
       // Step 2: Create seat hold + payment order on backend
+      // Backend returns: { bookingId, bookingNumber, holdExpiresAt, payment: { orderId, amount, currency, gateway, keyId } }
       const checkoutResult = await apiCheckout({
         tripId: selectedBusObj.tripId,
         boardingStopId: selectedBusObj.boardingStopId,
@@ -157,21 +172,43 @@ export function useAppLogic() {
         throw new Error(checkoutResult.message || 'Checkout failed');
       }
 
-      const { bookingId, payment } = checkoutResult;
+      bookingId = checkoutResult.bookingId;
+      payment = checkoutResult.payment;
 
-      // Step 3: Run payment (simulated in dev; replace with real SDK for prod)
-      // The provider returns paymentId + signature that we relay to backend.
-      // We NEVER send the amount — backend already knows it.
+      setPaymentStep('awaiting_payment');
+
+      // Step 3: Run payment via appropriate provider
       let paymentTokens;
+
       if (payment.gateway === 'SIMULATED') {
+        // Dev/test simulated payment — auto-succeeds instantly
         paymentTokens = await runSimulatedPayment(payment);
+
+      } else if (payment.gateway === 'RAZORPAY') {
+        // Load Razorpay script dynamically (idempotent — only loads once)
+        await loadRazorpayScript();
+
+        // Open the Razorpay Checkout modal
+        // Note: amount is NOT sent from here — backend already locked it in the Razorpay order.
+        // keyId is the PUBLIC key returned by the backend — secret is never exposed here.
+        paymentTokens = await openRazorpayCheckout({
+          keyId: payment.keyId,           // PUBLIC key_id only
+          orderId: payment.orderId,
+          currency: payment.currency,
+          bookingNumber: checkoutResult.bookingNumber,
+          userEmail: user?.email || '',
+          userName: user?.displayName || user?.name || '',
+          userPhone: user?.phone || '',
+        });
+
       } else {
-        // Production: open Razorpay widget here
-        // paymentTokens = await openRazorpayWidget(payment);
-        throw new Error('Real payment gateway not yet integrated on frontend.');
+        throw new Error(`Unsupported payment gateway: ${payment.gateway}`);
       }
 
+      setPaymentStep('verifying');
+
       // Step 4: Backend verifies signature → confirms booking
+      // We NEVER send amount — backend already knows it from the booking record.
       const verifyResult = await apiVerifyPayment({
         bookingId,
         orderId: payment.orderId,
@@ -183,11 +220,12 @@ export function useAppLogic() {
         throw new Error(verifyResult.message || 'Payment verification failed');
       }
 
+      setPaymentStep('confirmed');
+
       // Step 5: Update Zustand store with confirmed booking from backend
       const confirmed = verifyResult.booking;
       addActiveBooking({
         ...mapBooking(confirmed),
-        // Supplement from search context for display
         from: confirmed.boardingStop?.stopName || origin,
         to: confirmed.droppingStop?.stopName || destination,
         busType: confirmed.tripId?.busId?.busType || selectedBusObj.busType || selectedBusObj.name,
@@ -198,10 +236,35 @@ export function useAppLogic() {
       setIsBookingSuccess(true);
       // Refresh full list from backend
       await fetchBookings();
+
     } catch (error) {
       const msg = error?.message || JSON.stringify(error);
-      setCheckoutError(msg);
-      alert('Booking failed: ' + msg);
+
+      if (msg === 'PAYMENT_CANCELLED') {
+        // User dismissed the Razorpay modal — booking is PENDING, seats still held
+        setPaymentStep('cancelled');
+        setCheckoutError('Payment cancelled. Your seat hold is still active for 15 minutes.');
+        alert(
+          'Payment cancelled.\n\n' +
+          'Your seat hold is still active for 15 minutes.\n' +
+          'You can retry from My Bookings if needed.'
+        );
+      } else if (msg === 'PAYMENT_FAILED' || msg.includes('payment')) {
+        setPaymentStep('failed');
+        setCheckoutError('Payment failed. Please try again.');
+        alert('Payment failed. Please try again or choose a different payment method.');
+      } else if (error?.statusCode === 410 || msg.includes('expired')) {
+        setPaymentStep('failed');
+        setCheckoutError('Your seat hold has expired. Please search and book again.');
+        alert('Seat hold expired. Please search again and book.');
+      } else {
+        setPaymentStep('failed');
+        setCheckoutError(msg);
+        alert(
+          'Booking failed: ' + msg + '\n\n' +
+          (bookingId ? 'Check My Bookings to see if your booking was processed.' : '')
+        );
+      }
     } finally {
       setIsCheckingOut(false);
     }
@@ -237,6 +300,7 @@ export function useAppLogic() {
     setSearchError,
     checkoutError,
     isCheckingOut,
+    paymentStep,
     handleSearchClick,
     handleCheckout,
     handleCancelBooking,

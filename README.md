@@ -23,6 +23,13 @@ MONGO_URI=<your-mongodb-connection-string>
 JWT_SECRET=<your-jwt-secret>
 PORT=5011
 
+# Payment Configuration (SIMULATED or RAZORPAY)
+PAYMENT_PROVIDER=SIMULATED
+RAZORPAY_KEY_ID=rzp_test_xxxx
+RAZORPAY_KEY_SECRET=your_test_secret
+RAZORPAY_WEBHOOK_SECRET=your_webhook_secret
+PAYMENT_WEBHOOK_SECRET=sim-webhook-secret
+
 # Firebase Admin configuration for phone authentication.
 # Keep the service-account JSON on one line, or use base64 to avoid multiline
 # .env parsing issues.
@@ -83,3 +90,12 @@ VITE_FIREBASE_APP_ID=<firebase-app-id>
 
 - `backend/` - Express API server (Uses `jsonwebtoken` for authentication)
 - `frontend/` - React client app (Uses `react-router-dom` for navigation)
+
+## Payment Integration (Razorpay)
+
+The application supports both a `SIMULATED` mode and a real `RAZORPAY` test mode for processing payments.
+
+- **SIMULATED**: Default mode. Does not require internet or credentials. Automatically approves payments for easy local testing.
+- **RAZORPAY**: To activate, set `PAYMENT_PROVIDER=RAZORPAY` in your `backend/.env` file and provide `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, and `RAZORPAY_WEBHOOK_SECRET`. Use Razorpay **TEST MODE** credentials only. Never expose the `KEY_SECRET` to the frontend.
+
+A webhook route is available at `POST /api/bookings/webhook`. Configure it in the Razorpay Dashboard to listen to `payment.captured`, `payment.failed`, and `order.paid` events.
