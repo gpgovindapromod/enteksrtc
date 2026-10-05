@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Clock, Bus, MapPin, Filter, X, ArrowLeftRight, Calendar, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, ArrowDownWideNarrow, RotateCcw, CheckCircle2, Moon, Sun } from 'lucide-react';
+import { ArrowLeft, Clock, Bus, MapPin, Filter, X, ArrowLeftRight, Calendar, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, ArrowDownWideNarrow, RotateCcw, CheckCircle2, Moon, Sun, Download } from 'lucide-react';
 import { generateSeatLayoutData } from '../../services/busService';
 import { useBusSearch } from '../../hooks/useBusSearch';
 import SeatGrid from '../shared/SeatGrid';
 import StopSearchAutocomplete from '../shared/StopSearchAutocomplete';
 import { useBookingStore } from '../../store/useBookingStore';
+import { downloadTicketPDF } from '../../utils/pdfUtils';
 
 const DesktopSearchResults = ({
   onBack,
@@ -31,6 +32,20 @@ const DesktopSearchResults = ({
   isUserLoggedIn,
   setShowLoginModal
 }) => {
+  
+  const validatePassengerField = (seat, field, value) => {
+    let error = '';
+    if (field === 'name') {
+      if (!value || value.trim().length < 2) error = 'Please enter passenger name.';
+    }
+    if (field === 'age') {
+      const ageNum = parseInt(value, 10);
+      if (!value || isNaN(ageNum) || ageNum < 1 || ageNum > 120) error = 'Please enter a valid age.';
+    }
+    setFieldErrors(prev => ({ ...prev, [`${seat}_${field}`]: error }));
+  };
+
+  const [fieldErrors, setFieldErrors] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
@@ -367,15 +382,24 @@ const DesktopSearchResults = ({
                             placeholder="Name"
                             className="w-full mb-2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white"
                             value={passengerDetails?.[seat]?.name || ''}
-                            onChange={e => setPassengerDetails({...passengerDetails, [seat]: {...passengerDetails?.[seat], name: e.target.value}})}
+                            onChange={e => {
+                              setPassengerDetails({...passengerDetails, [seat]: {...passengerDetails?.[seat], name: e.target.value}});
+                              if (fieldErrors[`${seat}_name`]) validatePassengerField(seat, 'name', e.target.value);
+                            }}
+                            onBlur={e => validatePassengerField(seat, 'name', e.target.value)}
                           />
+                          {fieldErrors[`${seat}_name`] && <span className="text-red-500 text-xs mt-1 block">{fieldErrors[`${seat}_name`]}</span>}
                           <div className="flex gap-2">
                             <input
                               type="number"
                               placeholder="Age"
                               className="w-1/2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white"
                               value={passengerDetails?.[seat]?.age || ''}
-                              onChange={e => setPassengerDetails({...passengerDetails, [seat]: {...passengerDetails?.[seat], age: e.target.value}})}
+                              onChange={e => {
+                              setPassengerDetails({...passengerDetails, [seat]: {...passengerDetails?.[seat], age: e.target.value}});
+                              if (fieldErrors[`${seat}_age`]) validatePassengerField(seat, 'age', e.target.value);
+                            }}
+                            onBlur={e => validatePassengerField(seat, 'age', e.target.value)}
                             />
                             <select
                               className="w-1/2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white"
@@ -416,7 +440,7 @@ const DesktopSearchResults = ({
                      PNR: {confirmed.bookingNumber || confirmed.id}
                    </div>
                  )}
-                 <div className="max-w-md mx-auto mb-8 p-6 bg-gray-50 dark:bg-slate-950 rounded-2xl text-left border border-gray-200 dark:border-white/5 shadow-inner space-y-3 text-sm">
+                 <div id="desktop-ticket-summary" className="max-w-md mx-auto mb-8 p-6 bg-gray-50 dark:bg-slate-950 rounded-2xl text-left border border-gray-200 dark:border-white/5 shadow-inner space-y-3 text-sm">
                    <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Bus</span><strong className="text-gray-900 dark:text-white text-right">{selectedBus.name}</strong></div>
                    <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Type</span><strong className="text-gray-900 dark:text-white text-right">{selectedBus.type || selectedBus.busType || '—'}</strong></div>
                    <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Route</span><strong className="text-gray-900 dark:text-white text-right">{origin} → {destination}</strong></div>

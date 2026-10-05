@@ -17,7 +17,11 @@ const bookingSchema = new mongoose.Schema(
     // farePaise: authoritative server-calculated amount in paise (INR smallest unit).
     // ₹100 = 10000 paise. NEVER accept this value from frontend.
     farePaise: { type: Number },
+    cancellationFeePaise: { type: Number, default: 0 },
+    refundAmountPaise: { type: Number, default: 0 },
 
+    isBlock: { type: Boolean, default: false }, // Indicates an admin seat block
+    
     bookedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 
     totalFare: { type: Number, required: true },
@@ -30,7 +34,7 @@ const bookingSchema = new mongoose.Schema(
     //   FAILED   → verification failed or hold expired
     //   REFUNDED → booking cancelled after payment (database status only;
     //              actual Razorpay refund is done via Razorpay dashboard in TEST MODE)
-    paymentStatus: { type: String, enum: ['PENDING', 'PAID', 'FAILED', 'REFUNDED'], default: 'PENDING' },
+    paymentStatus: { type: String, enum: ['PENDING', 'PAID', 'FAILED', 'REFUND_REQUESTED', 'REFUNDED'], default: 'PENDING' },
 
     // Payment provider references (server-generated, NEVER from frontend)
     // paymentOrderId: Razorpay order ID (or SIM_ORD_... for SIMULATED)

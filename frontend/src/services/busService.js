@@ -54,10 +54,9 @@ export const fetchBuses = async ({ origin = '', destination = '', date = '' }) =
   }
 };
 
-export const generateSeatLayoutData = () => {
+export const generateSeatLayoutData = (preBooked = []) => {
   const rows = 6;
   const cols = 5;
-  const preBooked = []; // will be overridden by real data
   const grid = [];
 
   for (let r = 0; r < rows; r++) {
@@ -70,7 +69,7 @@ export const generateSeatLayoutData = () => {
       const seatId = `${r}-${c}`;
       // In real scenario, label is just 1, 2, 3.. or A1, B1
       const seatLabel = `${(r * 4) + (c > 2 ? c : c + 1)}`;
-      const isBooked = preBooked.includes(seatId);
+      const isBooked = preBooked.includes(seatLabel);
       rowSeats.push({
         isAisle: false,
         seatId,

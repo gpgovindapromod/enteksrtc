@@ -17,6 +17,8 @@ const MobileTicketsTab = ({
   setIsSearching,
   t,
 }) => {
+  const [qrPopup, setQrPopup] = React.useState(null);
+  
   return (
     <div className="tab-view-fadein">
       <div className="tab-header-title">
@@ -146,23 +148,24 @@ const MobileTicketsTab = ({
                       </div>
                     )}
 
-                    {/* QR */}
-                    <div className="qr-wrapper">
-                      <div className="qr-box">
-                        <svg width="130" height="130" viewBox="0 0 100 100" style={{ display: 'block', margin: 'auto' }}>
-                          <rect width="100" height="100" fill="white" />
-                          <rect x="5" y="5" width="25" height="25" fill="black" /><rect x="10" y="10" width="15" height="15" fill="white" /><rect x="13" y="13" width="9" height="9" fill="black" />
-                          <rect x="70" y="5" width="25" height="25" fill="black" /><rect x="75" y="10" width="15" height="15" fill="white" /><rect x="78" y="13" width="9" height="9" fill="black" />
-                          <rect x="5" y="70" width="25" height="25" fill="black" /><rect x="10" y="75" width="15" height="15" fill="white" /><rect x="13" y="78" width="9" height="9" fill="black" />
-                          <rect x="35" y="10" width="10" height="15" fill="black" /><rect x="50" y="5" width="15" height="10" fill="black" />
-                          <rect x="35" y="30" width="20" height="10" fill="black" /><rect x="5" y="40" width="15" height="20" fill="black" />
-                          <rect x="65" y="35" width="25" height="15" fill="black" /><rect x="35" y="55" width="10" height="25" fill="black" />
-                          <rect x="50" y="50" width="25" height="10" fill="black" /><rect x="75" y="70" width="20" height="20" fill="black" />
-                          <rect x="60" y="80" width="10" height="15" fill="black" /><rect x="50" y="75" width="5" height="5" fill="black" />
-                          <rect x="45" y="90" width="15" height="5" fill="black" /><rect x="80" y="60" width="15" height="5" fill="black" />
-                        </svg>
+                    {/* QR Code and Seat Display aligned */}
+                    <div className="flex flex-col items-center justify-center my-6 gap-2">
+                      <div className="text-center font-bold text-lg text-emerald-600 dark:text-emerald-400 mb-2">
+                        SEAT(S): {ticket.seats?.join(', ') || '—'}
                       </div>
-                      <span className="qr-caption">{t?.tapToScan || 'Tap to scan at boarding'}</span>
+                      <div 
+                        className={`w-32 h-32 bg-white border border-gray-200 p-2 rounded-xl shadow-sm transition-opacity ${!isCancelled ? 'cursor-pointer hover:opacity-80' : 'opacity-40 grayscale cursor-not-allowed'}`} 
+                        onClick={() => {
+                           if (!isCancelled) setQrPopup(ticket.qrCode || ticket.bookingNumber || ticket.id);
+                        }}
+                      >
+                        <img 
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ticket.qrCode || ticket.bookingNumber || ticket.id}`} 
+                          alt="Ticket QR Code" 
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <span className="text-xs text-gray-500 mt-2">{t?.tapToScan || 'Tap QR to scan at boarding'}</span>
                     </div>
 
                     {/* Actions */}
@@ -191,6 +194,30 @@ const MobileTicketsTab = ({
               </div>
             );
           })}
+        </div>
+      )}
+      {/* QR Code Modal Popup */}
+      {qrPopup && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in-up" onClick={() => setQrPopup(null)}>
+          <div className="bg-white p-6 rounded-3xl shadow-2xl flex flex-col items-center max-w-sm w-full" onClick={e => e.stopPropagation()}>
+            <div className="w-full flex justify-end mb-2">
+              <button onClick={() => setQrPopup(null)} className="p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200">
+                <X size={20} />
+              </button>
+            </div>
+            <h3 className="text-xl font-bold font-outfit text-gray-900 mb-6 text-center">Boarding Pass QR</h3>
+            <div className="bg-white p-4 border-2 border-dashed border-gray-200 rounded-2xl mb-6 shadow-inner">
+              <img 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${qrPopup}`} 
+                alt="Enlarged Ticket QR" 
+                className="w-56 h-56 mx-auto object-contain"
+              />
+            </div>
+            <p className="text-sm font-bold text-gray-500 mb-6 font-mono text-center tracking-widest bg-gray-100 px-4 py-2 rounded-xl">
+              PNR: {qrPopup}
+            </p>
+            <p className="text-xs text-gray-400 text-center max-w-[200px]">Show this QR code to the conductor when boarding</p>
+          </div>
         </div>
       )}
     </div>

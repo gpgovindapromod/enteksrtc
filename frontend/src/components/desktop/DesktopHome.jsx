@@ -75,7 +75,7 @@ const DesktopHome = () => {
           </div>
           <div className="hidden lg:flex justify-center gap-8 flex-1 px-4">
             <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Home</a>
-            <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Routes</a>
+            <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#routes">Routes</a>
             <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Contact</a>
           </div>
           <div className="flex items-center justify-end gap-5">
@@ -194,7 +194,7 @@ const DesktopHome = () => {
 
       {/* Main Content Area */}
       <main className="pt-32 md:pt-28 bg-background transition-colors duration-300">
-        <section className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop py-stack-xl">
+        <section id="routes" className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop py-stack-xl">
           <div className="flex justify-between items-end mb-stack-lg">
             <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold text-gray-900 dark:text-white">Top Routes</h2>
             <a className="text-primary hover:brightness-110 flex items-center gap-1 transition-colors" href="#">View All <span className="material-symbols-outlined text-sm">chevron_right</span></a>
@@ -289,7 +289,7 @@ const DesktopHome = () => {
               <div>
                 <h3 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary"></span> Explore</h3>
                 <ul className="space-y-4">
-                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Routes</a></li>
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#routes">Routes</a></li>
                   <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Fleet</a></li>
                 </ul>
               </div>

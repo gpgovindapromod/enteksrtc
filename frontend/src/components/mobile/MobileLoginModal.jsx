@@ -12,6 +12,9 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
     setSignupTab,
     isSubmitting,
     authError,
+    fieldErrors,
+    validateLoginField,
+    validateSignupField,
     loginForm,
     setLoginForm,
     signupForm,
@@ -77,7 +80,11 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                           aria-label="Name"
                           placeholder="NAME"
                           value={signupForm.fullName}
-                          onChange={(e) => setSignupForm((prev) => ({ ...prev, fullName: e.target.value }))}
+                          onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, fullName: e.target.value }));
+                              if (fieldErrors.signup_fullName) validateSignupField('fullName', e.target.value, signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('fullName', e.target.value, signupForm)}
                           required
                         />
                       </div>
@@ -87,7 +94,11 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                           aria-label="Age"
                           placeholder="Age"
                           value={signupForm.age}
-                          onChange={(e) => setSignupForm((prev) => ({ ...prev, age: e.target.value }))}
+                          onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, age: e.target.value }));
+                              if (fieldErrors.signup_age) validateSignupField('age', e.target.value, signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('age', e.target.value, signupForm)}
                           required
                         />
                       </div>
@@ -97,7 +108,11 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                           aria-label="Email ID"
                           placeholder="EMAIL ID"
                           value={signupForm.email}
-                          onChange={(e) => setSignupForm((prev) => ({ ...prev, email: e.target.value }))}
+                          onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, email: e.target.value }));
+                              if (fieldErrors.signup_email) validateSignupField('email', e.target.value, signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('email', e.target.value, signupForm)}
                           required
                         />
                       </div>
@@ -110,7 +125,11 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                               aria-label="Mobile Number"
                               placeholder="MOBILE NUMBER"
                               value={signupForm.phone}
-                              onChange={(e) => setSignupForm((prev) => ({ ...prev, phone: e.target.value }))}
+                              onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, phone: e.target.value }));
+                              if (fieldErrors.signup_phone) validateSignupField('phone', e.target.value, signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('phone', e.target.value, signupForm)}
                               disabled={otpSent}
                               required
                             />
@@ -131,7 +150,11 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                                 aria-label="OTP"
                                 placeholder="ENTER OTP"
                                 value={signupForm.otp}
-                                onChange={(e) => setSignupForm((prev) => ({ ...prev, otp: e.target.value }))}
+                                onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, otp: e.target.value }));
+                              if (fieldErrors.signup_otp) validateSignupField('otp', e.target.value, signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('otp', e.target.value, signupForm)}
                                 required
                               />
                               <button
@@ -171,7 +194,11 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                             aria-label="Password"
                             placeholder="Password"
                             value={signupForm.password}
-                            onChange={(e) => setSignupForm((prev) => ({ ...prev, password: e.target.value }))}
+                            onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, password: e.target.value }));
+                              if (fieldErrors.signup_password) validateSignupField('password', e.target.value, signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('password', e.target.value, signupForm)}
                             required
                           />
                           <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
@@ -187,7 +214,11 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                             aria-label="Confirm Password"
                             placeholder="Confirm Password"
                             value={signupForm.confirmPassword}
-                            onChange={(e) => setSignupForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+                            onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, confirmPassword: e.target.value }));
+                              if (fieldErrors.signup_confirmPassword) validateSignupField('confirmPassword', e.target.value, signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('confirmPassword', e.target.value, signupForm)}
                             required
                           />
                         </div>
@@ -280,9 +311,14 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Password"
                       value={loginForm.password}
-                      onChange={(e) => setLoginForm((prev) => ({ ...prev, password: e.target.value }))}
+                      onChange={(e) => {
+                              setLoginForm((prev) => ({ ...prev, password: e.target.value }));
+                              if (fieldErrors.password) validateLoginField('password', e.target.value);
+                            }}
+                            onBlur={(e) => validateLoginField('password', e.target.value)}
                       required
                     />
+                    {fieldErrors.password && <span className="auth-error-text" style={{color: '#ef4444', fontSize: '11px', position: 'absolute', bottom: '-18px'}}>{fieldErrors.password}</span>}
                     <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>

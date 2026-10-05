@@ -42,13 +42,18 @@ import BookingSeat from '../../database/models/BookingSeat.js';
 import Trip from '../../database/models/Trip.js';
 import RouteStop from '../../database/models/RouteStop.js';
 import Payment from '../../database/models/Payment.js';
+import Ticket from '../../database/models/Ticket.js';
 import { calculateFare, getFareConfig } from '../../utils/fareUtils.js';
+import { auditBooking } from '../../utils/auditUtils.js';
+import { evaluateCancellation } from '../../utils/cancellationPolicy.js';
+import { notificationService } from '../../services/notificationService.js';
 import {
   createPaymentOrder,
   verifyPayment,
   verifyWebhookSignature,
   activeGateway,
   getPublicKeyId,
+  createRefund,
 } from '../../services/paymentService.js';
 import mongoose from 'mongoose';
 import crypto from 'crypto';
@@ -90,6 +95,9 @@ export const checkout = async (req, res) => {
     }
 
     // ── Passenger validation (before acquiring the lock) ──────────────────
+    if (seats.length === 1 && seats[0].age < 12) {
+      return res.status(400).json({ success: false, message: 'A passenger under 12 years cannot book a single ticket.' });
+    }
     for (const seat of seats) {
       if (!seat.passengerName || seat.passengerName.trim() === '') {
         return res.status(400).json({ success: false, message: `Passenger name is required for seat ${seat.seatNo}` });
@@ -115,6 +123,18 @@ export const checkout = async (req, res) => {
         { new: true, session }
       ).populate('busId');
       if (!trip) throw new Error('Trip not found');
+      
+      // ── Trip Lifecycle & Cutoff Validation ────────────────────────────────
+      if (trip.status !== 'SCHEDULED') {
+        throw new Error(`Trip is currently ${trip.status} and not open for booking`);
+      }
+      
+      const cutoffMinutes = trip.bookingCutoffMinutes || 30;
+      const cutoffTime = new Date(new Date(trip.departureDate).getTime() - (cutoffMinutes * 60000));
+      if (new Date() > cutoffTime) {
+        throw new Error(`Booking cutoff passed. Bookings closed ${cutoffMinutes} minutes before departure.`);
+      }
+      // ──────────────────────────────────────────────────────────────────────
 
       const boardingRouteStop = await RouteStop.findOne({ routeId: trip.routeId, stopId: boardingStopId });
       const droppingRouteStop = await RouteStop.findOne({ routeId: trip.routeId, stopId: droppingStopId });
@@ -184,6 +204,19 @@ export const checkout = async (req, res) => {
         holdExpiresAt,
       });
       await newBooking.save({ session });
+      await auditBooking({
+        bookingId: newBooking._id,
+        bookingNumber: newBooking.bookingNumber,
+        userId: newBooking.passengerId,
+        eventType: 'BOOKING_CREATED',
+        previousBookingStatus: null,
+        newBookingStatus: 'PENDING',
+        previousPaymentStatus: null,
+        newPaymentStatus: 'PENDING',
+        source: 'USER',
+        reason: 'Initial booking hold',
+        session
+      });
 
       // Create BookingSeats (linked to hold booking)
       const bookingSeats = seats.map((seat) => ({
@@ -249,6 +282,199 @@ export const checkout = async (req, res) => {
   } catch (error) {
     console.error('[Checkout] Unexpected error:', error.message);
     return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+// ─── ATOMIC BOOKING CONFIRMATION LOGIC ────────────────────────────────────────
+
+const confirmBookingPayment = async ({ bookingId, transactionId, gateway }) => {
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+
+    // 1. Locate booking and lock it
+    const booking = await Booking.findById(bookingId).session(session);
+    if (!booking) throw new Error('Booking not found');
+
+    // 2. Check if already confirmed (idempotency)
+    if (booking.bookingStatus === 'CONFIRMED' && booking.paymentStatus === 'PAID') {
+      await session.commitTransaction();
+      return { success: true, alreadyConfirmed: true, booking };
+    }
+
+    // 3. Reject invalid states
+    if (booking.bookingStatus === 'CANCELLED') {
+      throw new Error('Booking has been cancelled and cannot be confirmed');
+    }
+
+    // 4. Check hold validity
+    if (booking.holdExpiresAt && booking.holdExpiresAt < new Date()) {
+      // Hold expired but payment succeeded! We must NOT confirm.
+      // We will record the payment but trigger refund.
+      booking.paymentStatus = 'REFUND_REQUESTED';
+      booking.bookingStatus = 'CANCELLED';
+      booking.holdExpiresAt = null;
+      await booking.save({ session });
+      
+      await auditBooking({
+        bookingId: booking._id,
+        bookingNumber: booking.bookingNumber,
+        userId: booking.passengerId,
+        eventType: 'HOLD_EXPIRED',
+        previousBookingStatus: 'PENDING',
+        newBookingStatus: 'CANCELLED',
+        previousPaymentStatus: 'PENDING',
+        newPaymentStatus: 'REFUND_REQUESTED',
+        source: 'SYSTEM',
+        reason: 'Hold expired before payment capture',
+        session
+      });
+
+      // Ensure payment is recorded so we can refund it
+      const existingPay = await Payment.findOne({ transactionId }).session(session);
+      if (!existingPay) {
+        await Payment.create([{
+          bookingId: booking._id,
+          amount: booking.farePaise,
+          paymentMethod: 'ONLINE',
+          transactionId,
+          gateway: gateway || booking.paymentGateway,
+          paymentStatus: 'SUCCESS',
+          refundStatus: 'PENDING',
+          paidAt: new Date(),
+        }], { session });
+      }
+
+      await session.commitTransaction();
+      
+      // Attempt refund asynchronously
+      // Use idempotency / save provider refund ID
+      createRefund({ transactionId, amountPaise: booking.farePaise, notes: { reason: 'Hold expired' }, receiptId: booking.bookingNumber })
+        .then(async (refund) => {
+           await Payment.updateOne({ transactionId }, { 
+             refundStatus: refund.status === 'PROCESSED' ? 'PROCESSED' : 'PENDING',
+             providerRefundId: refund.refundId
+           });
+           if(refund.status === 'PROCESSED') await Booking.updateOne({ _id: booking._id }, { paymentStatus: 'REFUNDED' });
+        }).catch(err => console.error('Auto-refund failed:', err));
+
+      return { success: false, reason: 'HOLD_EXPIRED', message: 'Seat hold expired before payment was processed. Your payment will be refunded.' };
+    }
+
+    // 5. Update Booking
+    booking.bookingStatus = 'CONFIRMED';
+    booking.paymentStatus = 'PAID';
+    booking.paymentTransactionId = transactionId;
+    booking.holdExpiresAt = null;
+    await booking.save({ session });
+
+    await auditBooking({
+        bookingId: booking._id,
+        bookingNumber: booking.bookingNumber,
+        userId: booking.passengerId,
+        eventType: 'BOOKING_CONFIRMED',
+        previousBookingStatus: 'PENDING',
+        newBookingStatus: 'CONFIRMED',
+        previousPaymentStatus: 'PENDING',
+        newPaymentStatus: 'PAID',
+        source: gateway || 'SYSTEM',
+        metadata: { transactionId },
+        session
+    });
+
+    // 6. Record Payment
+    const existingPay = await Payment.findOne({ transactionId }).session(session);
+    if (!existingPay) {
+      await Payment.create([{
+        bookingId: booking._id,
+        amount: booking.farePaise,
+        paymentMethod: 'ONLINE',
+        transactionId,
+        gateway: gateway || booking.paymentGateway,
+        paymentStatus: 'SUCCESS',
+        paidAt: new Date(),
+      }], { session });
+    }
+
+    // 7. Create Ticket EXACTLY ONCE
+    const existingTicket = await Ticket.findOne({ bookingId: booking._id }).session(session);
+    if (!existingTicket) {
+      const newTkt = await Ticket.create([{
+        bookingId: booking._id,
+        ticketNumber: 'TKT-' + crypto.randomBytes(4).toString('hex').toUpperCase()
+      }], { session });
+      await auditBooking({
+        bookingId: booking._id,
+        bookingNumber: booking.bookingNumber,
+        userId: booking.passengerId,
+        eventType: 'TICKET_CREATED',
+        previousBookingStatus: 'CONFIRMED',
+        newBookingStatus: 'CONFIRMED',
+        previousPaymentStatus: 'PAID',
+        newPaymentStatus: 'PAID',
+        source: 'SYSTEM',
+        metadata: { ticketNumber: newTkt[0].ticketNumber },
+        session
+      });
+      // ── FEATURE 6: NOTIFICATIONS ───────────────────────────────────────────
+      // Send notifications asynchronously outside the critical path
+      const passenger = booking.passengerId; // This is an ObjectId, wait we need the populated user to get email/phone.
+      // We will look up the passenger async since we don't want to break the transaction
+      setImmediate(async () => {
+        try {
+          const { default: User } = await import('../../database/models/User.js');
+          const p = await User.findById(booking.passengerId);
+          if (!p) return;
+
+          const basePayload = {
+            userId: booking.passengerId,
+            bookingId: booking._id,
+            tripId: booking.tripId,
+            eventType: 'BOOKING_CONFIRMED'
+          };
+
+          const textMessage = `Ente KSRTC: Booking confirmed.\nPNR: ${booking.bookingNumber}\nRoute: ${booking.boardingSequence} to ${booking.droppingSequence}\nSeat(s): Confirmed\nThank you for travelling with Ente KSRTC.`;
+
+          if (p.email) {
+            notificationService.dispatchNotification({
+              ...basePayload,
+              channel: 'EMAIL',
+              recipient: p.email,
+              subject: `Ente KSRTC Booking Confirmed - PNR ${booking.bookingNumber}`,
+              message: textMessage
+            });
+          }
+
+          if (p.phone) {
+            notificationService.dispatchNotification({
+              ...basePayload,
+              channel: 'SMS',
+              recipient: p.phone,
+              message: textMessage
+            });
+            notificationService.dispatchNotification({
+              ...basePayload,
+              channel: 'WHATSAPP',
+              recipient: p.phone,
+              message: textMessage
+            });
+          }
+        } catch (e) {
+          console.error('Notification dispatch failed', e);
+        }
+      });
+      // ───────────────────────────────────────────────────────────────────────
+
+    }
+
+    await session.commitTransaction();
+    return { success: true, booking };
+  } catch (err) {
+    await session.abortTransaction();
+    throw err;
+  } finally {
+    session.endSession();
   }
 };
 
@@ -499,80 +725,45 @@ export const handleWebhook = async (req, res) => {
   }
 };
 
-// ─── GET MY BOOKINGS ──────────────────────────────────────────────────────────
+// (Moved getUserBookings to views/bookingViewController.js)
 
-export const getUserBookings = async (req, res) => {
-  try {
-    const userId = req.user.id || req.user._id;
-    const bookings = await Booking.find({ passengerId: userId })
-      .populate({ path: 'tripId', populate: { path: 'busId routeId' } })
-      .populate('boardingStop droppingStop')
-      .sort({ createdAt: -1 });
-
-    const results = [];
-    for (const b of bookings) {
-      const seats = await BookingSeat.find({ bookingId: b._id });
-      results.push({ ...b.toObject(), seats });
-    }
-
-    return res.json({ success: true, bookings: results });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-// ─── CANCEL BOOKING ────────────────────────────────────────────────────────────
-
-export const cancelBooking = async (req, res) => {
+// ─── RECONCILE PAYMENT ────────────────────────────────────────────────────────
+export const reconcilePayment = async (req, res) => {
   try {
     const { bookingId } = req.params;
     const userId = req.user.id || req.user._id;
 
-    // IDOR: only the owner can cancel
     const booking = await Booking.findOne({ _id: bookingId, passengerId: userId });
     if (!booking) return res.status(404).json({ success: false, message: 'Booking not found' });
 
-    if (booking.bookingStatus === 'CANCELLED') {
-      return res.status(400).json({ success: false, message: 'Booking is already cancelled' });
+    if (booking.bookingStatus === 'CONFIRMED') {
+      return res.json({ success: true, message: 'Already confirmed', booking });
     }
 
-    booking.bookingStatus = 'CANCELLED';
-    // If PAID, mark as REFUNDED (database status — actual Razorpay refund would be via API)
-    // For TEST MODE: we mark REFUNDED in DB only; actual Razorpay refund via dashboard
-    if (booking.paymentStatus === 'PAID') {
-      booking.paymentStatus = 'REFUNDED';
+    if (!booking.paymentOrderId) {
+      return res.status(400).json({ success: false, message: 'No payment order associated' });
     }
-    booking.holdExpiresAt = null;
-    await booking.save();
 
-    console.info('[CancelBooking] Cancelled', { bookingId, userId, paymentStatus: booking.paymentStatus });
+    const { status, transactionId } = await getPaymentStatus({ orderId: booking.paymentOrderId });
+    
+    if (status === 'CAPTURED') {
+      const result = await confirmBookingPayment({ bookingId: booking._id, transactionId, gateway: booking.paymentGateway });
+      if (!result.success && result.reason === 'HOLD_EXPIRED') {
+        return res.status(410).json({ success: false, message: result.message, booking: await Booking.findById(booking._id) });
+      }
+      return res.json({ success: true, message: 'Reconciled and confirmed', booking: await Booking.findById(booking._id) });
+    } else if (status === 'FAILED') {
+      booking.paymentStatus = 'FAILED';
+      await booking.save();
+      return res.json({ success: true, message: 'Reconciled as failed', booking });
+    }
 
-    return res.json({ success: true, message: 'Booking cancelled successfully' });
+    return res.json({ success: true, message: 'Payment still pending', booking });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// ─── GET SINGLE BOOKING (for confirmation screen + recovery) ──────────────────
-
-export const getBooking = async (req, res) => {
-  try {
-    const { bookingId } = req.params;
-    const userId = req.user.id || req.user._id;
-
-    // IDOR: only the booking owner can view
-    const booking = await Booking.findOne({ _id: bookingId, passengerId: userId })
-      .populate({ path: 'tripId', populate: { path: 'busId routeId' } })
-      .populate('boardingStop droppingStop');
-
-    if (!booking) return res.status(404).json({ success: false, message: 'Booking not found' });
-
-    const seats = await BookingSeat.find({ bookingId: booking._id });
-    return res.json({ success: true, booking: { ...booking.toObject(), seats } });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
-  }
-};
 
 // ─── HOLD EXPIRY CLEANUP (called periodically) ────────────────────────────────
 
@@ -608,3 +799,6 @@ export const cleanupExpiredHolds = async (req, res) => {
     }
   }
 };
+
+
+// (Moved getBookingAudits to views/bookingViewController.js)

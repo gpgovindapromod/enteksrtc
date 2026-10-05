@@ -20,42 +20,24 @@ const DesktopTicketsModal = ({ show, onClose, activeBookings, handleCancelBookin
 
   return (
     <div
-      className="desktop-modal-overlay"
-      style={{
-        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.55)', zIndex: 10000,
-        display: 'flex', justifyContent: 'center', alignItems: 'center',
-        backdropFilter: 'blur(6px)',
-      }}
+      className="desktop-modal-overlay fixed inset-0 z-[10000] flex justify-center items-center backdrop-blur-sm bg-black/60"
+      onClick={onClose}
     >
       <div
-        className="desktop-modal-content"
-        style={{
-          backgroundColor: 'var(--white)',
-          color: 'var(--dark)',
-          borderRadius: '20px',
-          padding: '28px',
-          width: '100%',
-          maxWidth: '720px',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
-          maxHeight: '88vh',
-          overflowY: 'auto',
-        }}
+        className="desktop-modal-content bg-white dark:bg-slate-900 text-gray-900 dark:text-white rounded-3xl p-7 w-full max-w-3xl shadow-2xl max-h-[88vh] overflow-y-auto relative"
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div className="flex justify-between items-center mb-6">
           <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0 }}>My Boarding Passes</h2>
-            <p style={{ fontSize: '0.85rem', color: '#6b7280', marginTop: 4 }}>{activeBookings.length} ticket(s)</p>
+            <h2 className="text-2xl font-extrabold m-0 text-gray-900 dark:text-white">My Boarding Passes</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{activeBookings.length} ticket(s)</p>
           </div>
           <button
             onClick={onClose}
-            style={{
-              background: '#f3f4f6', border: 'none', borderRadius: '50%',
-              width: 36, height: 36, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}
+            className="w-9 h-9 rounded-full bg-gray-100 dark:bg-slate-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
           >
-            <X size={18} color="#374151" />
+            <X size={18} className="text-gray-700 dark:text-gray-300" />
           </button>
         </div>
 
@@ -113,39 +95,39 @@ const DesktopTicketsModal = ({ show, onClose, activeBookings, handleCancelBookin
                     </div>
 
                     {/* Details Grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 16 }}>
-                      <div style={{ background: '#f9fafb', borderRadius: 10, padding: '10px 12px' }}>
-                        <div style={{ fontSize: '0.7rem', color: '#9ca3af', marginBottom: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      <div className="bg-gray-50 dark:bg-slate-800/50 rounded-xl p-3 border border-gray-100 dark:border-white/5">
+                        <div className="text-[0.7rem] text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-1">
                           <Bus size={11} /> Bus
                         </div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>{ticket.busType || '—'}</div>
-                        <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{ticket.busNumber || ''}</div>
+                        <div className="text-[0.85rem] font-bold text-gray-900 dark:text-white">{ticket.busType || '—'}</div>
+                        <div className="text-[0.75rem] text-gray-500 dark:text-gray-400">{ticket.busNumber || ''}</div>
                       </div>
-                      <div style={{ background: '#f9fafb', borderRadius: 10, padding: '10px 12px' }}>
-                        <div style={{ fontSize: '0.7rem', color: '#9ca3af', marginBottom: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <div className="bg-gray-50 dark:bg-slate-800/50 rounded-xl p-3 border border-gray-100 dark:border-white/5">
+                        <div className="text-[0.7rem] text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-1">
                           <MapPin size={11} /> Seats
                         </div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>{ticket.seats?.join(', ') || '—'}</div>
-                        <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{ticket.seats?.length} seat(s)</div>
+                        <div className="text-[0.85rem] font-bold text-gray-900 dark:text-white">{ticket.seats?.join(', ') || '—'}</div>
+                        <div className="text-[0.75rem] text-gray-500 dark:text-gray-400">{ticket.seats?.length} seat(s)</div>
                       </div>
-                      <div style={{ background: '#f9fafb', borderRadius: 10, padding: '10px 12px' }}>
-                        <div style={{ fontSize: '0.7rem', color: '#9ca3af', marginBottom: 3, display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <div className="bg-gray-50 dark:bg-slate-800/50 rounded-xl p-3 border border-gray-100 dark:border-white/5">
+                        <div className="text-[0.7rem] text-gray-500 dark:text-gray-400 mb-1 flex items-center gap-1">
                           <CreditCard size={11} /> Fare
                         </div>
-                        <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#10b981' }}>{ticket.price}</div>
-                        <div className={pStatus.text} style={{ fontSize: '0.7rem', fontWeight: 700 }}>{pStatus.label}</div>
+                        <div className="text-[0.95rem] font-extrabold text-emerald-500 dark:text-emerald-400">{ticket.price}</div>
+                        <div className={`text-[0.7rem] font-bold ${pStatus.text}`}>{pStatus.label}</div>
                       </div>
                     </div>
 
                     {/* Passengers */}
                     {ticket.passengers && ticket.passengers.length > 0 && (
-                      <div style={{ marginBottom: 14 }}>
-                        <div style={{ fontSize: '0.75rem', color: '#9ca3af', marginBottom: 6, display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <div className="mb-4">
+                        <div className="text-[0.75rem] text-gray-500 dark:text-gray-400 mb-2 flex items-center gap-1">
                           <User size={11} /> Passengers
                         </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        <div className="flex flex-wrap gap-2">
                           {ticket.passengers.map((p, i) => (
-                            <div key={i} style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 8, padding: '4px 10px', fontSize: '0.78rem', color: '#065f46' }}>
+                            <div key={i} className="bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800/50 rounded-lg px-2.5 py-1 text-[0.78rem] text-emerald-700 dark:text-emerald-400 font-medium">
                               {p.passengerName} · Seat {p.seatNo} · {p.age}y · {p.gender}
                             </div>
                           ))}
@@ -162,35 +144,25 @@ const DesktopTicketsModal = ({ show, onClose, activeBookings, handleCancelBookin
                       </div>
                     )}
 
-                    {/* QR placeholder */}
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
-                      <div style={{
-                        width: 100, height: 100, background: '#f9fafb', border: '1px dashed #d1d5db',
-                        borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 6,
-                      }}>
-                        <svg width="60" height="60" viewBox="0 0 100 100">
-                          <rect width="100" height="100" fill="white" />
-                          <rect x="5" y="5" width="25" height="25" fill="black" /><rect x="10" y="10" width="15" height="15" fill="white" /><rect x="13" y="13" width="9" height="9" fill="black" />
-                          <rect x="70" y="5" width="25" height="25" fill="black" /><rect x="75" y="10" width="15" height="15" fill="white" /><rect x="78" y="13" width="9" height="9" fill="black" />
-                          <rect x="5" y="70" width="25" height="25" fill="black" /><rect x="10" y="75" width="15" height="15" fill="white" /><rect x="13" y="78" width="9" height="9" fill="black" />
-                          <rect x="35" y="10" width="10" height="15" fill="black" /><rect x="50" y="5" width="15" height="10" fill="black" />
-                          <rect x="35" y="55" width="10" height="25" fill="black" /><rect x="50" y="50" width="25" height="10" fill="black" />
-                        </svg>
-                        <span style={{ fontSize: '0.6rem', color: '#9ca3af' }}>{ticket.id}</span>
+                    {/* QR Code */}
+                    <div className="flex justify-center mb-4">
+                      <div className="w-24 h-24 bg-white rounded-xl border border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center p-2 shadow-sm overflow-hidden">
+                        <img 
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${ticket.qrCode || ticket.bookingNumber || ticket.id}`} 
+                          alt="Ticket QR Code" 
+                          className={`w-full h-full object-contain ${isCancelled ? 'opacity-30 grayscale' : ''}`}
+                        />
                       </div>
                     </div>
 
                     {/* Actions */}
                     {!isCancelled && (
-                      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <div className="flex justify-end border-t border-gray-100 dark:border-white/5 pt-4 mt-4">
                         <button
                           onClick={() => {
                             if (window.confirm('Cancel this booking?')) handleCancelBooking(ticket.id);
                           }}
-                          style={{
-                            background: 'transparent', border: '1px solid #ef4444', color: '#ef4444',
-                            padding: '6px 16px', borderRadius: 8, cursor: 'pointer', fontSize: '0.82rem', fontWeight: 700,
-                          }}
+                          className="px-4 py-1.5 border border-red-500 text-red-500 rounded-lg text-sm font-bold hover:bg-red-500 hover:text-white transition-colors"
                         >
                           Cancel Booking
                         </button>

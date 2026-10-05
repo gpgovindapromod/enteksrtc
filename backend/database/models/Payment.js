@@ -13,6 +13,7 @@ const paymentSchema = new mongoose.Schema(
 
     refundAmount: { type: Number, default: 0 },
     refundStatus: { type: String, enum: ['NOT_APPLICABLE', 'PENDING', 'PROCESSED'], default: 'NOT_APPLICABLE' },
+    providerRefundId: { type: String },
 
     paidAt: { type: Date }
   },

@@ -149,12 +149,20 @@ export function useAppLogic() {
 
     try {
       // Step 1: Build seat data
+      for (const seatNo of selectedSeats) {
+        const details = passengerDetails[seatNo] || {};
+        const parsedAge = parseInt(details.age, 10);
+        if (isNaN(parsedAge) || parsedAge < 1 || parsedAge > 120) {
+          throw new Error(`Invalid age for seat ${seatNo}. Age must be between 1 and 120.`);
+        }
+      }
+
       const seatsData = selectedSeats.map((seatNo) => {
         const details = passengerDetails[seatNo] || {};
         return {
           seatNo,
           passengerName: details.name || '',
-          age: parseInt(details.age) || 0,
+          age: parseInt(details.age, 10),
           gender: details.gender || 'Male',
         };
       });

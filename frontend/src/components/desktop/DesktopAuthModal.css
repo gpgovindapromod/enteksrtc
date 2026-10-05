@@ -300,3 +300,10 @@
   margin-top: 16px;
   text-align: center;
 }
+
+.auth-error-text {
+  color: #d1483c;
+  font-size: 11px;
+  margin-top: 4px;
+  display: block;
+}

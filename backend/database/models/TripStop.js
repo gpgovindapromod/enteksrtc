@@ -8,7 +8,10 @@ const tripStopSchema = new mongoose.Schema(
     arrivalTime: { type: Date },
     departureTime: { type: Date },
 
-    platform: { type: String }
+    platform: { type: String },
+    
+    // Distinguishes real published schedule from distance-based demo/generated times
+    timetableType: { type: String, enum: ['GENERATED', 'ACTUAL'], default: 'GENERATED' }
   },
   { timestamps: true }
 );

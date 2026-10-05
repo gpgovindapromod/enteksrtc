@@ -13,6 +13,9 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
     setSignupTab,
     isSubmitting,
     authError,
+    fieldErrors,
+    validateLoginField,
+    validateSignupField,
     loginForm,
     setLoginForm,
     signupForm,
@@ -83,7 +86,11 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                           className="bp-input"
                           placeholder="NAME"
                           value={signupForm.fullName}
-                          onChange={(e) => setSignupForm((prev) => ({ ...prev, fullName: e.target.value }))}
+                          onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, fullName: e.target.value }));
+                              if (fieldErrors.signup_fullName) validateSignupField('fullName', e.target.value, signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('fullName', e.target.value, signupForm)}
                           required
                         />
                       </div>
@@ -94,7 +101,11 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                           className="bp-input"
                           placeholder="AGE"
                           value={signupForm.age}
-                          onChange={(e) => setSignupForm((prev) => ({ ...prev, age: e.target.value }))}
+                          onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, age: e.target.value }));
+                              if (fieldErrors.signup_age) validateSignupField('age', e.target.value, signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('age', e.target.value, signupForm)}
                           required
                         />
                       </div>
@@ -108,7 +119,11 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                           className="bp-input"
                           placeholder="EMAIL ID"
                           value={signupForm.email}
-                          onChange={(e) => setSignupForm((prev) => ({ ...prev, email: e.target.value }))}
+                          onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, email: e.target.value }));
+                              if (fieldErrors.signup_email) validateSignupField('email', e.target.value, signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('email', e.target.value, signupForm)}
                           required
                         />
                       </div>
@@ -136,7 +151,11 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                             className="bp-input"
                             placeholder="MOBILE NUMBER"
                             value={signupForm.phone}
-                            onChange={(e) => setSignupForm((prev) => ({ ...prev, phone: e.target.value }))}
+                            onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, phone: e.target.value }));
+                              if (fieldErrors.signup_phone) validateSignupField('phone', e.target.value, signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('phone', e.target.value, signupForm)}
                             disabled={otpSent || otpVerified}
                             required
                           />
@@ -168,7 +187,11 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                               className="bp-input"
                               placeholder="ENTER OTP"
                               value={signupForm.otp}
-                              onChange={(e) => setSignupForm((prev) => ({ ...prev, otp: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
+                              onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, otp: e.target.value.replace(/\D/g, '').slice(0, 6) }));
+                              if (fieldErrors.signup_otp) validateSignupField('otp', e.target.value.replace(/\D/g, '').slice(0, 6), signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('otp', e.target.value.replace(/\D/g, '').slice(0, 6), signupForm)}
                               required
                             />
                             <button
@@ -196,7 +219,11 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                             className="bp-input"
                             placeholder="PASSWORD"
                             value={signupForm.password}
-                            onChange={(e) => setSignupForm((prev) => ({ ...prev, password: e.target.value }))}
+                            onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, password: e.target.value }));
+                              if (fieldErrors.signup_password) validateSignupField('password', e.target.value, signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('password', e.target.value, signupForm)}
                             required
                           />
                           <button
@@ -214,7 +241,11 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                             className="bp-input"
                             placeholder="CONFIRM PASSWORD"
                             value={signupForm.confirmPassword}
-                            onChange={(e) => setSignupForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+                            onChange={(e) => {
+                              setSignupForm((prev) => ({ ...prev, confirmPassword: e.target.value }));
+                              if (fieldErrors.signup_confirmPassword) validateSignupField('confirmPassword', e.target.value, signupForm);
+                            }}
+                            onBlur={(e) => validateSignupField('confirmPassword', e.target.value, signupForm)}
                             required
                           />
                         </div>
@@ -308,9 +339,14 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                       className="bp-input"
                       placeholder="Password"
                       value={loginForm.password}
-                      onChange={(e) => setLoginForm((prev) => ({ ...prev, password: e.target.value }))}
+                      onChange={(e) => {
+                              setLoginForm((prev) => ({ ...prev, password: e.target.value }));
+                              if (fieldErrors.password) validateLoginField('password', e.target.value);
+                            }}
+                            onBlur={(e) => validateLoginField('password', e.target.value)}
                       required
                     />
+                    {fieldErrors.password && <span className="auth-error-text" style={{color: '#ef4444', fontSize: '11px', position: 'absolute', bottom: '-18px'}}>{fieldErrors.password}</span>}
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}

@@ -210,7 +210,7 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
           <div className="flex-1 transition-all duration-300">
             {activeTab === 'Settings' ? (
               <SettingsView />
-            ) : activeTab === 'Home' || activeTab === 'Overview' || activeTab === 'Tracking' || activeTab === 'My Route' || activeTab === 'Tickets' || activeTab === 'Stations' || activeTab === 'Bookings' ? (
+            ) : activeTab === 'Home' || activeTab === 'Overview' || activeTab === 'Tracking' || activeTab === 'My Route' || activeTab === 'Tickets' || activeTab === 'Stations' || activeTab === 'Bookings' || activeTab === 'Loyalty' || activeTab === 'Support' || activeTab === 'Amenities' ? (
               <ActiveDashboardComponent data={dashboardData} loading={loading} user={user} activeTab={activeTab} />
             ) : (
               <div className="flex flex-col items-center justify-center h-[60vh] border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/50 rounded-3xl mt-12 w-full animate-fade-in-up">

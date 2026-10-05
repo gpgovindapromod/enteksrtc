@@ -10,7 +10,8 @@ const tripSchema = new mongoose.Schema(
     arrivalDate: { type: Date },
 
     fare: { type: Number },
-    status: { type: String, enum: ['SCHEDULED', 'RUNNING', 'COMPLETED', 'CANCELLED'], default: 'SCHEDULED', index: true },
+    status: { type: String, enum: ['SCHEDULED', 'OPEN', 'BOARDING', 'DEPARTED', 'COMPLETED', 'CANCELLED'], default: 'SCHEDULED', index: true },
+    bookingCutoffMinutes: { type: Number, default: 30 }, // Minutes before departureDate when booking stops
 
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
   },

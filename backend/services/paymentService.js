@@ -52,48 +52,18 @@ const timingSafeEqual = (a, b) => {
 // ─── SIMULATED PROVIDER ───────────────────────────────────────────────────────
 
 const simulated = {
-  /**
-   * Creates a "payment order" reference on the server.
-   * In simulation mode this is just a unique server-generated ID.
-   * @param {Object} params
-   * @param {number} params.amountPaise  - Amount in paise (100ths of a rupee)
-   * @param {string} params.bookingId    - Internal booking _id (for correlation)
-   * @param {string} params.receipt      - Human-readable receipt label
-   * @returns {{ orderId: string, amount: number, currency: string, gateway: string }}
-   */
+  // ... existing methods ...
   createOrder: async ({ amountPaise, bookingId, receipt }) => {
     const orderId = `SIM_ORD_${bookingId}_${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
     return { orderId, amount: amountPaise, currency: 'INR', gateway: 'SIMULATED' };
   },
-
-  /**
-   * Verifies the payment against the server-recorded order.
-   * In simulation mode, "verify" just checks that the orderId we issued
-   * matches what was returned, and that paymentStatus sent is SUCCESS.
-   *
-   * The frontend CANNOT forge this because it does not know the bookingId used
-   * to generate the orderId — it only receives the orderId.
-   *
-   * @param {Object} params
-   * @param {string} params.orderId          - The orderId we created
-   * @param {string} params.paymentId        - Provider payment ID (simulated)
-   * @param {string} params.signature        - Simulated signature
-   * @param {string} params.expectedOrderId  - What we stored in the booking
-   * @returns {{ verified: boolean, transactionId: string }}
-   */
   verifyPayment: async ({ orderId, paymentId, signature, expectedOrderId }) => {
     if (!orderId || orderId !== expectedOrderId) {
       return { verified: false, transactionId: null };
     }
-    // In simulation, any non-empty paymentId is accepted
     const transactionId = paymentId || `SIM_PAY_${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
     return { verified: true, transactionId };
   },
-
-  /**
-   * Verifies a webhook payload signature.
-   * Simulation: webhook secret must match env, payload hash is checked.
-   */
   verifyWebhook: ({ rawBody, signature }) => {
     const secret = process.env.PAYMENT_WEBHOOK_SECRET || 'sim-webhook-secret';
     const expected = crypto
@@ -102,16 +72,19 @@ const simulated = {
       .digest('hex');
     return timingSafeEqual(expected, signature || '');
   },
+  getPaymentStatus: async ({ orderId }) => {
+    // Simulated: just return captured if called, as we don't have a real state store
+    return { status: 'CAPTURED', transactionId: `SIM_PAY_${orderId}` };
+  },
+  createRefund: async ({ transactionId, amountPaise, notes }) => {
+    const refundId = `SIM_REF_${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
+    return { refundId, status: 'PROCESSED' };
+  },
 };
 
 // ─── RAZORPAY PROVIDER ────────────────────────────────────────────────────────
 
 const razorpayProvider = {
-  /**
-   * Creates a Razorpay order using the backend-calculated amount in paise.
-   * RAZORPAY_KEY_SECRET is used here server-side only.
-   * Returns only safe data (no secret) to be forwarded to the frontend.
-   */
   createOrder: async ({ amountPaise, bookingId, receipt }) => {
     if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
       throw new Error('Razorpay credentials not configured');
@@ -122,65 +95,67 @@ const razorpayProvider = {
     } catch {
       throw new Error('Razorpay SDK not installed. Run: npm install razorpay');
     }
-    const instance = new Razorpay({
-      key_id: RAZORPAY_KEY_ID,
-      key_secret: RAZORPAY_KEY_SECRET,
-    });
+    const instance = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
     const order = await instance.orders.create({
-      amount: amountPaise,       // paise – Razorpay expects smallest currency unit
+      amount: amountPaise,
       currency: 'INR',
-      receipt: String(receipt).substring(0, 40),  // Razorpay receipt max 40 chars
+      receipt: String(receipt).substring(0, 40),
       notes: { bookingId: String(bookingId) },
     });
     return {
       orderId: order.id,
-      amount: order.amount,       // echo back what Razorpay confirmed (paise)
+      amount: order.amount,
       currency: order.currency,
       gateway: 'RAZORPAY',
     };
   },
-
-  /**
-   * Verifies Razorpay payment signature server-side.
-   * HMAC-SHA256( razorpay_order_id + "|" + razorpay_payment_id, KEY_SECRET )
-   * Uses timing-safe comparison to prevent timing attacks.
-   */
   verifyPayment: async ({ orderId, paymentId, signature, expectedOrderId }) => {
-    if (!orderId || !paymentId || !signature) {
+    if (!orderId || !paymentId || !signature || orderId !== expectedOrderId || !RAZORPAY_KEY_SECRET) {
       return { verified: false, transactionId: null };
     }
-    if (orderId !== expectedOrderId) {
-      return { verified: false, transactionId: null };
-    }
-    if (!RAZORPAY_KEY_SECRET) {
-      return { verified: false, transactionId: null };
-    }
-    const body = `${orderId}|${paymentId}`;
     const expected = crypto
       .createHmac('sha256', RAZORPAY_KEY_SECRET)
-      .update(body)
+      .update(`${orderId}|${paymentId}`)
       .digest('hex');
     const verified = timingSafeEqual(expected, signature);
     return { verified, transactionId: verified ? paymentId : null };
   },
-
-  /**
-   * Verifies Razorpay webhook signature using the RAZORPAY_WEBHOOK_SECRET.
-   * Must be called with the raw request body bytes (before JSON.parse).
-   * Header: X-Razorpay-Signature
-   */
   verifyWebhook: ({ rawBody, signature }) => {
-    if (!RAZORPAY_WEBHOOK_SECRET) {
-      console.warn('[PaymentService] RAZORPAY_WEBHOOK_SECRET not set – webhook verification skipped');
-      return false;
-    }
-    if (!signature) return false;
+    if (!RAZORPAY_WEBHOOK_SECRET || !signature) return false;
     const expected = crypto
       .createHmac('sha256', RAZORPAY_WEBHOOK_SECRET)
       .update(rawBody)
       .digest('hex');
     return timingSafeEqual(expected, signature);
   },
+  getPaymentStatus: async ({ orderId }) => {
+    let Razorpay;
+    try { Razorpay = (await import('razorpay')).default; } catch { throw new Error('SDK error'); }
+    const instance = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
+    const payments = await instance.orders.fetchPayments(orderId);
+    
+    // Find a captured payment if any
+    const captured = payments.items.find(p => p.status === 'captured');
+    if (captured) {
+      return { status: 'CAPTURED', transactionId: captured.id };
+    }
+    const authorized = payments.items.find(p => p.status === 'authorized');
+    if (authorized) {
+      return { status: 'AUTHORIZED', transactionId: authorized.id };
+    }
+    return { status: 'PENDING', transactionId: null };
+  },
+  createRefund: async ({ transactionId, amountPaise, notes, receiptId }) => {
+    let Razorpay;
+    try { Razorpay = (await import('razorpay')).default; } catch { throw new Error('SDK error'); }
+    const instance = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
+    const refund = await instance.payments.refund(transactionId, {
+      amount: amountPaise,
+      notes: notes || {},
+      receipt: receiptId || transactionId
+    });
+    return { refundId: refund.id, status: refund.status === 'processed' ? 'PROCESSED' : 'PENDING' };
+  }
 };
 
 // ─── PROVIDER SELECTION ───────────────────────────────────────────────────────
@@ -190,10 +165,6 @@ const provider = PROVIDER === 'RAZORPAY' && isRazorpayConfigured ? razorpayProvi
 export const isRealProviderConfigured = PROVIDER === 'RAZORPAY' && isRazorpayConfigured;
 export const activeGateway = isRealProviderConfigured ? 'RAZORPAY' : 'SIMULATED';
 
-/**
- * Returns the PUBLIC Razorpay key ID to send to the frontend.
- * The secret is NEVER included.
- */
 export const getPublicKeyId = () => {
   if (isRealProviderConfigured) return RAZORPAY_KEY_ID;
   return null;
@@ -202,3 +173,5 @@ export const getPublicKeyId = () => {
 export const createPaymentOrder = (params) => provider.createOrder(params);
 export const verifyPayment = (params) => provider.verifyPayment(params);
 export const verifyWebhookSignature = (params) => provider.verifyWebhook(params);
+export const getPaymentStatus = (params) => provider.getPaymentStatus(params);
+export const createRefund = (params) => provider.createRefund(params);
