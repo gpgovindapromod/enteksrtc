@@ -34,7 +34,7 @@ const bookingSchema = new mongoose.Schema(
 
     // Payment provider references (server-generated, NEVER from frontend)
     // paymentOrderId: Razorpay order ID (or SIM_ORD_... for SIMULATED)
-    paymentOrderId: { type: String, sparse: true, index: true },
+    paymentOrderId: { type: String, sparse: true },
 
     // paymentTransactionId: Razorpay payment ID confirmed after verification
     paymentTransactionId: { type: String, sparse: true },
