@@ -179,7 +179,7 @@ export const searchTrips = async (req, res) => {
         }
       });
 
-      const totalSeats = trip.busId.capacity || 40;
+      const totalSeats = trip.busId.capacity || 51;
       const availableSeats = Math.max(0, totalSeats - bookedSeatsCount);
 
       validTrips.push({
@@ -235,7 +235,8 @@ export const getSeatAvailability = async (req, res) => {
 
     // Fetch the bus layout seats
     const layout = await BusLayout.findOne({ busId: trip.busId._id });
-    const allSeats = layout ? layout.seats : Array.from({length: trip.busId.capacity}, (_, i) => ({ seatNumber: `${i+1}`, isAvailable: true }));
+    const capacity = trip.busId.capacity || 51;
+    const allSeats = layout ? layout.seats : Array.from({length: capacity}, (_, i) => ({ seatNumber: `${i+1}`, isAvailable: true }));
 
     // Find all overlapping bookings for this trip
     // Overlap condition: booking.boarding < requested.dropping AND booking.dropping > requested.boarding

@@ -8,7 +8,7 @@ import { downloadTicketPDF } from '../../../utils/pdfUtils.jsx';
 
 import { getMyBookings, cancelBooking } from '../../../services/bookingService';
 
-const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home' }) => {
+const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', setActiveTab }) => {
   const navigate = useNavigate();
   const [activeBookings, setActiveBookings] = useState([]);
   const [expandedTicketId, setExpandedTicketId] = useState(null);
@@ -630,10 +630,14 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home' }) 
           <div>
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-bold font-outfit">Recent Travels</h3>
-              <button className="text-[10px] text-slate-500 dark:text-slate-400 font-bold hover:text-slate-900 dark:text-white transition-colors uppercase tracking-widest">View All</button>
+              <button 
+                onClick={() => setActiveTab && setActiveTab('Bookings')}
+                className="text-[10px] text-slate-500 dark:text-slate-400 font-bold hover:text-slate-900 dark:text-white transition-colors uppercase tracking-widest">
+                View All
+              </button>
             </div>
             <div className="space-y-4">
-              {recentTrips.length > 0 ? recentTrips.map((trip, i) => (
+              {recentTrips.length > 0 ? recentTrips.slice(0, 3).map((trip, i) => (
                 <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl group hover:border-[#10b981]/30 transition-all cursor-pointer">
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="text-sm font-bold group-hover:text-[#10b981] transition-colors">

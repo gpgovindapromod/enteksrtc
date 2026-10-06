@@ -218,7 +218,7 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
             {activeTab === 'Settings' ? (
               <SettingsView />
             ) : activeTab === 'Home' || activeTab === 'Overview' || activeTab === 'Tracking' || activeTab === 'My Route' || activeTab === 'Tickets' || activeTab === 'Stations' || activeTab === 'Bookings' || activeTab === 'Loyalty' || activeTab === 'Support' || activeTab === 'Amenities' ? (
-              <ActiveDashboardComponent data={dashboardData} loading={loading} user={user} activeTab={activeTab} />
+              <ActiveDashboardComponent data={dashboardData} loading={loading} user={user} activeTab={activeTab} setActiveTab={setActiveTab} />
             ) : (
               <div className="flex flex-col items-center justify-center h-[60vh] border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/50 rounded-3xl mt-12 w-full animate-fade-in-up">
                 <div className="w-16 h-16 bg-[#10b981]/10 rounded-full flex items-center justify-center text-[#10b981] mb-6">

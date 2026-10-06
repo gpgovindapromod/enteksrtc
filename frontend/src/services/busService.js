@@ -55,20 +55,22 @@ export const fetchBuses = async ({ origin = '', destination = '', date = '' }) =
 };
 
 export const generateSeatLayoutData = (seatStateMap = {}) => {
-  const rows = 6;
-  const cols = 5;
+  const rows = 10;
+  const cols = 6;
   const grid = [];
+  let seatNumberCounter = 1;
 
   for (let r = 0; r < rows; r++) {
     const rowSeats = [];
     for (let c = 0; c < cols; c++) {
-      if (c === 2) {
+      // 3x2 layout: Aisle is at column index 3, except for the last row (r === 9)
+      if (r < 9 && c === 3) {
         rowSeats.push({ isAisle: true, key: `aisle-${r}` });
         continue;
       }
+
       const seatId = `${r}-${c}`;
-      // In real scenario, label is just 1, 2, 3.. or A1, B1
-      const seatLabel = `${(r * 4) + (c > 2 ? c : c + 1)}`;
+      const seatLabel = `${seatNumberCounter++}`;
       
       const seatInfo = seatStateMap[seatLabel] || { isAvailable: true, status: 'AVAILABLE' };
       const isBooked = !seatInfo.isAvailable;
