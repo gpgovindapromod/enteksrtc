@@ -214,7 +214,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
 
                   {/* Sub Header */}
                   <div className="bg-[#2e7d32] text-white px-6 py-2 flex justify-between items-center text-xs font-semibold">
-                    <span>{trip.busType || 'Fast Passenger'}</span>
+                    <span>{trip.busType}</span>
                     <span>Trip Code: {trip.tripCode || 'N/A'}</span>
                   </div>
 
@@ -374,11 +374,11 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
             <p className="text-emerald-100 font-bold tracking-wider uppercase text-xs">Total Points</p>
           </div>
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-sm flex flex-col justify-center">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Current Tier: Gold</h3>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Current Tier: {data?.loyaltyTier || 'Standard'}</h3>
             <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full mt-4">
-              <div className="h-full bg-yellow-400 rounded-full transition-all duration-1000" style={{ width: '75%' }}></div>
+              <div className="h-full bg-yellow-400 rounded-full transition-all duration-1000" style={{ width: `${data?.loyaltyProgress || 0}%` }}></div>
             </div>
-            <p className="text-xs text-slate-500 mt-2">250 points to Platinum</p>
+            <p className="text-xs text-slate-500 mt-2">{data?.pointsToNextTier || 0} points to next tier</p>
           </div>
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 flex flex-col justify-center items-center text-center hover:border-[#10b981] hover:shadow-lg hover:shadow-emerald-500/10 transition-all cursor-pointer group shadow-sm">
             <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 text-[#10b981] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -448,8 +448,8 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
     <div className="space-y-12">
       <section className="relative h-[400px] rounded-3xl overflow-hidden group shadow-2xl mb-12">
         <img
-          src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&q=80&w=1200"
-          alt="Kerala Tea Plantations"
+          src={data?.heroImageUrl || "/assets/images/premium_hero_1.webp"}
+          alt="Dashboard Hero"
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center px-16">
@@ -535,8 +535,8 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
                     <Bus size={28} />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold font-outfit">{upcomingTrip.tripId?.busId?.busNumber || 'K-Swift Gaja'}</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{upcomingTrip.tripId?.busId?.busType || 'Volvo 9600 Multi-Axle Sleeper'}</p>
+                    <h4 className="text-xl font-bold font-outfit">{upcomingTrip.tripId?.busId?.busNumber}</h4>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{upcomingTrip.tripId?.busId?.busType}</p>
                   </div>
                 </div>
                 <div className="text-center p-6 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-2xl">
@@ -646,7 +646,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
                     <span className="text-[10px] bg-emerald-500/10 text-[#10b981] px-2 py-0.5 rounded font-bold">{trip.bookingStatus}</span>
                   </div>
                   <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
-                    {safeFormatDate(trip.date)} • {trip.tripId?.busId?.busType || 'Bus'}
+                    {safeFormatDate(trip.date)} • {trip.tripId?.busId?.busType}
                   </p>
                 </div>
               )) : (

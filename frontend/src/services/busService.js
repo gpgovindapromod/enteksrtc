@@ -55,20 +55,37 @@ export const fetchBuses = async ({ origin = '', destination = '', date = '' }) =
 };
 
 export const generateSeatLayoutData = (seatStateMap = {}) => {
-  const rows = 10;
-  const cols = 6;
+  const rows = 6;
+  const cols = 12;
   const grid = [];
   let seatNumberCounter = 1;
 
   for (let r = 0; r < rows; r++) {
     const rowSeats = [];
     for (let c = 0; c < cols; c++) {
-      // 3x2 layout: Aisle is at column index 3, except for the last row (r === 9)
-      if (r < 9 && c === 3) {
-        rowSeats.push({ isAisle: true, key: `aisle-${r}` });
+      // Driver column (far left)
+      if (c === 0) {
+        if (r === 0) {
+          rowSeats.push({ isDriver: true, key: `driver` });
+        } else {
+          rowSeats.push({ isEmpty: true, key: `empty-${r}-${c}` });
+        }
         continue;
       }
 
+      // Aisle row (horizontal)
+      if (r === 3) {
+        rowSeats.push({ isAisle: true, key: `aisle-${c}` });
+        continue;
+      }
+
+      // Gaps in the bottom block for doors
+      if ((r === 4 || r === 5) && (c === 2 || c === 9)) {
+        rowSeats.push({ isEmpty: true, key: `door-${r}-${c}` });
+        continue;
+      }
+
+      // Actual seat
       const seatId = `${r}-${c}`;
       const seatLabel = `${seatNumberCounter++}`;
       
@@ -76,7 +93,7 @@ export const generateSeatLayoutData = (seatStateMap = {}) => {
       const isBooked = !seatInfo.isAvailable;
 
       rowSeats.push({
-        isAisle: false,
+        isSeat: true,
         seatId,
         seatLabel,
         isBooked,
