@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useAppStore } from '../../store/useAppStore';
 import { useBookingStore } from '../../store/useBookingStore';
@@ -55,7 +55,7 @@ const MobileLayout = () => {
     isUserLoggedIn, showLoginModal, setShowLoginModal, setAuthSession, clearAuthSession
   } = useAuthStore();
   
-  const { searchError, handleSearchClick, handleCheckout, handleCancelBooking, handleBookRoute } = useAppLogic();
+  const { searchError, handleSearchClick, handleCheckout, handleCancelBooking, handleBookRoute, isCheckingOut } = useAppLogic();
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -86,7 +86,7 @@ const MobileLayout = () => {
     <div className="mobile-app-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
       
       <Routes>
-        <Route path="/" element={
+        <Route path="/" element={isUserLoggedIn ? <Navigate to="/profile" replace /> : (
           <div className="tab-view-fadein" style={{ paddingBottom: '120px', overflowY: 'auto', flex: 1 }}>
             <MobileHomeTab
               origin={origin}
@@ -127,10 +127,13 @@ const MobileLayout = () => {
               setActiveMobileTab={(tab) => navigate(tab === 'home' ? '/' : `/${tab}`)}
             />
           </div>
-        } />
+        ) } />
+        <Route path="/login" element={isUserLoggedIn ? <Navigate to="/profile" replace /> : <Navigate to="/" replace />} />
+        <Route path="/register" element={isUserLoggedIn ? <Navigate to="/profile" replace /> : <Navigate to="/" replace />} />
 
         <Route path="/tickets" element={
-          <div className="tab-view-container" style={{ paddingBottom: '80px', display: 'flex', flexDirection: 'column', flex: 1, overflowY: 'auto' }}>
+          isUserLoggedIn ? (
+            <div className="tab-view-container" style={{ paddingBottom: '80px', display: 'flex', flexDirection: 'column', flex: 1, overflowY: 'auto' }}>
             <MobileAppHeader
               theme={theme}
               toggleTheme={toggleTheme}
@@ -152,10 +155,14 @@ const MobileLayout = () => {
               />
             </main>
           </div>
+          ) : (
+            <Navigate to="/" replace />
+          )
         } />
 
         <Route path="/profile" element={
-          <div className="tab-view-container" style={{ paddingBottom: '80px', display: 'flex', flexDirection: 'column', flex: 1, overflowY: 'auto' }}>
+          isUserLoggedIn ? (
+            <div className="tab-view-container" style={{ paddingBottom: '80px', display: 'flex', flexDirection: 'column', flex: 1, overflowY: 'auto' }}>
             <MobileAppHeader
               theme={theme}
               toggleTheme={toggleTheme}
@@ -167,25 +174,29 @@ const MobileLayout = () => {
             />
             <main className="mobile-webapp-content" style={{ flex: 1, paddingTop: '64px' }}>
               <MobileDashboard
-                theme={theme}
-                toggleTheme={toggleTheme}
-                language={language}
-                setLanguage={setLanguage}
-                hasActivatedWebApp={hasActivatedWebApp}
-                setHasActivatedWebApp={setHasActivatedWebApp}
-                faqExpanded={faqExpanded}
-                setFaqExpanded={setFaqExpanded}
-                onLogout={handleLogout}
-                t={t}
-              />
-            </main>
-          </div>
+                  theme={theme}
+                  toggleTheme={toggleTheme}
+                  language={language}
+                  setLanguage={setLanguage}
+                  hasActivatedWebApp={hasActivatedWebApp}
+                  setHasActivatedWebApp={setHasActivatedWebApp}
+                  faqExpanded={faqExpanded}
+                  setFaqExpanded={setFaqExpanded}
+                  onLogout={handleLogout}
+                  t={t}
+                />
+              </main>
+            </div>
+          ) : (
+            <Navigate to="/" replace />
+          )
         } />
         
         {/* Map /dashboard to profile on mobile for URL consistency */}
         <Route path="/dashboard" element={
-          <div className="tab-view-container" style={{ paddingBottom: '80px', display: 'flex', flexDirection: 'column', flex: 1, overflowY: 'auto' }}>
-            <MobileAppHeader
+          isUserLoggedIn ? (
+            <div className="tab-view-container" style={{ paddingBottom: '80px', display: 'flex', flexDirection: 'column', flex: 1, overflowY: 'auto' }}>
+              <MobileAppHeader
               theme={theme}
               toggleTheme={toggleTheme}
               showNotifications={showNotifications}
@@ -196,19 +207,22 @@ const MobileLayout = () => {
             />
             <main className="mobile-webapp-content" style={{ flex: 1, paddingTop: '64px' }}>
               <MobileDashboard
-                theme={theme}
-                toggleTheme={toggleTheme}
-                language={language}
-                setLanguage={setLanguage}
-                hasActivatedWebApp={hasActivatedWebApp}
-                setHasActivatedWebApp={setHasActivatedWebApp}
-                faqExpanded={faqExpanded}
-                setFaqExpanded={setFaqExpanded}
-                onLogout={handleLogout}
-                t={t}
-              />
-            </main>
-          </div>
+                  theme={theme}
+                  toggleTheme={toggleTheme}
+                  language={language}
+                  setLanguage={setLanguage}
+                  hasActivatedWebApp={hasActivatedWebApp}
+                  setHasActivatedWebApp={setHasActivatedWebApp}
+                  faqExpanded={faqExpanded}
+                  setFaqExpanded={setFaqExpanded}
+                  onLogout={handleLogout}
+                  t={t}
+                />
+              </main>
+            </div>
+          ) : (
+            <Navigate to="/" replace />
+          )
         } />
       </Routes>
 
@@ -243,6 +257,7 @@ const MobileLayout = () => {
         isBookingSuccess={isBookingSuccess}
         setIsBookingSuccess={setIsBookingSuccess}
         handleCheckout={handleCheckout}
+        isCheckingOut={isCheckingOut}
         setHasActivatedWebApp={setHasActivatedWebApp}
         setActiveMobileTab={(tab) => navigate(tab === 'home' ? '/' : `/${tab}`)}
         t={t}
@@ -321,3 +336,4 @@ const MobileLayout = () => {
 };
 
 export default MobileLayout;
+

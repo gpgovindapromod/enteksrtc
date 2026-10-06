@@ -15,6 +15,22 @@ import ConductorDashboard from './dashboards/ConductorDashboard';
 import DriverDashboard from './dashboards/DriverDashboard';
 import SupportDashboard from './dashboards/SupportDashboard';
 import SettingsView from './dashboards/SettingsView';
+import ErrorBoundary from '../ErrorBoundary';
+
+const PassengerDashboardWithBoundary = (props) => (
+  <ErrorBoundary>
+    <PassengerDashboardWidgets {...props} />
+  </ErrorBoundary>
+);
+
+const ROLE_COMPONENTS = {
+  passenger: PassengerDashboardWithBoundary,
+  admin: AdminDashboardWidgets,
+  stationMaster: StationMasterDashboard,
+  conductor: ConductorDashboard,
+  driver: DriverDashboard,
+  support: SupportDashboard,
+};
 
 const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
   const { user } = useAuthStore();
@@ -23,16 +39,7 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
   const [activeTab, setActiveTab] = useState('Home');
   const { dashboardData, loading } = useDashboardData();
 
-  const ROLE_COMPONENTS = {
-    passenger: PassengerDashboardWidgets,
-    admin: AdminDashboardWidgets,
-    stationMaster: StationMasterDashboard,
-    conductor: ConductorDashboard,
-    driver: DriverDashboard,
-    support: SupportDashboard,
-  };
-
-  const ActiveDashboardComponent = ROLE_COMPONENTS[activeRole] || PassengerDashboardWidgets;
+  const ActiveDashboardComponent = ROLE_COMPONENTS[activeRole] || PassengerDashboardWithBoundary;
 
   // Sync activeTab if role changes
   useEffect(() => {

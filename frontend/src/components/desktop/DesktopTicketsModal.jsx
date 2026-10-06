@@ -1,5 +1,7 @@
 import React from 'react';
-import { CheckCircle2, XCircle, Clock, X, Bus, MapPin, User, CreditCard, Hash, ArrowRight } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, X, Bus, MapPin, User, CreditCard, Hash, ArrowRight, Download } from 'lucide-react';
+import { downloadTicketPDF } from '../../utils/pdfUtils.jsx';
+import { useAuthStore } from '../../store/useAuthStore';
 
 const statusColors = {
   CONFIRMED: { bg: 'bg-emerald-50 dark:bg-emerald-900/20', text: 'text-emerald-700 dark:text-emerald-400', dot: 'bg-emerald-500', label: '✓ Confirmed' },
@@ -155,9 +157,9 @@ const DesktopTicketsModal = ({ show, onClose, activeBookings, handleCancelBookin
                       </div>
                     </div>
 
-                    {/* Actions */}
-                    {!isCancelled && (
-                      <div className="flex justify-end border-t border-gray-100 dark:border-white/5 pt-4 mt-4">
+                                        {/* Actions */}
+                    <div className="flex justify-end gap-2 border-t border-gray-100 dark:border-white/5 pt-4 mt-4">
+                      {!isCancelled && (
                         <button
                           onClick={() => {
                             if (window.confirm('Cancel this booking?')) handleCancelBooking(ticket.id);
@@ -166,8 +168,16 @@ const DesktopTicketsModal = ({ show, onClose, activeBookings, handleCancelBookin
                         >
                           Cancel Booking
                         </button>
-                      </div>
-                    )}
+                      )}
+                      {ticket.bookingStatus !== 'CANCELLED' && (
+                        <button
+                          onClick={() => downloadTicketPDF(ticket, useAuthStore.getState().user, 'KSRTC_Ticket_' + (ticket.bookingNumber || ticket.id) + '.pdf')}
+                          className="px-4 py-1.5 border border-emerald-500 text-emerald-500 rounded-lg text-sm font-bold hover:bg-emerald-500 hover:text-white transition-colors flex items-center gap-2"
+                        >
+                          <Download size={14} /> Download
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -180,3 +190,6 @@ const DesktopTicketsModal = ({ show, onClose, activeBookings, handleCancelBookin
 };
 
 export default DesktopTicketsModal;
+
+
+

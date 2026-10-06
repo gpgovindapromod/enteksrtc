@@ -44,3 +44,12 @@ export const logoutUser = async () => {
     createServiceError(error, 'Logout failed.');
   }
 };
+
+export const updateProfile = async (payload) => {
+  try {
+    const response = await apiClient.put('/api/auth/me', payload);
+    return response.data;
+  } catch (error) {
+    createServiceError(error, 'Failed to update profile.');
+  }
+};

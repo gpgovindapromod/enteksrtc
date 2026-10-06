@@ -3,9 +3,11 @@ import { useSearchParams } from 'react-router-dom';
 import { ArrowLeft, RotateCcw, CheckCircle2, Info, SlidersHorizontal, ArrowDownWideNarrow, X, ChevronDown, ChevronUp, Clock, Download } from 'lucide-react';
 import MobileBookingWidget from './MobileBookingWidget';
 import { useBusSearch } from '../../hooks/useBusSearch';
+import { useSeatGrid } from '../../hooks/useSeatGrid';
 import { useTheme } from '../../context/ThemeContext';
 import SeatGrid from '../shared/SeatGrid';
-import { downloadTicketPDF } from '../../utils/pdfUtils';
+import { downloadTicketPDF } from '../../utils/pdfUtils.jsx';
+import { useAuthStore } from '../../store/useAuthStore';
 
 const MobileSearchResults = ({
   isSearching,
@@ -25,6 +27,7 @@ const MobileSearchResults = ({
   isBookingSuccess,
   setIsBookingSuccess,
   handleCheckout,
+  isCheckingOut,
   setHasActivatedWebApp,
   setActiveMobileTab,
   t,
@@ -88,6 +91,7 @@ const MobileSearchResults = ({
   const [isModifyOpen, setIsModifyOpen] = useState(false);
   const [tripType, setTripType] = useState('one-way');
   const [pendingBusSelection, setPendingBusSelection] = useState(null);
+  const { seatGridData: dynamicSeatGridData } = useSeatGrid(selectedBus);
 
   React.useEffect(() => {
     if (isUserLoggedIn && pendingBusSelection) {
@@ -281,7 +285,7 @@ const MobileSearchResults = ({
                   
                   <div className="min-w-[300px]">
                     <SeatGrid 
-                      seatGridData={seatGridData} 
+                      seatGridData={dynamicSeatGridData || seatGridData} 
                       selectedSeats={selectedSeats} 
                       setSelectedSeats={setSelectedSeats} 
                       seatSizeClass="w-11 h-11"
@@ -340,8 +344,8 @@ const MobileSearchResults = ({
                   <span className="text-2xl font-bold text-emerald-500 font-outfit">₹{(selectedSeats.length * selectedBus.fare).toLocaleString()}</span>
                 </div>
                 <button
-                  className={`w-full py-4 rounded-xl font-bold text-base transition-all ${selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age) ? 'bg-gray-200 dark:bg-slate-800 text-gray-400 dark:text-gray-500 cursor-not-allowed' : 'bg-emerald-500 text-white active:scale-95 shadow-xl shadow-emerald-500/30'}`}
-                  disabled={selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age)}
+                  className={`w-full py-4 rounded-xl font-bold text-base transition-all ${isCheckingOut || selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age) ? 'bg-gray-200 dark:bg-slate-800 text-gray-400 dark:text-gray-500 cursor-not-allowed' : 'bg-emerald-500 text-white active:scale-95 shadow-xl shadow-emerald-500/30'}`}
+                  disabled={isCheckingOut || selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age)}
                   onClick={() => handleCheckout(selectedBus)}
                 >
                   Confirm & Pay ₹{(selectedSeats.length * selectedBus.fare).toLocaleString()}
@@ -363,6 +367,32 @@ const MobileSearchResults = ({
                 <div className="flex justify-between border-t border-gray-200 dark:border-white/10 pt-4 text-base"><span className="font-bold text-gray-900 dark:text-white">Total Paid</span><strong className="text-emerald-500 text-lg font-bold">₹{(selectedSeats.length * selectedBus.fare).toLocaleString()}</strong></div>
               </div>
 
+                            <button 
+                className="w-full mb-4 bg-white dark:bg-slate-800 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-white/10 font-bold py-4 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform" 
+                onClick={() => {                  const ticketData = {
+                    bookingNumber: 'CONFIRMED',
+                    from: origin,
+                    to: destination,
+                    boardingStopName: origin,
+                    droppingStopName: destination,
+                    date: journeyDate,
+                    time: selectedBus?.departureTime,
+                    dropTime: selectedBus?.arrivalTime,
+                    totalFare: selectedSeats.length * (selectedBus?.fare || 0),
+                    busType: selectedBus?.type || 'Fast Passenger',
+                    passengers: selectedSeats.map(seat => ({
+                      seatNo: seat,
+                      passengerName: passengerDetails?.[seat]?.name || 'Passenger',
+                      age: passengerDetails?.[seat]?.age || '30',
+                      gender: passengerDetails?.[seat]?.gender || 'Male'
+                    }))
+                  };
+                  const user = useAuthStore.getState().user;
+                  downloadTicketPDF(ticketData, user, 'KSRTC_Ticket.pdf');}}
+              >
+                <Download size={18} />
+                Download Ticket
+              </button>
               <button className="w-full bg-emerald-500 text-white font-bold py-4 rounded-xl shadow-xl shadow-emerald-500/30 active:scale-95 transition-transform" onClick={() => {
                 setIsBookingSuccess(false);
                 setSelectedBus(null);
@@ -448,3 +478,6 @@ const MobileSearchResults = ({
 };
 
 export default MobileSearchResults;
+
+
+

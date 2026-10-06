@@ -120,7 +120,7 @@ export const checkout = async (req, res) => {
       const trip = await Trip.findOneAndUpdate(
         { _id: tripId },
         { $set: { lastBookingAttempt: new Date() } },
-        { new: true, session }
+        { returnDocument: 'after', session }
       ).populate('busId');
       if (!trip) throw new Error('Trip not found');
       

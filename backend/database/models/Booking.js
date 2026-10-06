@@ -61,7 +61,6 @@ bookingSchema.index({
   holdExpiresAt: 1,
 });
 
-// Index for webhook/verify lookup by paymentOrderId
-bookingSchema.index({ paymentOrderId: 1 }, { sparse: true });
+// Index for webhook/verify lookup by paymentOrderId (auto-created by sparse: true on field)
 
 export default mongoose.model('Booking', bookingSchema);

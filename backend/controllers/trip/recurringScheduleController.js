@@ -1,5 +1,4 @@
 import RecurringSchedule from '../../database/models/RecurringSchedule.js';
-import RouteStop from '../../database/models/RouteStop.js';
 
 export const createRecurringSchedule = async (req, res) => {
   try {
@@ -49,7 +48,7 @@ export const updateRecurringSchedule = async (req, res) => {
     const { scheduleId } = req.params;
     const updates = req.body;
 
-    const schedule = await RecurringSchedule.findByIdAndUpdate(scheduleId, updates, { new: true });
+    const schedule = await RecurringSchedule.findByIdAndUpdate(scheduleId, updates, { returnDocument: 'after' });
     if (!schedule) return res.status(404).json({ success: false, message: 'Schedule not found' });
 
     res.json({ success: true, message: 'Schedule updated', schedule });

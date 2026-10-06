@@ -2,13 +2,36 @@ import React, { useState } from 'react';
 import { User, Bell, Lock, Shield, Smartphone, Globe, CreditCard } from 'lucide-react';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { useTheme } from '../../../context/ThemeContext';
+import { updateProfile } from '../../../services/authService';
 
 const SettingsView = () => {
-  const { user } = useAuthStore();
+  const { user, setAuthSession } = useAuthStore();
   const { theme, toggleTheme } = useTheme();
   
   const [pushEnabled, setPushEnabled] = useState(true);
   const [tfaEnabled, setTfaEnabled] = useState(false);
+  
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editName, setEditName] = useState(user?.name || user?.fullName || user?.firstName || '');
+  const [editEmail, setEditEmail] = useState(user?.email || '');
+  const [editPhone, setEditPhone] = useState(user?.phone || '');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveProfile = async () => {
+    setIsSaving(true);
+    try {
+      const result = await updateProfile({ fullName: editName, email: editEmail, phone: editPhone });
+      if (result && result.user) {
+        setAuthSession({ user: result.user });
+        setIsEditingProfile(false);
+        alert('Profile updated successfully!');
+      }
+    } catch (error) {
+      alert('Failed to update profile.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="animate-fade-in-up w-full max-w-6xl mx-auto space-y-8 pb-12">
@@ -47,12 +70,38 @@ const SettingsView = () => {
                     {(user?.role || 'passenger').toUpperCase()}
                   </div>
                 </div>
-                <button className="px-6 py-3 bg-gradient-to-r from-[#10b981] to-emerald-500 hover:from-emerald-500 hover:to-[#10b981] text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 active:translate-y-0 shrink-0">
-                  Edit Profile
+                <button 
+                  onClick={() => setIsEditingProfile(!isEditingProfile)}
+                  className="px-6 py-3 bg-gradient-to-r from-[#10b981] to-emerald-500 hover:from-emerald-500 hover:to-[#10b981] text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 active:translate-y-0 shrink-0">
+                  {isEditingProfile ? 'Cancel' : 'Edit Profile'}
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-200/50 dark:border-slate-800/50">
+              {isEditingProfile ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-200/50 dark:border-slate-800/50">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Name</label>
+                    <input type="text" value={editName} onChange={(e) => setEditName(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl p-3 text-sm font-medium" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Email Address</label>
+                    <input type="email" value={editEmail} onChange={(e) => setEditEmail(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl p-3 text-sm font-medium" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Phone Number</label>
+                    <input type="text" value={editPhone} onChange={(e) => setEditPhone(e.target.value)} className="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl p-3 text-sm font-medium" />
+                  </div>
+                  <div className="flex items-end">
+                    <button 
+                      onClick={handleSaveProfile}
+                      disabled={isSaving}
+                      className="w-full px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold rounded-xl transition-all shadow-lg hover:-translate-y-0.5 active:translate-y-0">
+                      {isSaving ? 'Saving...' : 'Save Changes'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-200/50 dark:border-slate-800/50">
                 <div>
                   <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Email Address</label>
                   <p className="text-slate-900 dark:text-white font-medium">{user?.email || 'admin@enteksrtc.com'}</p>
@@ -62,6 +111,7 @@ const SettingsView = () => {
                   <p className="text-slate-900 dark:text-white font-medium">{user?.phone || '+91 98765 43210'}</p>
                 </div>
               </div>
+              )}
             </div>
           </div>
         </div>
@@ -138,7 +188,10 @@ const SettingsView = () => {
                   </div>
                 </div>
                 <button 
-                  onClick={() => setTfaEnabled(!tfaEnabled)}
+                  onClick={() => {
+                    setTfaEnabled(!tfaEnabled);
+                    alert(!tfaEnabled ? 'Two-Factor Authentication Enabled. You will need to verify your phone number on next login.' : 'Two-Factor Authentication Disabled.');
+                  }}
                   className={`px-5 py-2 text-sm font-bold rounded-xl transition-all shrink-0 ${tfaEnabled ? 'bg-rose-500 text-white shadow-md shadow-rose-500/25' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'}`}
                 >
                   {tfaEnabled ? 'Disable' : 'Enable'}
@@ -155,7 +208,9 @@ const SettingsView = () => {
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Saved cards & UPI.</p>
                   </div>
                 </div>
-                <button className="px-5 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-sm font-bold rounded-xl transition-all shadow-sm hover:shadow-md hover:text-purple-600 dark:hover:text-purple-400 shrink-0">
+                <button 
+                  onClick={() => alert('Opening Secure Payment Gateway Manager...')}
+                  className="px-5 py-2 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-sm font-bold rounded-xl transition-all shadow-sm hover:shadow-md hover:text-purple-600 dark:hover:text-purple-400 shrink-0">
                   Manage
                 </button>
               </div>

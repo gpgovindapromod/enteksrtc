@@ -54,7 +54,7 @@ export const fetchBuses = async ({ origin = '', destination = '', date = '' }) =
   }
 };
 
-export const generateSeatLayoutData = (preBooked = []) => {
+export const generateSeatLayoutData = (seatStateMap = {}) => {
   const rows = 6;
   const cols = 5;
   const grid = [];
@@ -69,12 +69,16 @@ export const generateSeatLayoutData = (preBooked = []) => {
       const seatId = `${r}-${c}`;
       // In real scenario, label is just 1, 2, 3.. or A1, B1
       const seatLabel = `${(r * 4) + (c > 2 ? c : c + 1)}`;
-      const isBooked = preBooked.includes(seatLabel);
+      
+      const seatInfo = seatStateMap[seatLabel] || { isAvailable: true, status: 'AVAILABLE' };
+      const isBooked = !seatInfo.isAvailable;
+
       rowSeats.push({
         isAisle: false,
         seatId,
         seatLabel,
-        isBooked
+        isBooked,
+        status: seatInfo.status || (isBooked ? 'BOOKED' : 'AVAILABLE')
       });
     }
     grid.push({ rowId: `row-${r}`, seats: rowSeats });
@@ -85,7 +89,7 @@ export const generateSeatLayoutData = (preBooked = []) => {
 export const getTripSeatAvailability = async (tripId, boardingSequence, droppingSequence) => {
   try {
     const response = await apiClient.get(`/api/trips/${tripId}/seats`, {
-      params: { boardingSequence, droppingSequence }
+      params: { boardingSequence, droppingSequence, _t: Date.now() }
     });
     return response.data.seats;
   } catch (error) {

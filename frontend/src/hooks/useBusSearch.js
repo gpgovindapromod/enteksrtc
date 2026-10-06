@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchBuses, generateSeatLayoutData } from '../services/busService';
+import { fetchBuses } from '../services/busService';
 
 export const useBusSearch = ({
   initialOrigin,
@@ -134,7 +134,6 @@ export const useBusSearch = ({
     setSortBy('Relevance');
   };
 
-  const seatGridData = generateSeatLayoutData();
 
   return {
     isLoading,
@@ -156,7 +155,7 @@ export const useBusSearch = ({
     handleSwap,
     handleModify,
     handleCheckboxChange,
-    clearAllFilters,
-    seatGridData
+    seatGridData: null,  // use useSeatGrid hook instead
+    availableBusTypes
   };
 };

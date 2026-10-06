@@ -25,7 +25,7 @@
  *   - Hold expired
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useBookingStore } from '../store/useBookingStore';
 import { useAuthStore } from '../store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
@@ -105,8 +105,10 @@ export function useAppLogic() {
   // ── Fetch all bookings from backend ─────────────────────────────────────
   const fetchBookings = useCallback(async () => {
     try {
-      const resBookings = await getMyBookings();
-      setActiveBookings(resBookings.map(mapBooking));
+      const resData = await getMyBookings(1, 10);
+      if (resData && resData.bookings) {
+        setActiveBookings(resData.bookings.map(mapBooking));
+      }
     } catch (e) {
       console.error('fetchBookings error:', e);
     }
@@ -138,8 +140,13 @@ export function useAppLogic() {
   };
 
   // ── Checkout → Payment → Verify ──────────────────────────────────────────
+  const isCheckingOutRef = useRef(false);
+
   const handleCheckout = async (selectedBusObj) => {
     if (selectedSeats.length === 0 || !selectedBusObj) return;
+    if (isCheckingOutRef.current) return; // Prevent double-submission
+    
+    isCheckingOutRef.current = true;
     setCheckoutError('');
     setIsCheckingOut(true);
     setPaymentStep('creating_order');
@@ -275,6 +282,7 @@ export function useAppLogic() {
       }
     } finally {
       setIsCheckingOut(false);
+      isCheckingOutRef.current = false;
     }
   };
 

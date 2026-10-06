@@ -10,7 +10,8 @@ import { materializeTripsForDate } from '../../utils/scheduleMaterializer.js';
 
 export const searchTrips = async (req, res) => {
   try {
-    console.time('Total Search Time');
+    const tId = Math.random().toString(36).substring(7);
+    console.time(`Total Search Time - ${tId}`);
     const { from, to, date, limit = 50, page = 1 } = req.query;
     if (!from || !to || !date) {
       return res.status(400).json({ success: false, message: 'from, to, and date are required' });
@@ -19,7 +20,7 @@ export const searchTrips = async (req, res) => {
     // Materialize trips from recurring schedules just-in-time
     await materializeTripsForDate(date);
 
-    console.time('Stop Validation');
+    console.time(`Stop Validation - ${tId}`);
     const fromStop = await Stop.findOne({ stopName: new RegExp(`^${from}$`, 'i') }).lean();
     const toStop = await Stop.findOne({ stopName: new RegExp(`^${to}$`, 'i') }).lean();
 
@@ -28,19 +29,19 @@ export const searchTrips = async (req, res) => {
       console.log(`Requested from: "${from}", to: "${to}"`);
       console.log(`Found fromStop: ${fromStop ? fromStop.stopName : 'NULL'}`);
       console.log(`Found toStop: ${toStop ? toStop.stopName : 'NULL'}`);
-      console.timeEnd('Stop Validation');
-      console.timeEnd('Total Search Time');
+      console.timeEnd(`Stop Validation - ${tId}`);
+      console.timeEnd(`Total Search Time - ${tId}`);
       return res.status(404).json({ success: false, message: 'Invalid stops' });
     }
     
     if (fromStop._id.toString() === toStop._id.toString()) {
-      console.timeEnd('Stop Validation');
-      console.timeEnd('Total Search Time');
+      console.timeEnd(`Stop Validation - ${tId}`);
+      console.timeEnd(`Total Search Time - ${tId}`);
       return res.status(400).json({ success: false, message: 'Source and destination cannot be the same' });
     }
-    console.timeEnd('Stop Validation');
+    console.timeEnd(`Stop Validation - ${tId}`);
 
-    console.time('Route Filtering');
+    console.time(`Route Filtering - ${tId}`);
     // Find all routeStops for fromStop and toStop
     const [fromRouteStops, toRouteStops] = await Promise.all([
       RouteStop.find({ stopId: fromStop._id }).lean(),
@@ -74,14 +75,14 @@ export const searchTrips = async (req, res) => {
       }
     });
 
-    console.timeEnd('Route Filtering');
+    console.timeEnd(`Route Filtering - ${tId}`);
 
     if (validRouteIds.length === 0) {
-      console.timeEnd('Total Search Time');
+      console.timeEnd(`Total Search Time - ${tId}`);
       return res.json({ success: true, trips: [] });
     }
 
-    console.time('Trip Query');
+    console.time(`Trip Query - ${tId}`);
     const queryDate = new Date(date);
     const startOfDay = new Date(queryDate.setHours(0, 0, 0, 0));
     const endOfDay = new Date(queryDate.setHours(23, 59, 59, 999));
@@ -98,16 +99,16 @@ export const searchTrips = async (req, res) => {
     .populate('busId')
     .populate({ path: 'routeId', populate: { path: 'sourceStop destinationStop' } })
     .lean();
-    console.timeEnd('Trip Query');
+    console.timeEnd(`Trip Query - ${tId}`);
 
     if (trips.length === 0) {
-      console.timeEnd('Total Search Time');
+      console.timeEnd(`Total Search Time - ${tId}`);
       return res.json({ success: true, trips: [] });
     }
 
     const tripIds = trips.map(t => t._id);
 
-    console.time('Batch TripStops & Bookings');
+    console.time(`Batch TripStops & Bookings - ${tId}`);
     // Fetch TripStops and Bookings in parallel
     const [tripStops, overlappingBookings] = await Promise.all([
       TripStop.find({ tripId: { $in: tripIds } }).lean(),
@@ -145,9 +146,9 @@ export const searchTrips = async (req, res) => {
         bookedSeatsByBooking.set(bIdStr, (bookedSeatsByBooking.get(bIdStr) || 0) + 1);
       });
     }
-    console.timeEnd('Batch TripStops & Bookings');
+    console.timeEnd(`Batch TripStops & Bookings - ${tId}`);
 
-    console.time('Result Formatting');
+    console.time(`Result Formatting - ${tId}`);
     const validTrips = [];
 
     for (const trip of trips) {
@@ -211,9 +212,9 @@ export const searchTrips = async (req, res) => {
         fare: fare
       });
     }
-    console.timeEnd('Result Formatting');
+    console.timeEnd(`Result Formatting - ${tId}`);
 
-    console.timeEnd('Total Search Time');
+    console.timeEnd(`Total Search Time - ${tId}`);
     res.json({ success: true, trips: validTrips });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -254,11 +255,35 @@ export const getSeatAvailability = async (req, res) => {
     const bookedSeatsRecords = await BookingSeat.find({ bookingId: { $in: bookingIds } });
     const bookedSeatNumbers = bookedSeatsRecords.map(s => s.seatNo);
 
-    const seatMap = allSeats.map(seat => ({
-      seatNumber: seat.seatNumber || seat.seatNo,
-      isAvailable: !bookedSeatNumbers.includes(seat.seatNumber || seat.seatNo),
-      type: seat.type || 'SEATER'
-    }));
+    const seatMap = allSeats.map(seat => {
+      const seatNo = seat.seatNumber || seat.seatNo;
+      
+      // Find all bookings that occupy this seat
+      const bookingIdsForSeat = bookedSeatsRecords.filter(s => s.seatNo === seatNo).map(s => String(s.bookingId));
+      let status = 'AVAILABLE';
+      let isAvailable = true;
+
+      for (const booking of overlappingBookings) {
+        if (bookingIdsForSeat.includes(String(booking._id))) {
+          isAvailable = false;
+          if (booking.isBlock) {
+             status = 'BLOCKED';
+          } else if (booking.bookingStatus === 'PENDING') {
+             status = 'HELD';
+          } else {
+             status = 'BOOKED';
+          }
+          break;
+        }
+      }
+
+      return {
+        seatNumber: seatNo,
+        isAvailable,
+        status,
+        type: seat.type || 'SEATER'
+      };
+    });
 
     res.json({ success: true, seats: seatMap });
   } catch (error) {
@@ -323,3 +348,5 @@ export const updateTripStatus = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+

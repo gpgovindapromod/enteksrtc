@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Clock, Bus, MapPin, Filter, X, ArrowLeftRight, Calendar, ChevronDown, ChevronLeft, ChevronRight, SlidersHorizontal, ArrowDownWideNarrow, RotateCcw, CheckCircle2, Moon, Sun, Download } from 'lucide-react';
-import { generateSeatLayoutData } from '../../services/busService';
 import { useBusSearch } from '../../hooks/useBusSearch';
+import { useSeatGrid } from '../../hooks/useSeatGrid';
 import SeatGrid from '../shared/SeatGrid';
 import StopSearchAutocomplete from '../shared/StopSearchAutocomplete';
 import { useBookingStore } from '../../store/useBookingStore';
-import { downloadTicketPDF } from '../../utils/pdfUtils';
+import { downloadTicketPDF } from '../../utils/pdfUtils.jsx';
+import { useAuthStore } from '../../store/useAuthStore';
 
 const DesktopSearchResults = ({
   onBack,
@@ -27,6 +28,7 @@ const DesktopSearchResults = ({
   isBookingSuccess,
   setIsBookingSuccess,
   handleCheckout,
+  isCheckingOut,
   setShowDesktopTicketsModal,
   t = {},
   isUserLoggedIn,
@@ -94,6 +96,10 @@ const DesktopSearchResults = ({
   });
 
   const activeBookings = useBookingStore((s) => s.activeBookings);
+
+  // Real-time seat availability: fetches booked seats from backend whenever selectedBus changes
+  const { seatGridData: dynamicSeatGridData, isLoadingSeats } = useSeatGrid(selectedBus);
+
   const [pendingBusSelection, setPendingBusSelection] = useState(null);
 
   useEffect(() => {
@@ -306,8 +312,7 @@ const DesktopSearchResults = ({
               </div>
             ))
           ) : selectedBus ? (
-            !isBookingSuccess ? (
-              /* Seat Selection Layout */
+            /* Seat Selection Layout */
               <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xl animate-fade-in-up">
                 <div className="flex justify-between items-center mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
                   <div>
@@ -344,7 +349,7 @@ const DesktopSearchResults = ({
                       
                       <div className="min-w-[400px]">
                         <SeatGrid 
-                          seatGridData={seatGridData} 
+                          seatGridData={dynamicSeatGridData || seatGridData} 
                           selectedSeats={selectedSeats} 
                           setSelectedSeats={setSelectedSeats} 
                           seatSizeClass="w-[38px] h-[38px]"
@@ -416,9 +421,9 @@ const DesktopSearchResults = ({
                     </div>
 
                     <button
-                      disabled={selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age)}
+                      disabled={isCheckingOut || selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age)}
                       onClick={() => handleCheckout(selectedBus)}
-                      className={`w-full py-4 rounded-xl font-bold text-base mt-4 shadow-xl transition-all ${selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age)
+                      className={`w-full py-4 rounded-xl font-bold text-base mt-4 shadow-xl transition-all ${isCheckingOut || selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age)
                           ? 'bg-gray-200 dark:bg-slate-800 text-gray-400 dark:text-gray-500 cursor-not-allowed shadow-none'
                           : 'bg-emerald-500 text-white hover:scale-105 active:scale-95 shadow-emerald-500/30'
                         }`}
@@ -428,50 +433,6 @@ const DesktopSearchResults = ({
                   </div>
                 </div>
               </div>
-            ) : (() => {
-              const confirmed = activeBookings[0];
-              return (
-               <div className="bg-white dark:bg-slate-900 p-10 rounded-2xl border border-gray-200 dark:border-white/10 text-center shadow-2xl max-w-2xl mx-auto animate-fade-in-up">
-                 <CheckCircle2 size={72} className="text-emerald-500 mx-auto mb-5" />
-                 <h2 className="text-3xl font-bold font-outfit text-gray-900 dark:text-white mb-1">Booking Confirmed!</h2>
-                 <p className="text-gray-500 dark:text-gray-400 mb-2 text-sm">Your seat is reserved. View your boarding pass in My Tickets.</p>
-                 {confirmed && (
-                   <div className="text-xs font-mono text-emerald-500 mb-6 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-2 rounded-full inline-block">
-                     PNR: {confirmed.bookingNumber || confirmed.id}
-                   </div>
-                 )}
-                 <div id="desktop-ticket-summary" className="max-w-md mx-auto mb-8 p-6 bg-gray-50 dark:bg-slate-950 rounded-2xl text-left border border-gray-200 dark:border-white/5 shadow-inner space-y-3 text-sm">
-                   <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Bus</span><strong className="text-gray-900 dark:text-white text-right">{selectedBus.name}</strong></div>
-                   <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Type</span><strong className="text-gray-900 dark:text-white text-right">{selectedBus.type || selectedBus.busType || '—'}</strong></div>
-                   <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Route</span><strong className="text-gray-900 dark:text-white text-right">{origin} → {destination}</strong></div>
-                   <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Departure</span><strong className="text-gray-900 dark:text-white text-right">{selectedBus.departure}</strong></div>
-                   <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Seats</span><strong className="text-gray-900 dark:text-white text-right">{selectedSeats.join(', ')}</strong></div>
-                   {confirmed?.distanceKm && <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Distance</span><strong className="text-gray-900 dark:text-white text-right">{confirmed.distanceKm} km</strong></div>}
-                   <div className="flex justify-between border-t border-gray-200 dark:border-white/10 pt-3 text-base">
-                     <span className="font-bold text-gray-900 dark:text-white">Total Paid</span>
-                     <strong className="text-emerald-500">{confirmed?.price || `₹${(selectedSeats.length * selectedBus.fare).toLocaleString()}`}</strong>
-                   </div>
-                   {confirmed?.paymentStatus && (
-                     <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Payment</span><strong className="text-emerald-600 dark:text-emerald-400 text-right">{confirmed.paymentStatus}</strong></div>
-                   )}
-                   {confirmed?.paymentTransactionId && (
-                     <div className="flex justify-between text-xs"><span className="text-gray-400">Ref</span><span className="font-mono text-gray-400 text-right">{confirmed.paymentTransactionId}</span></div>
-                   )}
-                 </div>
-                 <button
-                   onClick={() => {
-                     setIsBookingSuccess(false);
-                     setSelectedBus(null);
-                     setSelectedSeats([]);
-                     setShowDesktopTicketsModal(true);
-                   }}
-                   className="px-8 py-4 bg-emerald-500 text-white rounded-xl font-bold text-base hover:scale-105 active:scale-95 transition-all shadow-xl shadow-emerald-500/30"
-                 >
-                   View My Boarding Passes
-                 </button>
-               </div>
-              );
-            })()
           ) : (
             // Actual Buses List
             filteredBuses.length > 0 ? filteredBuses.map((bus) => (
@@ -545,8 +506,89 @@ const DesktopSearchResults = ({
           )}
         </div>
       </main>
+
+      {isBookingSuccess && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-2xl shadow-2xl relative animate-fade-in-up border border-gray-200 dark:border-white/10 overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-white/10">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                Booking Confirmed!
+              </h2>
+              <button
+                onClick={() => {
+                  setIsBookingSuccess(false);
+                  setSelectedBus(null);
+                  setSelectedSeats([]);
+                }}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors font-bold text-gray-500"
+              >
+                X
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto" id="desktop-ticket-summary">
+               <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm text-center">Your seat is reserved. View your boarding pass in My Tickets.</p>
+               
+               <div className="text-center mb-6">
+                 <div className="text-xs font-mono text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-2 rounded-full inline-block">
+                   PNR: {(activeBookings && activeBookings.length > 0) ? (activeBookings[0].bookingNumber || activeBookings[0].id) : 'PROCESSING...'}
+                 </div>
+               </div>
+
+               <div className="max-w-md mx-auto p-6 bg-gray-50 dark:bg-slate-950 rounded-2xl text-left border border-gray-200 dark:border-white/5 shadow-inner space-y-3 text-sm">
+                 <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Bus</span><strong className="text-gray-900 dark:text-white text-right">{selectedBus?.name}</strong></div>
+                 <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Seats</span><strong className="text-gray-900 dark:text-white text-right">{selectedSeats.join(', ')}</strong></div>
+                 <div className="flex justify-between border-t border-gray-200 dark:border-white/10 pt-3 text-base">
+                   <span className="font-bold text-gray-900 dark:text-white">Total Paid</span>
+                   <strong className="text-emerald-500">?{(selectedSeats.length * (selectedBus?.fare || 0))}</strong>
+                 </div>
+               </div>
+            </div>
+            <div className="p-6 border-t border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-slate-900/50 flex flex-col sm:flex-row gap-4 justify-end">
+              <button
+                onClick={() => {
+                  setIsBookingSuccess(false);
+                  setSelectedBus(null);
+                  setSelectedSeats([]);
+                }}
+                className="px-6 py-3 bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-white rounded-xl font-bold text-sm hover:bg-gray-300 dark:hover:bg-white/20 transition-colors"
+              >
+                Back to Search
+              </button>
+              <button
+                onClick={() => {                  const ticketData = {
+                    bookingNumber: 'CONFIRMED',
+                    from: origin,
+                    to: destination,
+                    boardingStopName: origin,
+                    droppingStopName: destination,
+                    date: journeyDate,
+                    time: selectedBus?.departureTime,
+                    dropTime: selectedBus?.arrivalTime,
+                    totalFare: selectedSeats.length * (selectedBus?.fare || 0),
+                    busType: selectedBus?.type || 'Fast Passenger',
+                    passengers: selectedSeats.map(seat => ({
+                      seatNo: seat,
+                      passengerName: passengerDetails?.[seat]?.name || 'Passenger',
+                      age: passengerDetails?.[seat]?.age || '30',
+                      gender: passengerDetails?.[seat]?.gender || 'Male'
+                    }))
+                  };
+                  const user = useAuthStore.getState().user;
+                  downloadTicketPDF(ticketData, user, 'KSRTC_Ticket.pdf');}}
+                className="px-6 py-3 bg-emerald-500 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
+              >
+                <Download size={18} />
+                Download Ticket
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default DesktopSearchResults;
+
+
+

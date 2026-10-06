@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { Bus } from 'lucide-react';
 import { useAuthStore } from './store/useAuthStore';
 import { useAppStore } from './store/useAppStore';
@@ -12,6 +12,7 @@ function App() {
   const { isMobile, setIsMobile, forceMobilePreview } = useAppStore();
   const { setAuthSession, clearAuthSession } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Screen size resize handler
   useEffect(() => {
@@ -36,6 +37,7 @@ function App() {
         if (!isMounted) return;
         if (error.statusCode === 401) {
           clearAuthSession();
+          navigate('/login', { replace: true });
         }
       } finally {
         if (isMounted) setIsLoading(false);

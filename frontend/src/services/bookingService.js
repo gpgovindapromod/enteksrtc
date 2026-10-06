@@ -55,10 +55,10 @@ export const verifyPayment = async (verifyData) => {
 /**
  * Fetch all bookings for the authenticated user.
  */
-export const getMyBookings = async () => {
+export const getMyBookings = async (page = 1, limit = 10) => {
   try {
-    const response = await apiClient.get('/api/bookings/my-bookings');
-    return response.data.bookings;
+    const response = await apiClient.get(`/api/bookings/my-bookings?page=${page}&limit=${limit}`);
+    return response.data; // returns { success, bookings, pagination }
   } catch (error) {
     throw error.response?.data || error.message;
   }
@@ -161,7 +161,7 @@ export const openRazorpayCheckout = (options) => {
       order_id: orderId,
       name: 'Ente KSRTC',
       description: `Booking ${bookingNumber || ''}`,
-      image: '/ksrtc-logo.png',
+      image: '/assets/images/ksrtc_logo.png',
       currency,
       // amount is NOT passed here — Razorpay reads it from the server-created order.
       // Passing amount here would create a new order; we want to use the existing one.

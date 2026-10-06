@@ -6,10 +6,18 @@ import BookingSeat from '../../../database/models/BookingSeat.js';
 export const getUserBookings = async (req, res) => {
   try {
     const userId = req.user.id || req.user._id;
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    const totalBookings = await Booking.countDocuments({ passengerId: userId });
+
     const bookings = await Booking.find({ passengerId: userId })
       .populate({ path: 'tripId', populate: { path: 'busId routeId' } })
       .populate('boardingStop droppingStop')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     const results = [];
     for (const b of bookings) {
@@ -17,7 +25,16 @@ export const getUserBookings = async (req, res) => {
       results.push({ ...b.toObject(), seats });
     }
 
-    return res.json({ success: true, bookings: results });
+    return res.json({ 
+      success: true, 
+      bookings: results,
+      pagination: {
+        total: totalBookings,
+        page,
+        limit,
+        totalPages: Math.ceil(totalBookings / limit)
+      }
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }

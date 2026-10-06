@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../database/models/User.js";
+export const SERVER_RUNTIME_ID = Date.now().toString();
 
 export const protect = async (req, res, next) => {
     try {
@@ -15,6 +16,14 @@ export const protect = async (req, res, next) => {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET || "dev-secret");
+        
+        if (decoded.runtimeId !== SERVER_RUNTIME_ID) {
+            return res.status(401).json({
+                success: false,
+                message: "Not authorized, session expired due to server restart."
+            });
+        }
+
         const userId = decoded.sub || decoded.id;
         const user = await User.findById(userId);
 

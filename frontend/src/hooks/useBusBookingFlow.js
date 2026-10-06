@@ -23,8 +23,12 @@ export const useBusBookingFlow = ({
     if (selectedBus) {
       getTripSeatAvailability(selectedBus.id, selectedBus.boardingSequence, selectedBus.droppingSequence)
         .then(seats => {
-          const preBooked = seats.filter(s => !s.isAvailable).map(s => s.seatNumber);
-          setDynamicSeatGridData(generateSeatLayoutData(preBooked));
+          const seatStateMap = {};
+          (seats || []).forEach(s => {
+            const label = String(s.seatNumber || s.seatNo);
+            seatStateMap[label] = { isAvailable: s.isAvailable, status: s.status };
+          });
+          setDynamicSeatGridData(generateSeatLayoutData(seatStateMap));
         })
         .catch(() => {
           setDynamicSeatGridData(generateSeatLayoutData());

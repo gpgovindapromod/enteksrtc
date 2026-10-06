@@ -1,5 +1,7 @@
 import React from 'react';
-import { Ticket, Share2, Bus, MapPin, User, CreditCard, Hash, ArrowRight, X } from 'lucide-react';
+import { Ticket, Share2, Bus, MapPin, User, CreditCard, Hash, ArrowRight, X, Download } from 'lucide-react';
+import { downloadTicketPDF } from '../../utils/pdfUtils.jsx';
+import { useAuthStore } from '../../store/useAuthStore';
 
 const statusColors = {
   CONFIRMED: { cls: 'pulsing-live', label: '● Confirmed', color: '#10b981' },
@@ -168,8 +170,16 @@ const MobileTicketsTab = ({
                       <span className="text-xs text-gray-500 mt-2">{t?.tapToScan || 'Tap QR to scan at boarding'}</span>
                     </div>
 
-                    {/* Actions */}
+                                        {/* Actions */}
                     <div className="ticket-actions-group">
+                      {ticket.bookingStatus !== 'CANCELLED' && (
+                        <button
+                          className="btn-share-ticket" style={{color: '#10b981', borderColor: '#10b981'}}
+                          onClick={() => downloadTicketPDF(ticket, useAuthStore.getState().user, 'KSRTC_Ticket_' + (ticket.bookingNumber || ticket.id) + '.pdf')}
+                        >
+                          <Download size={16} /> Download
+                        </button>
+                      )}
                       {!isCancelled && (
                         <button
                           className="btn-cancel-ticket"
@@ -225,3 +235,6 @@ const MobileTicketsTab = ({
 };
 
 export default MobileTicketsTab;
+
+
+

@@ -35,12 +35,15 @@ const buildUserPayload = (user) => {
     return plain;
 };
 
+import { SERVER_RUNTIME_ID } from "../middleware/authMiddleware.js";
+
 const signToken = (user) =>
     jwt.sign(
         {
             sub: user._id.toString(),
             role: user.role || "USER",
-            email: user.email
+            email: user.email,
+            runtimeId: SERVER_RUNTIME_ID
         },
         process.env.JWT_SECRET || "dev-secret",
         { expiresIn: process.env.JWT_EXPIRE || "7d" }
@@ -165,5 +168,31 @@ export const getCurrentUser = async (userId) => {
         throw error;
     }
 
+    return buildUserPayload(user);
+};
+
+export const updateUser = async (userId, payload) => {
+    if (!userId) {
+        const error = new Error("User ID is required.");
+        error.statusCode = 400;
+        throw error;
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+        const error = new Error("User not found.");
+        error.statusCode = 404;
+        throw error;
+    }
+    if (payload.fullName || payload.name || payload.firstName) {
+        const nameSource = payload.fullName || payload.name || payload.firstName;
+        const parsedName = splitName(nameSource);
+        user.firstName = payload.firstName || parsedName.firstName || user.firstName;
+        user.lastName = payload.lastName || parsedName.lastName || user.lastName;
+        user.fullName = payload.fullName || parsedName.fullName || user.fullName;
+    }
+    if (payload.phone) user.phone = payload.phone;
+    if (payload.email) user.email = payload.email;
+    
+    await user.save();
     return buildUserPayload(user);
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useBookingStore } from '../../store/useBookingStore';
 import { useTheme } from '../../context/ThemeContext';
@@ -32,7 +32,7 @@ const DesktopLayout = () => {
   const { language } = useAppStore();
   const { isUserLoggedIn, showLoginModal, setShowLoginModal, setAuthSession, clearAuthSession } = useAuthStore();
   
-  const { handleCheckout, handleCancelBooking } = useAppLogic();
+  const { handleCheckout, handleCancelBooking, isCheckingOut } = useAppLogic();
 
   const [showDesktopTicketsModal, setShowDesktopTicketsModal] = useState(false);
   
@@ -50,7 +50,9 @@ const DesktopLayout = () => {
   return (
     <>
       <Routes>
-        <Route path="/" element={<DesktopHome />} />
+        <Route path="/" element={isUserLoggedIn ? <Navigate to="/dashboard" replace /> : <DesktopHome />} />
+        <Route path="/login" element={isUserLoggedIn ? <Navigate to="/dashboard" replace /> : <Navigate to="/" replace />} />
+        <Route path="/register" element={isUserLoggedIn ? <Navigate to="/dashboard" replace /> : <Navigate to="/" replace />} />
         
         <Route path="/search" element={
           <DesktopSearchResults
@@ -72,6 +74,7 @@ const DesktopLayout = () => {
             isBookingSuccess={isBookingSuccess}
             setIsBookingSuccess={setIsBookingSuccess}
             handleCheckout={handleCheckout}
+            isCheckingOut={isCheckingOut}
             setShowDesktopTicketsModal={setShowDesktopTicketsModal}
             t={t}
             isUserLoggedIn={isUserLoggedIn}
@@ -80,9 +83,13 @@ const DesktopLayout = () => {
         } />
 
         <Route path="/dashboard" element={
-          <div style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 99999, overflowY: 'auto', backgroundColor: 'var(--bg-color)' }}>
+          isUserLoggedIn ? (
+            <div style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 99999, overflowY: 'auto', backgroundColor: 'var(--bg-color)' }}>
             <DesktopDashboard theme={theme} toggleTheme={toggleTheme} onLogout={handleLogout} />
-          </div>
+            </div>
+          ) : (
+            <Navigate to="/" replace />
+          )
         } />
       </Routes>
 
@@ -105,3 +112,4 @@ const DesktopLayout = () => {
 };
 
 export default DesktopLayout;
+
