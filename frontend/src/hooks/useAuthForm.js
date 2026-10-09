@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { loginUser, registerUser, verifyOtp } from '../services/authService';
+import { loginUser, registerUser, verifyOtp, resetPassword } from '../services/authService';
 import { confirmPhoneOtp, sendPhoneOtp } from '../services/firebaseAuth';
 
 export const useAuthForm = (onLoginSuccess, onClose, recaptchaContainerId) => {
@@ -139,7 +139,7 @@ export const useAuthForm = (onLoginSuccess, onClose, recaptchaContainerId) => {
           password: loginForm.password,
         });
         onLoginSuccess?.(result.user, result.token);
-      } else {
+      } else if (authMode === 'signup') {
         // --- SIGNUP VALIDATIONS ---
         const isNameValid = validateSignupField('fullName', signupForm.fullName, signupForm);
         const isAgeValid = validateSignupField('age', signupForm.age, signupForm);
@@ -169,6 +169,38 @@ export const useAuthForm = (onLoginSuccess, onClose, recaptchaContainerId) => {
           password: signupForm.password,
         });
         onLoginSuccess?.(result.user, result.token);
+      } else if (authMode === 'forgot_password') {
+        const isPhoneValid = validateSignupField('phone', signupForm.phone, signupForm);
+        const isPasswordValid = validateSignupField('password', signupForm.password, signupForm);
+        const isConfirmPasswordValid = validateSignupField('confirmPassword', signupForm.confirmPassword, signupForm);
+        
+        if (!isPhoneValid || !isPasswordValid || !isConfirmPasswordValid) {
+          setIsSubmitting(false);
+          return;
+        }
+        
+        if (!otpVerified) {
+          setAuthError('Please verify your mobile number with OTP before resetting password.');
+          setIsSubmitting(false);
+          return;
+        }
+
+        const result = await resetPassword({
+          phone: signupForm.phone,
+          firebaseIdToken: signupForm.firebaseIdToken,
+          newPassword: signupForm.password,
+        });
+
+        if (result && result.success) {
+          setAuthError('Password reset successfully. Please login.');
+          setAuthMode('login');
+          setOtpVerified(false);
+          setSignupForm((prev) => ({ ...prev, password: '', confirmPassword: '', otp: '', firebaseIdToken: '' }));
+          setIsSubmitting(false);
+          return;
+        } else {
+          throw new Error('Failed to reset password');
+        }
       }
 
       onClose?.();

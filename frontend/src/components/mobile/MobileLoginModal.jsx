@@ -325,7 +325,7 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                   </div>
 
                   <div className="form-options">
-                    <a href="#" className="forgot-password">
+                    <a href="#" className="forgot-password" onClick={(e) => { e.preventDefault(); setAuthMode('forgot_password'); }}>
                       Forgot Password?
                     </a>
                   </div>
@@ -338,8 +338,8 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                 </p>
               )}
 
-              <button type="submit" className="btn-primary auth-submit-btn" disabled={isSubmitting}>
-                {isSubmitting ? 'Please wait...' : authMode === 'login' ? 'Sign In' : 'Create Account'}
+              <button type="submit" className="btn-primary auth-submit-btn" disabled={isSubmitting || (authMode === 'forgot_password' && !otpVerified)}>
+                {isSubmitting ? 'Please wait...' : authMode === 'login' ? 'Sign In' : authMode === 'forgot_password' ? 'Reset Password' : 'Create Account'}
               </button>
             </form>
 

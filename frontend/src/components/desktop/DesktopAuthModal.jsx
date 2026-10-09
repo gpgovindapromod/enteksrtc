@@ -359,9 +359,9 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', fontSize: '12px' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94a3b8', cursor: 'pointer' }}>
-                    <input type="checkbox" aria-label="Remember me" style={{ accentColor: '#10b981' }} /> Remember me
+                    <input type="checkbox" aria-label="Remember me" style={{ accentColor: '#1a7a40' }} /> Remember me
                   </label>
-                  <a href="#" style={{ color: '#10b981', textDecoration: 'none' }}>
+                  <a href="#" style={{ color: '#1a7a40', textDecoration: 'none' }}>
                     Forgot Password?
                   </a>
                 </div>
@@ -410,7 +410,7 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
           <div className="bp-flight-info">
             <div>
               <div className="bp-label">CLASS</div>
-              <div className="val text-[#10b981]">VIP</div>
+              <div className="val text-[#1a7a40]">VIP</div>
             </div>
             <div>
               <div className="bp-label">GATE</div>

@@ -14,7 +14,7 @@ const GallerySection = React.memo(({ images }) => (
       
       <BorderGlow 
         glowColor="158 91 39" 
-        colors={['#059669', '#10b981', '#34d399']} 
+        colors={['#059669', '#1a7a40', '#34d399']} 
         backgroundColor="transparent"
         borderRadius={32} 
         glowRadius={40} 

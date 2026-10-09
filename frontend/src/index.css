@@ -51,7 +51,7 @@
 
 
 [data-theme="dark"] {
-  --primary: #10b981;
+  --primary: #1a7a40;
   --primary-hover: #059669;
   --primary-light: #064e3b;
   --secondary: #d1483c;
@@ -2497,3 +2497,5 @@ h6,
   font-size: 16px;
   font-weight: 600;
 }
+
+

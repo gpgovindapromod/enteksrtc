@@ -196,3 +196,37 @@ export const updateUser = async (userId, payload) => {
     await user.save();
     return buildUserPayload(user);
 };
+
+export const resetPassword = async (payload = {}) => {
+    const phone = normalizePhone(payload.phone);
+    const newPassword = payload.newPassword;
+    const firebaseIdToken = payload.firebaseIdToken;
+
+    if (!phone || !newPassword || !firebaseIdToken) {
+        const error = new Error("Phone number, new password, and Firebase verification are required.");
+        error.statusCode = 400;
+        throw error;
+    }
+
+    const decodedToken = await verifyFirebaseIdToken(firebaseIdToken);
+    if (!decodedToken.phone_number || decodedToken.phone_number !== phone) {
+        const error = new Error("The verified phone number does not match the provided number.");
+        error.statusCode = 400;
+        throw error;
+    }
+
+    const user = await User.findOne({ phone }).select("+password");
+    if (!user) {
+        const error = new Error("User not found with this phone number.");
+        error.statusCode = 404;
+        throw error;
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    return {
+        success: true,
+        message: "Password reset successfully."
+    };
+};

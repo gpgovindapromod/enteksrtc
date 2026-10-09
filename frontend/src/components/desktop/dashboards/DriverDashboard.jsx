@@ -5,7 +5,7 @@ const DriverDashboard = ({ data, loading, activeTab }) => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh]">
-        <div className="w-12 h-12 border-4 border-[#10b981] border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-[#1a7a40] border-t-transparent rounded-full animate-spin"></div>
         <p className="mt-4 text-slate-500 font-medium">Loading Schedule...</p>
       </div>
     );
@@ -27,7 +27,7 @@ const DriverDashboard = ({ data, loading, activeTab }) => {
 
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
           <div className="flex justify-between items-start mb-4">
-            <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-[#10b981]">
+            <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-[#1a7a40]">
               <Route size={24} />
             </div>
           </div>
@@ -48,7 +48,7 @@ const DriverDashboard = ({ data, loading, activeTab }) => {
       
       <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm overflow-hidden">
         <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center">
-          <h3 className="text-xl font-bold font-outfit flex items-center gap-2"><Navigation size={20} className="text-[#10b981]"/> Upcoming Trips</h3>
+          <h3 className="text-xl font-bold font-outfit flex items-center gap-2"><Navigation size={20} className="text-[#1a7a40]"/> Upcoming Trips</h3>
         </div>
         <div className="p-8 text-center text-slate-500 dark:text-slate-400">
            No trips assigned for today yet. Check back later or contact the Station Master.

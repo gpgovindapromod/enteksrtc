@@ -37,7 +37,7 @@ const SettingsView = () => {
     <div className="animate-fade-in-up w-full max-w-6xl mx-auto space-y-8 pb-12">
       {/* Header */}
       <div className="relative">
-        <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#10b981]/20 blur-3xl rounded-full pointer-events-none"></div>
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#1a7a40]/20 blur-3xl rounded-full pointer-events-none"></div>
         <h2 className="text-4xl font-bold font-outfit text-slate-900 dark:text-white mb-2 relative z-10">Platform Settings</h2>
         <p className="text-slate-500 dark:text-slate-400 text-sm relative z-10">Manage your account preferences and security configurations.</p>
       </div>
@@ -50,8 +50,8 @@ const SettingsView = () => {
           
           <div className="flex flex-col md:flex-row items-center md:items-start gap-10 relative z-10">
             <div className="relative group shrink-0">
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#10b981] to-emerald-300 rounded-full blur opacity-30 group-hover:opacity-60 transition-opacity duration-500"></div>
-              <div className="relative w-36 h-36 bg-white dark:bg-slate-950 rounded-full flex items-center justify-center text-[#10b981] border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#1a7a40] to-emerald-300 rounded-full blur opacity-30 group-hover:opacity-60 transition-opacity duration-500"></div>
+              <div className="relative w-36 h-36 bg-white dark:bg-slate-950 rounded-full flex items-center justify-center text-[#1a7a40] border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
                 {user?.profilePicture ? (
                   <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
@@ -66,13 +66,13 @@ const SettingsView = () => {
                   <h3 className="text-3xl font-bold font-outfit text-slate-900 dark:text-white mb-1">
                     {user?.name || user?.fullName || user?.firstName || 'User Account'}
                   </h3>
-                  <div className="inline-block px-4 py-1.5 bg-[#10b981]/10 text-[#10b981] text-xs font-bold uppercase tracking-widest rounded-lg">
+                  <div className="inline-block px-4 py-1.5 bg-[#1a7a40]/10 text-[#1a7a40] text-xs font-bold uppercase tracking-widest rounded-lg">
                     {(user?.role || 'passenger').toUpperCase()}
                   </div>
                 </div>
                 <button 
                   onClick={() => setIsEditingProfile(!isEditingProfile)}
-                  className="px-6 py-3 bg-gradient-to-r from-[#10b981] to-emerald-500 hover:from-emerald-500 hover:to-[#10b981] text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 active:translate-y-0 shrink-0">
+                  className="px-6 py-3 bg-gradient-to-r from-[#1a7a40] to-emerald-500 hover:from-emerald-500 hover:to-[#1a7a40] text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 hover:-translate-y-0.5 active:translate-y-0 shrink-0">
                   {isEditingProfile ? 'Cancel' : 'Edit Profile'}
                 </button>
               </div>
@@ -141,7 +141,7 @@ const SettingsView = () => {
                 </div>
                 <button 
                   onClick={toggleTheme}
-                  className={`w-14 h-7 rounded-full transition-all duration-300 relative shadow-inner shrink-0 ${theme === 'dark' ? 'bg-[#10b981]' : 'bg-slate-200 dark:bg-slate-700'}`}
+                  className={`w-14 h-7 rounded-full transition-all duration-300 relative shadow-inner shrink-0 ${theme === 'dark' ? 'bg-[#1a7a40]' : 'bg-slate-200 dark:bg-slate-700'}`}
                 >
                   <div className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow-sm transition-all duration-300 ${theme === 'dark' ? 'left-8' : 'left-1'}`}></div>
                 </button>
@@ -159,7 +159,7 @@ const SettingsView = () => {
                 </div>
                 <button 
                   onClick={() => setPushEnabled(!pushEnabled)}
-                  className={`w-14 h-7 rounded-full transition-all duration-300 relative shadow-inner shrink-0 ${pushEnabled ? 'bg-[#10b981]' : 'bg-slate-200 dark:bg-slate-700'}`}
+                  className={`w-14 h-7 rounded-full transition-all duration-300 relative shadow-inner shrink-0 ${pushEnabled ? 'bg-[#1a7a40]' : 'bg-slate-200 dark:bg-slate-700'}`}
                 >
                   <div className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow-sm transition-all duration-300 ${pushEnabled ? 'left-8' : 'left-1'}`}></div>
                 </button>

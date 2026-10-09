@@ -53,3 +53,12 @@ export const updateProfile = async (payload) => {
     createServiceError(error, 'Failed to update profile.');
   }
 };
+
+export const resetPassword = async (payload) => {
+  try {
+    const response = await apiClient.post('/api/auth/reset-password', payload);
+    return response.data;
+  } catch (error) {
+    createServiceError(error, 'Failed to reset password.');
+  }
+};

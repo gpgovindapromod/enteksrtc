@@ -11,12 +11,13 @@ export const getDashboardData = async (req, res, next) => {
     try {
         const userId = req.user.id;
         const role = normalizeRole(req.user.role);
+        const filters = req.query; // Capture query params for advanced filters
 
         let dashboardData = {};
 
         switch (role) {
             case 'admin':
-                dashboardData = await getAdminDashboard(userId);
+                dashboardData = await getAdminDashboard(userId, filters);
                 break;
             case 'passenger':
                 dashboardData = await getPassengerDashboard(userId);
@@ -44,22 +45,63 @@ export const getDashboardData = async (req, res, next) => {
     }
 };
 
-const getAdminDashboard = async (req, res) => {
-    // 1. Total Users
-    const totalUsers = await User.countDocuments();
-    // 2. Active Fleet
-    const activeBuses = await Bus.countDocuments({ status: 'ACTIVE' });
-    // 3. Total Revenue
-    const revenueAggregation = await Booking.aggregate([
-        { $match: { bookingStatus: 'CONFIRMED' } },
-        { $group: { _id: null, totalRevenue: { $sum: '$totalFare' } } }
-    ]);
-    const totalRevenue = revenueAggregation.length > 0 ? revenueAggregation[0].totalRevenue : 0;
+const getAdminDashboard = async (userId, filters = {}) => {
+    const { startDate, endDate, bookingStatus } = filters;
     
-    // 4. Recent Bookings
-    const recentBookings = await Booking.find()
+    // Build date match object
+    let dateMatch = {};
+    if (startDate || endDate) {
+        dateMatch.createdAt = {};
+        if (startDate) dateMatch.createdAt.$gte = new Date(startDate);
+        if (endDate) dateMatch.createdAt.$lte = new Date(endDate);
+    }
+
+    // 1. Total Users
+    const totalUsers = await User.countDocuments(dateMatch);
+    
+    // 2. Total Passengers (Users with role 'PASSENGER')
+    const totalPassengers = await User.countDocuments({ role: 'PASSENGER', ...dateMatch });
+
+    // 3. Active Fleet (Buses)
+    const activeBuses = await Bus.countDocuments({ status: 'ACTIVE' });
+    const totalBuses = await Bus.countDocuments();
+    const totalRoutes = await Route.countDocuments();
+    const totalScheduledTrips = await Trip.countDocuments(dateMatch);
+
+    // 4. Booking Status Breakdown & Total Bookings
+    const bookingMatch = { ...dateMatch };
+    if (bookingStatus) {
+        bookingMatch.bookingStatus = bookingStatus;
+    }
+    
+    const bookingAggregation = await Booking.aggregate([
+        { $match: bookingMatch },
+        { $group: { _id: '$bookingStatus', count: { $sum: 1 } } }
+    ]);
+    
+    let totalBookings = 0;
+    let bookingStatusBreakdown = {};
+    bookingAggregation.forEach(status => {
+        bookingStatusBreakdown[status._id] = status.count;
+        totalBookings += status.count;
+    });
+
+    // 5. Total Revenue (from authoritative payment records, subtracting refunds)
+    const revenueAggregation = await Booking.aggregate([
+        { $match: { paymentStatus: { $in: ['PAID', 'REFUND_REQUESTED', 'REFUNDED'] }, ...dateMatch } },
+        { 
+            $group: { 
+                _id: null, 
+                totalRevenuePaise: { $sum: { $subtract: ['$farePaise', '$refundAmountPaise'] } } 
+            } 
+        }
+    ]);
+    const totalRevenue = revenueAggregation.length > 0 ? (revenueAggregation[0].totalRevenuePaise / 100) : 0;
+    
+    // 6. Recent Bookings (with filters)
+    const recentBookings = await Booking.find(bookingMatch)
         .sort({ createdAt: -1 })
-        .limit(5)
+        .limit(10) // Changed to 10 to feed lazy load initially, full pagination comes later
         .populate('passengerId', 'fullName email phone')
         .populate({
             path: 'tripId',
@@ -69,11 +111,11 @@ const getAdminDashboard = async (req, res) => {
             ]
         });
 
-    // 6. Stations (Depots)
+    // 7. Stations (Depots)
     const totalStations = await Depot.countDocuments();
     const stations = await Depot.find().lean();
     
-    // 7. Station Masters (Assigned to Depots)
+    // 8. Station Masters (Assigned to Depots)
     const stationMasters = await User.find({ role: 'STATION_MASTER' }).select('fullName email phone depotId isActive').lean();
     
     const stationsData = stations.map(station => {
@@ -84,7 +126,58 @@ const getAdminDashboard = async (req, res) => {
         };
     });
 
-    return { totalUsers, activeBuses, totalRevenue, recentBookings, totalStations, stationsData };
+    // 9. Chart Aggregations (Revenue and Booking trends over time)
+    // We group by day for the charts.
+    const trendsAggregation = await Booking.aggregate([
+        { $match: { ...dateMatch } },
+        {
+            $group: {
+                _id: {
+                    year: { $year: "$createdAt" },
+                    month: { $month: "$createdAt" },
+                    day: { $dayOfMonth: "$createdAt" }
+                },
+                bookingCount: { $sum: 1 },
+                revenuePaise: {
+                    $sum: {
+                        $cond: [
+                            { $in: ["$paymentStatus", ["PAID", "REFUND_REQUESTED", "REFUNDED"]] },
+                            { $subtract: ["$farePaise", "$refundAmountPaise"] },
+                            0
+                        ]
+                    }
+                }
+            }
+        },
+        { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
+    ]);
+
+    const chartData = trendsAggregation.map(item => {
+        // Pad month and day with leading zero
+        const month = String(item._id.month).padStart(2, '0');
+        const day = String(item._id.day).padStart(2, '0');
+        return {
+            date: `${item._id.year}-${month}-${day}`,
+            bookings: item.bookingCount,
+            revenue: item.revenuePaise / 100 // Convert to Rupees
+        };
+    });
+
+    return { 
+        totalUsers, 
+        totalPassengers,
+        totalBuses,
+        activeBuses,
+        totalRoutes,
+        totalScheduledTrips,
+        totalBookings,
+        bookingStatusBreakdown,
+        totalRevenue, 
+        recentBookings, 
+        totalStations, 
+        stationsData,
+        chartData // Added for Phase 4B Recharts
+    };
 };
 
 const getPassengerDashboard = async (userId) => {

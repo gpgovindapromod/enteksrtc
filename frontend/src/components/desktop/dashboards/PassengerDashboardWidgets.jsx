@@ -113,7 +113,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
         <div className="space-y-8 animate-fade-in-up">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold font-outfit text-slate-900 dark:text-white">My Bookings</h2>
-            <button className="px-4 py-2 bg-[#10b981] text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-500/20 hover:scale-105 transition-transform" onClick={() => navigate('/')}>
+            <button className="px-4 py-2 bg-[#1a7a40] text-white rounded-xl text-sm font-bold shadow-lg shadow-emerald-500/20 hover:scale-105 transition-transform" onClick={() => navigate('/')}>
               Book New Trip
             </button>
           </div>
@@ -134,14 +134,14 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
                   <div
                     key={i}
                     ref={isLast ? lastBookingElementRef : null}
-                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 lg:p-8 rounded-3xl group hover:border-[#10b981]/50 hover:shadow-xl hover:shadow-emerald-500/5 transition-all flex flex-col md:flex-row gap-6 md:items-center"
+                    className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 lg:p-8 rounded-3xl group hover:border-[#1a7a40]/50 hover:shadow-xl hover:shadow-emerald-500/5 transition-all flex flex-col md:flex-row gap-6 md:items-center"
                   >
                     <div className="flex items-center gap-6 md:w-1/3">
-                      <div className="w-14 h-14 bg-emerald-50 dark:bg-emerald-900/20 text-[#10b981] rounded-2xl flex items-center justify-center shrink-0">
+                      <div className="w-14 h-14 bg-emerald-50 dark:bg-emerald-900/20 text-[#1a7a40] rounded-2xl flex items-center justify-center shrink-0">
                         <Bus size={28} />
                       </div>
                       <div>
-                        <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-1 group-hover:text-[#10b981] transition-colors">
+                        <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-1 group-hover:text-[#1a7a40] transition-colors">
                           {trip.boardingStopName} → {trip.droppingStopName}
                         </h4>
                         <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
@@ -153,7 +153,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
                     <div className="flex-1 flex flex-row justify-center gap-2 border-y md:border-y-0 md:border-x border-slate-100 dark:border-slate-800 py-4 md:py-0 md:px-6">
                       <div className="text-center bg-slate-50 dark:bg-slate-800/50 rounded-xl p-2 flex-1 max-w-[110px]">
                         <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Status</p>
-                        <p className={`text-xs md:text-sm font-bold ${trip.bookingStatus === 'Confirmed' ? 'text-[#10b981]' : 'text-slate-700 dark:text-slate-300'}`}>{trip.bookingStatus}</p>
+                        <p className={`text-xs md:text-sm font-bold ${trip.bookingStatus === 'Confirmed' ? 'text-[#1a7a40]' : 'text-slate-700 dark:text-slate-300'}`}>{trip.bookingStatus}</p>
                       </div>
                       <div className="text-center bg-slate-50 dark:bg-slate-800/50 rounded-xl p-2 flex-1 max-w-[110px]">
                         <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider mb-1">Total Fare</p>
@@ -179,7 +179,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
             )}
             {isLoadingMore && (
               <div className="flex justify-center items-center py-6">
-                <Loader2 className="w-8 h-8 text-[#10b981] animate-spin" />
+                <Loader2 className="w-8 h-8 text-[#1a7a40] animate-spin" />
               </div>
             )}
           </div>
@@ -368,7 +368,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
       <div className="space-y-8 animate-fade-in-up">
         <h2 className="text-3xl font-bold font-outfit text-slate-900 dark:text-white mb-6">Loyalty & Rewards</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-gradient-to-br from-[#10b981] to-emerald-600 rounded-3xl p-8 text-white shadow-lg shadow-emerald-500/30 flex flex-col justify-center">
+          <div className="bg-gradient-to-br from-[#1a7a40] to-emerald-600 rounded-3xl p-8 text-white shadow-lg shadow-emerald-500/30 flex flex-col justify-center">
             <Star size={32} className="mb-4 opacity-80" />
             <p className="text-4xl font-bold font-outfit mb-2">{loading ? '...' : data?.loyaltyPoints || 0}</p>
             <p className="text-emerald-100 font-bold tracking-wider uppercase text-xs">Total Points</p>
@@ -380,8 +380,8 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
             </div>
             <p className="text-xs text-slate-500 mt-2">{data?.pointsToNextTier || 0} points to next tier</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 flex flex-col justify-center items-center text-center hover:border-[#10b981] hover:shadow-lg hover:shadow-emerald-500/10 transition-all cursor-pointer group shadow-sm">
-            <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 text-[#10b981] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 flex flex-col justify-center items-center text-center hover:border-[#1a7a40] hover:shadow-lg hover:shadow-emerald-500/10 transition-all cursor-pointer group shadow-sm">
+            <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 text-[#1a7a40] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <CreditCard size={24} />
             </div>
             <p className="font-bold text-slate-900 dark:text-white">Redeem Points</p>
@@ -399,15 +399,15 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 shadow-sm">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Contact Us</h3>
             <div className="space-y-4">
-              <input type="text" placeholder="Subject" className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-[#10b981] transition-colors" />
-              <textarea placeholder="Describe your issue..." rows="4" className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-[#10b981] transition-colors"></textarea>
-              <button className="w-full py-4 bg-[#10b981] text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-transform">Submit Ticket</button>
+              <input type="text" placeholder="Subject" className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-[#1a7a40] transition-colors" />
+              <textarea placeholder="Describe your issue..." rows="4" className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-[#1a7a40] transition-colors"></textarea>
+              <button className="w-full py-4 bg-[#1a7a40] text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-transform">Submit Ticket</button>
             </div>
           </div>
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">FAQs</h3>
             {['How to cancel a ticket?', 'Where is my refund?', 'Baggage allowance policy'].map((faq, i) => (
-              <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl cursor-pointer hover:border-[#10b981] hover:shadow-md transition-all flex justify-between items-center shadow-sm">
+              <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl cursor-pointer hover:border-[#1a7a40] hover:shadow-md transition-all flex justify-between items-center shadow-sm">
                 <p className="font-bold text-slate-700 dark:text-slate-300">{faq}</p>
                 <ChevronRight size={20} className="text-slate-400" />
               </div>
@@ -423,21 +423,21 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
       <div className="space-y-8 animate-fade-in-up">
         <h2 className="text-3xl font-bold font-outfit text-slate-900 dark:text-white mb-6">Premium Amenities</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl group hover:border-[#10b981] hover:shadow-lg hover:shadow-emerald-500/5 transition-all cursor-pointer shadow-sm">
-            <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/30 text-[#10b981] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl group hover:border-[#1a7a40] hover:shadow-lg hover:shadow-emerald-500/5 transition-all cursor-pointer shadow-sm">
+            <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/30 text-[#1a7a40] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <Coffee size={32} />
             </div>
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Lounge Access</h3>
             <p className="text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">Enjoy complimentary snacks and comfortable seating at major terminals before your journey.</p>
-            <span className="text-[#10b981] font-bold uppercase tracking-wider text-xs">View Locations →</span>
+            <span className="text-[#1a7a40] font-bold uppercase tracking-wider text-xs">View Locations →</span>
           </div>
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl group hover:border-[#10b981] hover:shadow-lg hover:shadow-emerald-500/5 transition-all cursor-pointer shadow-sm">
-            <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/30 text-[#10b981] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-3xl group hover:border-[#1a7a40] hover:shadow-lg hover:shadow-emerald-500/5 transition-all cursor-pointer shadow-sm">
+            <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/30 text-[#1a7a40] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <Star size={32} />
             </div>
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">On-board Wi-Fi</h3>
             <p className="text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">Stay connected on the go with high-speed internet available on all premium buses.</p>
-            <span className="text-[#10b981] font-bold uppercase tracking-wider text-xs">Learn More →</span>
+            <span className="text-[#1a7a40] font-bold uppercase tracking-wider text-xs">Learn More →</span>
           </div>
         </div>
       </div>
@@ -455,7 +455,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent flex flex-col justify-center px-16">
           <h2 className="text-5xl font-outfit font-bold mb-4 tracking-tight leading-tight text-white">
             Welcome back, <br />
-            <span className="text-[#10b981]">{user?.name || user?.fullName || user?.firstName || 'Traveler'}</span>
+            <span className="text-[#1a7a40]">{user?.name || user?.fullName || user?.firstName || 'Traveler'}</span>
           </h2>
           <p className="max-w-md text-white/80 text-lg leading-relaxed">
             Your next luxury journey across the cinematic landscapes of Kerala awaits. Experience precision and comfort.
@@ -466,7 +466,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[90%] bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex items-center gap-4 shadow-2xl hidden md:flex">
           <div className="flex-1 grid grid-cols-3 gap-4">
             <div className="bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex items-center gap-3">
-              <MapPin size={18} className="text-[#10b981]" />
+              <MapPin size={18} className="text-[#1a7a40]" />
               <StopSearchAutocomplete
                 label="From"
                 value={searchParams.from}
@@ -477,11 +477,11 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
             <div className="bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex items-center gap-3 relative">
               <button
                 onClick={handleSwap}
-                className="absolute -left-6 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#10b981] rounded-full flex items-center justify-center text-slate-900 dark:text-white z-10 border-4 border-white dark:border-slate-900 hover:scale-110 transition-transform"
+                className="absolute -left-6 top-1/2 -translate-y-1/2 w-8 h-8 bg-[#1a7a40] rounded-full flex items-center justify-center text-slate-900 dark:text-white z-10 border-4 border-white dark:border-slate-900 hover:scale-110 transition-transform"
               >
                 <ArrowRightLeft size={14} />
               </button>
-              <MapPin size={18} className="text-[#10b981]" />
+              <MapPin size={18} className="text-[#1a7a40]" />
               <StopSearchAutocomplete
                 label="To"
                 value={searchParams.to}
@@ -490,7 +490,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
               />
             </div>
             <div className="bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex items-center gap-3">
-              <Calendar size={18} className="text-[#10b981]" />
+              <Calendar size={18} className="text-[#1a7a40]" />
               <div className="flex-1">
                 <p className="text-[10px] uppercase font-bold opacity-40">Date</p>
                 <input
@@ -505,9 +505,9 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
           <div className="flex flex-col relative w-auto">
             <button
               onClick={handleSearch}
-              className="h-[60px] px-8 bg-[#10b981] text-white font-bold rounded-xl hover:scale-105 active:scale-95 transition-all shadow-lg shadow-emerald-500/20"
+              className="h-[60px] px-8 bg-[#e84118] text-white font-bold rounded-xl hover:bg-[#d63a14] active:scale-95 transition-all shadow-lg shadow-red-500/20"
             >
-              Search Luxury Buses
+              SEARCH BUSES
             </button>
             {searchError && (
               <div className="absolute top-full mt-2 left-0 text-red-500 text-xs font-bold w-full text-center whitespace-nowrap bg-white/90 px-2 py-1 rounded shadow-sm">
@@ -523,7 +523,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
         <div className="lg:col-span-2 space-y-8">
           <div className="flex justify-between items-end">
             <h3 className="text-2xl font-bold font-outfit">Upcoming Journey</h3>
-            <button className="text-[#10b981] text-xs font-bold hover:underline">View Ticket</button>
+            <button className="text-[#1a7a40] text-xs font-bold hover:underline">View Ticket</button>
           </div>
 
           {/* Ticket Card */}
@@ -531,7 +531,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 relative overflow-hidden group">
               <div className="flex justify-between items-start mb-12">
                 <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-slate-100/50 dark:bg-slate-800/50 rounded-xl flex items-center justify-center text-[#10b981]">
+                  <div className="w-12 h-12 bg-slate-100/50 dark:bg-slate-800/50 rounded-xl flex items-center justify-center text-[#1a7a40]">
                     <Bus size={28} />
                   </div>
                   <div>
@@ -541,7 +541,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
                 </div>
                 <div className="text-center p-6 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-2xl">
                   <p className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 mb-1">Fare</p>
-                  <p className="text-xl font-bold text-[#10b981]">₹{upcomingTrip.totalFare || 0}</p>
+                  <p className="text-xl font-bold text-[#1a7a40]">₹{upcomingTrip.totalFare || 0}</p>
                   <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">{upcomingTrip.bookingStatus || 'Confirmed'}</p>
                 </div>
               </div>
@@ -559,11 +559,11 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
 
                   <div className="flex-1 flex flex-col items-center px-4 relative">
                     <div className="w-full h-[2px] bg-slate-100 dark:bg-slate-800 relative">
-                      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-2 h-2 rounded-full bg-[#10b981]"></div>
+                      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-2 h-2 rounded-full bg-[#1a7a40]"></div>
                       <div className="absolute top-1/2 right-0 -translate-y-1/2 w-2 h-2 rounded-full bg-outline-variant"></div>
-                      <div className="absolute top-1/2 left-0 h-full bg-[#10b981] transition-all duration-500" style={{ width: '0%' }}></div>
+                      <div className="absolute top-1/2 left-0 h-full bg-[#1a7a40] transition-all duration-500" style={{ width: '0%' }}></div>
                     </div>
-                    <p className="text-[10px] font-bold text-[#10b981] mt-3">Route</p>
+                    <p className="text-[10px] font-bold text-[#1a7a40] mt-3">Route</p>
                     <p className="text-[8px] text-slate-500 dark:text-slate-400 uppercase tracking-widest">{upcomingTrip.tripId?.routeId?.routeNumber}</p>
                   </div>
 
@@ -585,9 +585,9 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
           )}
 
           {/* Lounge Access Card */}
-          <button className="w-full bg-white dark:bg-slate-900 border border-[#10b981]/30 rounded-2xl p-6 flex items-center justify-between group hover:border-[#10b981] transition-all">
+          <button className="w-full bg-white dark:bg-slate-900 border border-[#1a7a40]/30 rounded-2xl p-6 flex items-center justify-between group hover:border-[#1a7a40] transition-all">
             <div className="flex items-center gap-6">
-              <div className="w-12 h-12 bg-[#10b981]/10 text-[#10b981] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 bg-[#1a7a40]/10 text-[#1a7a40] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Coffee size={24} />
               </div>
               <div className="text-left">
@@ -595,7 +595,7 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Complimentary refreshments before your next trip.</p>
               </div>
             </div>
-            <ChevronRight className="text-slate-500 dark:text-slate-400 group-hover:text-[#10b981] group-hover:translate-x-1 transition-all" />
+            <ChevronRight className="text-slate-500 dark:text-slate-400 group-hover:text-[#1a7a40] group-hover:translate-x-1 transition-all" />
           </button>
         </div>
 
@@ -603,12 +603,12 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
         <div className="space-y-8">
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl hover:scale-[1.02] transition-transform">
-              <Star className="text-[#10b981] mb-4" size={20} />
+              <Star className="text-[#1a7a40] mb-4" size={20} />
               <p className="text-2xl font-bold font-outfit">{loading ? '...' : data?.loyaltyPoints || 0}</p>
               <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Loyalty Points</p>
             </div>
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl hover:scale-[1.02] transition-transform">
-              <Bus className="text-[#10b981] mb-4" size={20} />
+              <Bus className="text-[#1a7a40] mb-4" size={20} />
               <p className="text-2xl font-bold font-outfit">{loading ? '...' : data?.totalTrips || 0}</p>
               <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Total Trips</p>
             </div>
@@ -617,12 +617,12 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <CreditCard size={14} className="text-[#10b981]" />
+                <CreditCard size={14} className="text-[#1a7a40]" />
                 <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Travel Credits</p>
               </div>
               <p className="text-2xl font-bold font-outfit">₹{loading ? '...' : data?.travelCredits || 0}</p>
             </div>
-            <button className="px-4 py-2 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-bold hover:bg-[#10b981] hover:text-slate-900 dark:text-white transition-all">
+            <button className="px-4 py-2 bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-lg text-xs font-bold hover:bg-[#1a7a40] hover:text-slate-900 dark:text-white transition-all">
               Redeem
             </button>
           </div>
@@ -638,12 +638,12 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
             </div>
             <div className="space-y-4">
               {recentTrips.length > 0 ? recentTrips.slice(0, 3).map((trip, i) => (
-                <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl group hover:border-[#10b981]/30 transition-all cursor-pointer">
+                <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-2xl group hover:border-[#1a7a40]/30 transition-all cursor-pointer">
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="text-sm font-bold group-hover:text-[#10b981] transition-colors">
+                    <h4 className="text-sm font-bold group-hover:text-[#1a7a40] transition-colors">
                       {trip.boardingStopName} → {trip.droppingStopName}
                     </h4>
-                    <span className="text-[10px] bg-emerald-500/10 text-[#10b981] px-2 py-0.5 rounded font-bold">{trip.bookingStatus}</span>
+                    <span className="text-[10px] bg-emerald-500/10 text-[#1a7a40] px-2 py-0.5 rounded font-bold">{trip.bookingStatus}</span>
                   </div>
                   <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
                     {safeFormatDate(trip.date)} • {trip.tripId?.busId?.busType}

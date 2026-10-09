@@ -1,0 +1,61 @@
+I recommend the following next steps for Ente KSRTC.
+
+Phase 5 — Scalability and production readiness
+1. Optimize MongoDB queries and indexes
+
+Index frequently queried booking dates, booking status, payment status, and booking numbers.
+
+Verify compound indexes against actual query patterns.
+
+Use .explain("executionStats") to identify collection scans and inefficient queries.
+
+Avoid adding redundant indexes that increase write costs.
+
+2. Make dashboard aggregations scalable
+
+Group chart data by day, month, or year based on the selected date range.
+
+Fill missing dates with zero values for continuous charts.
+
+Keep revenue calculations consistent with actual payment and refund records.
+
+Consider cached or pre-aggregated analytics if real-time queries become expensive.
+
+3. Review admin security and pagination
+
+Verify role-based authorization on every admin endpoint.
+
+Ensure filters cannot expose unauthorized records.
+
+Make cursor pagination deterministic when multiple records share timestamps.
+
+Check that changing filters resets pagination and prevents stale requests from corrupting the results.
+
+4. Review operational performance
+
+Inspect slow queries, API response times, database connection usage, and memory consumption.
+
+Check lazy loading and infinite scrolling on mobile devices.
+
+Add appropriate request limits and timeouts.
+
+Identify whether expensive reports need background processing.
+
+What I recommend doing first
+Audit the current implementation before making further changes. The implementation summary describes the intended behavior, but we should verify the actual code and database schema before assuming everything is correct.
+
+In particular, check that:
+
+The global bookingStatus filter does not unintentionally exclude cancelled bookings from the status distribution chart.
+
+The revenue aggregation handles refunds and payment transitions without double-counting.
+
+Chart queries use the intended date boundaries and timezone.
+
+The cursor pagination works correctly when records are created or updated during scrolling.
+
+Existing booking and payment workflows remain compatible with the new dashboard.
+
+I won't run the test suite unless you ask.
+
+Next step: Share your current backend/controllers/dashboard/dashboardController.js and backend/controllers/admin/adminController.js. I'll review the actual implementation for scalability, database correctness, and security, then identify the necessary changes without introducing mock data or a separate database.

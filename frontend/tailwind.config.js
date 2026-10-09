@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+// Force Vite HMR reload
 export default {
         darkMode: "class",
         content: [
@@ -8,6 +9,12 @@ export default {
         theme: {
                 extend: {
                         "colors": {
+                                "white": "#fcfaf5",
+                                "orange": {
+                                        "500": "#fb6204",
+                                        "600": "#db4901",
+                                        "700": "#b63403"
+                                },
                                 "secondary-container": "#00bd85",
                                 "surface-bright": "#343b36",
                                 "on-tertiary-fixed": "#410005",

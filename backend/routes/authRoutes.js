@@ -1,6 +1,6 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
-import { login, logout, me, register, verifyOtpStep, updateProfile } from "../controllers/auth/authController.js";
+import { login, logout, me, register, verifyOtpStep, updateProfile, resetPassword } from "../controllers/auth/authController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { validateRequest } from "../middleware/validateRequest.js";
 import { registerSchema, loginSchema, verifyOtpSchema } from "../validators/authValidators.js";
@@ -19,5 +19,6 @@ router.get("/me", protect, me);
 router.put("/me", protect, updateProfile);
 router.post("/logout", protect, logout);
 router.post("/verify-otp", validateRequest(verifyOtpSchema), verifyOtpStep);
+router.post("/reset-password", resetPassword);
 
 export default router;

@@ -20,10 +20,19 @@ const MobileDashboard = ({
   faqExpanded,
   setFaqExpanded,
   onLogout,
+  activeDashboardTab,
   t
 }) => {
+  const [filters, setFilters] = useState({
+    startDate: '',
+    endDate: '',
+    bookingStatus: '',
+    paymentStatus: '',
+    search: ''
+  });
+
   const { user } = useAuthStore();
-  const { dashboardData, loading } = useDashboardData();
+  const { dashboardData, loading } = useDashboardData(filters);
 
   const activeRole = normalizeRole(user?.role);
 
@@ -37,6 +46,7 @@ const MobileDashboard = ({
   };
 
   const ActiveDashboardComponent = ROLE_COMPONENTS[activeRole] || MobilePassengerDashboardWidgets;
+  const currentTab = activeDashboardTab || (activeRole === ROLES.ADMIN ? 'Overview' : 'Home');
 
   return (
     <div className="animate-fade-in-up bg-slate-50 dark:bg-slate-950 min-h-full pb-8">
@@ -44,18 +54,18 @@ const MobileDashboard = ({
       <div className="px-4 pt-6 pb-4">
         <div className="flex items-center gap-4 p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm mb-6 relative overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none"></div>
-          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#10b981] to-emerald-300 p-0.5 shrink-0 z-10">
-            <div className="w-full h-full rounded-full border-2 border-white dark:border-slate-900 bg-[#10b981] flex items-center justify-center text-white font-bold text-2xl">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#1a7a40] to-emerald-300 p-0.5 shrink-0 z-10">
+            <div className="w-full h-full rounded-full border-2 border-white dark:border-slate-900 bg-[#1a7a40] flex items-center justify-center text-white font-bold text-2xl">
               {(user?.name || user?.fullName || user?.firstName || 'T').charAt(0).toUpperCase()}
             </div>
           </div>
           <div className="flex-1 z-10" style={{ overflow: 'hidden' }}>
             <h3 className="text-lg font-bold font-outfit text-slate-900 dark:text-white leading-tight truncate">{user?.name || user?.fullName || user?.firstName || 'Traveler'}</h3>
             {activeRole === ROLES.PASSENGER && (
-              <p className="text-[10px] text-[#10b981] font-bold uppercase tracking-widest mt-1">Elite Gold Member</p>
+              <p className="text-[10px] text-[#1a7a40] font-bold uppercase tracking-widest mt-1">Elite Gold Member</p>
             )}
             {activeRole !== ROLES.PASSENGER && (
-              <p className="text-[10px] text-[#10b981] font-bold uppercase tracking-widest mt-1">{activeRole}</p>
+              <p className="text-[10px] text-[#1a7a40] font-bold uppercase tracking-widest mt-1">{activeRole}</p>
             )}
           </div>
           <button className="z-10 p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 hover:text-red-500 transition-colors shrink-0" onClick={onLogout} aria-label="Sign Out">
@@ -65,7 +75,7 @@ const MobileDashboard = ({
 
         {/* Dynamic Role-Based Main Content */}
         <div className="mb-8">
-          <ActiveDashboardComponent data={dashboardData} loading={loading} user={user} activeTab="Overview" />
+          <ActiveDashboardComponent data={dashboardData} loading={loading} user={user} activeTab={currentTab} filters={filters} setFilters={setFilters} />
         </div>
 
         {/* Preferences Section */}
@@ -77,7 +87,7 @@ const MobileDashboard = ({
               <span className="text-sm font-medium">{t.theme || 'Dark Mode'}</span>
             </div>
             <button 
-              className={`w-12 h-6 rounded-full transition-colors relative ${theme === 'dark' ? 'bg-[#10b981]' : 'bg-slate-300 dark:bg-slate-700'}`}
+              className={`w-12 h-6 rounded-full transition-colors relative ${theme === 'dark' ? 'bg-[#1a7a40]' : 'bg-slate-300 dark:bg-slate-700'}`}
               onClick={toggleTheme}
             >
               <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform shadow-sm ${theme === 'dark' ? 'translate-x-6.5 left-1' : 'translate-x-0.5 left-0.5'}`}></div>
@@ -91,11 +101,11 @@ const MobileDashboard = ({
             </div>
             <div className="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
               <button 
-                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${language === 'en' ? 'bg-white dark:bg-slate-900 shadow-sm text-[#10b981]' : 'text-slate-500'}`}
+                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${language === 'en' ? 'bg-white dark:bg-slate-900 shadow-sm text-[#1a7a40]' : 'text-slate-500'}`}
                 onClick={() => setLanguage('en')}
               >EN</button>
               <button 
-                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${language === 'ml' ? 'bg-white dark:bg-slate-900 shadow-sm text-[#10b981]' : 'text-slate-500'}`}
+                className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${language === 'ml' ? 'bg-white dark:bg-slate-900 shadow-sm text-[#1a7a40]' : 'text-slate-500'}`}
                 onClick={() => setLanguage('ml')}
               >മലയാളം</button>
             </div>
@@ -107,7 +117,7 @@ const MobileDashboard = ({
               <span className="text-sm font-medium">Offline Sync Mode</span>
             </div>
             <button 
-              className="w-12 h-6 rounded-full transition-colors relative bg-[#10b981]"
+              className="w-12 h-6 rounded-full transition-colors relative bg-[#1a7a40]"
               onClick={() => alert('Offline sync is always active for elite passengers.')}
             >
               <div className="w-5 h-5 bg-white rounded-full absolute top-0.5 left-1 translate-x-5.5 shadow-sm"></div>
@@ -123,11 +133,11 @@ const MobileDashboard = ({
             className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
             onClick={() => setHasActivatedWebApp(false)}
           >
-            <div className="flex items-center gap-3 text-[#10b981]">
+            <div className="flex items-center gap-3 text-[#1a7a40]">
               <RotateCcw size={18} />
               <span className="text-sm font-bold">Return to Website Home</span>
             </div>
-            <ChevronRight size={18} className="text-[#10b981]" />
+            <ChevronRight size={18} className="text-[#1a7a40]" />
           </div>
 
           {[

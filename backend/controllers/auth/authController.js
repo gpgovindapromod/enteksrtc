@@ -2,7 +2,8 @@ import {
     getCurrentUser,
     loginUser,
     registerUser,
-    updateUser
+    updateUser,
+    resetPassword as resetPasswordService
 } from "../../services/authService.js";
 import { verifyFirebaseIdToken } from "../../services/firebaseAdmin.js";
 
@@ -104,11 +105,21 @@ export const verifyOtpStep = async (req, res, next) => {
     }
 };
 
+export const resetPassword = async (req, res, next) => {
+    try {
+        const result = await resetPasswordService(req.body);
+        res.status(200).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export default {
     register,
     login,
     me,
     logout,
     verifyOtpStep,
-    updateProfile
+    updateProfile,
+    resetPassword
 };

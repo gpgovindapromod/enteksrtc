@@ -69,7 +69,7 @@ const DesktopTicketsModal = ({ show, onClose, activeBookings, handleCancelBookin
                 >
                   {/* Status Bar */}
                   <div className={bStatus.bg} style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: bStatus.dot === 'bg-emerald-500' ? '#10b981' : bStatus.dot === 'bg-amber-500' ? '#f59e0b' : '#ef4444' }} />
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: bStatus.dot === 'bg-emerald-500' ? '#1a7a40' : bStatus.dot === 'bg-amber-500' ? '#f59e0b' : '#ef4444' }} />
                     <span className={bStatus.text} style={{ fontSize: '0.8rem', fontWeight: 700 }}>{bStatus.label}</span>
                     <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: '#9ca3af', fontFamily: 'monospace' }}>{ticket.bookingNumber || ticket.id}</span>
                   </div>
@@ -83,9 +83,9 @@ const DesktopTicketsModal = ({ show, onClose, activeBookings, handleCancelBookin
                         <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{ticket.time}</div>
                       </div>
                       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                        <div style={{ width: '100%', height: 2, background: 'linear-gradient(90deg, #10b981, #059669)', borderRadius: 2, position: 'relative' }}>
+                        <div style={{ width: '100%', height: 2, background: 'linear-gradient(90deg, #1a7a40, #059669)', borderRadius: 2, position: 'relative' }}>
                           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', background: 'white', padding: '0 8px' }}>
-                            <ArrowRight size={14} color="#10b981" />
+                            <ArrowRight size={14} color="#1a7a40" />
                           </div>
                         </div>
                         <span style={{ fontSize: '0.7rem', color: '#9ca3af' }}>{ticket.distanceKm ? `${ticket.distanceKm} km` : ''}</span>

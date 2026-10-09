@@ -12,6 +12,7 @@ import TestimonialsSection from '../home/TestimonialsSection';
 import Marquee from '../home/Marquee';
 import { GalleryImages, TopRoutes, Testimonials } from '../../data/mockData';
 import StopSearchAutocomplete from '../shared/StopSearchAutocomplete';
+import ScrollReveal from '../shared/ScrollReveal';
 
 const DesktopHome = () => {
   const navigate = useNavigate();
@@ -195,13 +196,16 @@ const DesktopHome = () => {
       {/* Main Content Area */}
       <main className="pt-32 md:pt-28 bg-background transition-colors duration-300">
         <section id="routes" className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop py-stack-xl">
-          <div className="flex justify-between items-end mb-stack-lg">
-            <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold text-gray-900 dark:text-white">Top Routes</h2>
-            <a className="text-primary hover:brightness-110 flex items-center gap-1 transition-colors" href="#">View All <span className="material-symbols-outlined text-sm">chevron_right</span></a>
-          </div>
+          <ScrollReveal animation="fade-up">
+            <div className="flex justify-between items-end mb-stack-lg">
+              <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold text-gray-900 dark:text-white">Top Routes</h2>
+              <a className="text-primary hover:brightness-110 flex items-center gap-1 transition-colors" href="#">View All <span className="material-symbols-outlined text-sm">chevron_right</span></a>
+            </div>
+          </ScrollReveal>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
             {TopRoutes.map((route, idx) => (
-              <div key={idx} className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-white/5 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1 flex flex-col shadow-sm">
+              <ScrollReveal key={idx} animation="fade-up" delay={idx * 100} className="flex h-full">
+              <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-white/5 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group hover:-translate-y-1 flex flex-col shadow-sm w-full">
                 <div className="h-40 w-full overflow-hidden relative">
                   <img src={route.img} alt={`${route.from} to ${route.to}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
@@ -233,40 +237,47 @@ const DesktopHome = () => {
                   </div>
                 </div>
               </div>
+              </ScrollReveal>
             ))}
           </div>
         </section>
 
         <section className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop py-stack-xl mb-stack-xl">
-          <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold mb-stack-lg text-gray-900 dark:text-white">Popular Destinations</h2>
+          <ScrollReveal animation="fade-up">
+            <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold mb-stack-lg text-gray-900 dark:text-white">Popular Destinations</h2>
+          </ScrollReveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter h-auto md:h-[600px]">
-            <div className="relative rounded-xl overflow-hidden group cursor-pointer md:col-span-2 md:row-span-2 h-[400px] md:h-auto border border-white/10 shadow-lg">
+            <ScrollReveal animation="fade-right" delay={100} className="relative rounded-xl overflow-hidden group cursor-pointer md:col-span-2 md:row-span-2 h-[400px] md:h-full border border-white/10 shadow-lg">
               <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/route_munnar.webp')` }}></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
               <div className="absolute bottom-stack-lg left-stack-lg">
                 <h3 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-white mb-2 drop-shadow-lg">Munnar</h3>
                 <p className="text-white/70 font-body-md text-body-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">The Emerald Hills of Kerala</p>
               </div>
-            </div>
-            <div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
+            </ScrollReveal>
+            <ScrollReveal animation="fade-left" delay={200} className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-full border border-white/10 shadow-lg">
               <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/dest_kochi.webp')` }}></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
               <div className="absolute bottom-stack-md left-stack-md">
                 <h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Kochi</h3>
               </div>
-            </div>
-            <div className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-auto border border-white/10 shadow-lg">
+            </ScrollReveal>
+            <ScrollReveal animation="fade-left" delay={300} className="relative rounded-xl overflow-hidden group cursor-pointer h-[300px] md:h-full border border-white/10 shadow-lg">
               <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700 ease-in-out" style={{ backgroundImage: `url('./assets/images/dest_alleppey.webp')` }}></div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
               <div className="absolute bottom-stack-md left-stack-md">
                 <h3 className="font-headline-md text-headline-md text-white drop-shadow-md">Alleppey</h3>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </section>
 
-        <GallerySection images={GalleryImages} />
-        <TestimonialsSection testimonials={Testimonials} />
+        <ScrollReveal animation="fade-up">
+          <GallerySection images={GalleryImages} />
+        </ScrollReveal>
+        <ScrollReveal animation="fade-up" delay={200}>
+          <TestimonialsSection testimonials={Testimonials} />
+        </ScrollReveal>
         <div className="mt-20"><Marquee /></div>
       </main>
 
@@ -289,10 +300,63 @@ const DesktopHome = () => {
               <div>
                 <h3 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary"></span> Explore</h3>
                 <ul className="space-y-4">
-                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#routes">Routes</a></li>
-                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Fleet</a></li>
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#routes">Top Routes</a></li>
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Our Fleet</a></li>
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Destinations</a></li>
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Premium Amenities</a></li>
                 </ul>
               </div>
+              
+              <div>
+                <h3 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary"></span> Passengers</h3>
+                <ul className="space-y-4">
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Baggage Policy</a></li>
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Cancellation Rules</a></li>
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Refund Status</a></li>
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Loyalty Program</a></li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary"></span> Support</h3>
+                <ul className="space-y-4">
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Contact Us</a></li>
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Help Center / FAQ</a></li>
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">File a Complaint</a></li>
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Feedback</a></li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary"></span> Connect</h3>
+                <div className="flex gap-4 mb-6">
+                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-colors text-white/60">
+                    <span className="material-symbols-outlined text-[20px]">link</span>
+                  </a>
+                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-colors text-white/60">
+                    <span className="material-symbols-outlined text-[20px]">share</span>
+                  </a>
+                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-colors text-white/60">
+                    <span className="material-symbols-outlined text-[20px]">mail</span>
+                  </a>
+                </div>
+                <h4 className="text-sm font-bold text-white mb-3">Newsletter</h4>
+                <div className="flex relative">
+                  <input type="email" placeholder="Your email address" className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-3 pr-10 text-sm text-white focus:outline-none focus:border-primary transition-colors" />
+                  <button className="absolute right-1 top-1 bottom-1 px-3 bg-primary rounded-md text-white hover:brightness-110 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[16px]">send</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="border-t border-white/10 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-white/40">© {new Date().getFullYear()} Kerala State Road Transport Corporation. All rights reserved.</p>
+            <div className="flex gap-6">
+              <a href="#" className="text-xs text-white/40 hover:text-white transition-colors">Privacy Policy</a>
+              <a href="#" className="text-xs text-white/40 hover:text-white transition-colors">Terms of Service</a>
+              <a href="#" className="text-xs text-white/40 hover:text-white transition-colors">Accessibility</a>
             </div>
           </div>
         </div>

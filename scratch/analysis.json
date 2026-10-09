@@ -1,0 +1,1821 @@
+{
+  "package-lock.json": {
+    "path": "package-lock.json",
+    "name": "package-lock.json",
+    "imports": [],
+    "exports": [],
+    "size": 392530
+  },
+  "package.json": {
+    "path": "package.json",
+    "name": "package.json",
+    "imports": [],
+    "exports": [],
+    "size": 899
+  },
+  "vercel.json": {
+    "path": "vercel.json",
+    "name": "vercel.json",
+    "imports": [],
+    "exports": [],
+    "size": 164
+  },
+  "backend/app.js": {
+    "path": "backend/app.js",
+    "name": "app.js",
+    "imports": [
+      "express",
+      "cors",
+      "helmet",
+      "morgan",
+      "cookie-parser",
+      "./middleware/notFoundMiddleware.js",
+      "./middleware/errorMiddleware.js",
+      "./routes/authRoutes.js",
+      "./routes/userRoutes.js",
+      "./routes/dashboardRoutes.js",
+      "./routes/tripRoutes.js",
+      "./routes/bookingRoutes.js",
+      "./routes/stopRoutes.js",
+      "./routes/adminRoutes.js"
+    ],
+    "exports": [],
+    "size": 2733
+  },
+  "backend/checkBookingIssue.js": {
+    "path": "backend/checkBookingIssue.js",
+    "name": "checkBookingIssue.js",
+    "imports": [
+      "mongoose",
+      "dotenv",
+      "./database/models/Booking.js",
+      "./database/models/BookingSeat.js"
+    ],
+    "exports": [],
+    "size": 650
+  },
+  "backend/package-lock.json": {
+    "path": "backend/package-lock.json",
+    "name": "package-lock.json",
+    "imports": [],
+    "exports": [],
+    "size": 54822
+  },
+  "backend/package.json": {
+    "path": "backend/package.json",
+    "name": "package.json",
+    "imports": [],
+    "exports": [],
+    "size": 683
+  },
+  "backend/server.js": {
+    "path": "backend/server.js",
+    "name": "server.js",
+    "imports": [
+      "dns",
+      "dotenv",
+      "./app.js",
+      "./database/db.js",
+      "./controllers/booking/bookingController.js",
+      "./services/paymentService.js"
+    ],
+    "exports": [],
+    "size": 1224
+  },
+  "backend/test_cancel_err.js": {
+    "path": "backend/test_cancel_err.js",
+    "name": "test_cancel_err.js",
+    "imports": [
+      "mongoose",
+      "dotenv",
+      "./database/models/Booking.js",
+      "./database/models/Trip.js",
+      "./utils/cancellationPolicy.js"
+    ],
+    "exports": [],
+    "size": 1482
+  },
+  "backend/config/jwt.js": {
+    "path": "backend/config/jwt.js",
+    "name": "jwt.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/controllers/admin/adminController.js": {
+    "path": "backend/controllers/admin/adminController.js",
+    "name": "adminController.js",
+    "imports": [
+      "../../database/models/Booking.js",
+      "../../database/models/User.js",
+      "../../database/models/Bus.js"
+    ],
+    "exports": [
+      "getAdminDashboardData"
+    ],
+    "size": 1727
+  },
+  "backend/controllers/admin/reportController.js": {
+    "path": "backend/controllers/admin/reportController.js",
+    "name": "reportController.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/controllers/auth/authController.js": {
+    "path": "backend/controllers/auth/authController.js",
+    "name": "authController.js",
+    "imports": [
+      "../../services/firebaseAdmin.js"
+    ],
+    "exports": [
+      "register",
+      "login",
+      "updateProfile",
+      "me",
+      "logout",
+      "verifyOtpStep"
+    ],
+    "size": 2706
+  },
+  "backend/controllers/booking/bookingCancellationController.js": {
+    "path": "backend/controllers/booking/bookingCancellationController.js",
+    "name": "bookingCancellationController.js",
+    "imports": [
+      "../../database/models/Booking.js",
+      "../../database/models/Payment.js",
+      "../../utils/auditUtils.js",
+      "../../utils/cancellationPolicy.js",
+      "../../services/paymentService.js"
+    ],
+    "exports": [
+      "cancelBooking"
+    ],
+    "size": 4830
+  },
+  "backend/controllers/booking/bookingController.js": {
+    "path": "backend/controllers/booking/bookingController.js",
+    "name": "bookingController.js",
+    "imports": [
+      "../../database/models/Booking.js",
+      "../../database/models/BookingSeat.js",
+      "../../database/models/Trip.js",
+      "../../database/models/RouteStop.js",
+      "../../database/models/Payment.js",
+      "../../database/models/Ticket.js",
+      "../../utils/fareUtils.js",
+      "../../utils/auditUtils.js",
+      "../../utils/cancellationPolicy.js",
+      "../../services/notificationService.js",
+      "mongoose",
+      "crypto"
+    ],
+    "exports": [
+      "checkout",
+      "verifyPaymentHandler",
+      "handleWebhook",
+      "reconcilePayment",
+      "cleanupExpiredHolds"
+    ],
+    "size": 32723
+  },
+  "backend/controllers/booking/paymentController.js": {
+    "path": "backend/controllers/booking/paymentController.js",
+    "name": "paymentController.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/controllers/booking/views/bookingViewController.js": {
+    "path": "backend/controllers/booking/views/bookingViewController.js",
+    "name": "bookingViewController.js",
+    "imports": [
+      "../../../database/models/Booking.js",
+      "../../../database/models/BookingSeat.js"
+    ],
+    "exports": [
+      "getUserBookings",
+      "getBooking",
+      "getBookingAudits"
+    ],
+    "size": 2675
+  },
+  "backend/controllers/bus/busController.js": {
+    "path": "backend/controllers/bus/busController.js",
+    "name": "busController.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/controllers/bus/routeController.js": {
+    "path": "backend/controllers/bus/routeController.js",
+    "name": "routeController.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/controllers/dashboard/dashboardController.js": {
+    "path": "backend/controllers/dashboard/dashboardController.js",
+    "name": "dashboardController.js",
+    "imports": [
+      "../../database/models/Booking.js",
+      "../../database/models/Trip.js",
+      "../../database/models/Route.js",
+      "../../database/models/Bus.js",
+      "../../database/models/Stop.js",
+      "../../database/models/User.js",
+      "../../database/models/Depot.js",
+      "../../utils/roleUtils.js"
+    ],
+    "exports": [
+      "getDashboardData"
+    ],
+    "size": 8142
+  },
+  "backend/controllers/schedule/scheduleController.js": {
+    "path": "backend/controllers/schedule/scheduleController.js",
+    "name": "scheduleController.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/controllers/station/depotController.js": {
+    "path": "backend/controllers/station/depotController.js",
+    "name": "depotController.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/controllers/station/stopController.js": {
+    "path": "backend/controllers/station/stopController.js",
+    "name": "stopController.js",
+    "imports": [
+      "../../database/models/Stop.js"
+    ],
+    "exports": [
+      "searchStops"
+    ],
+    "size": 608
+  },
+  "backend/controllers/ticket/ticketController.js": {
+    "path": "backend/controllers/ticket/ticketController.js",
+    "name": "ticketController.js",
+    "imports": [],
+    "exports": [],
+    "size": 1
+  },
+  "backend/controllers/trip/adminInventoryController.js": {
+    "path": "backend/controllers/trip/adminInventoryController.js",
+    "name": "adminInventoryController.js",
+    "imports": [
+      "../../database/models/Trip.js",
+      "../../database/models/Booking.js",
+      "../../database/models/BookingSeat.js",
+      "../../database/models/BusLayout.js",
+      "../../utils/auditUtils.js",
+      "crypto"
+    ],
+    "exports": [
+      "getTripInventory",
+      "blockSeat",
+      "unblockSeat"
+    ],
+    "size": 5980
+  },
+  "backend/controllers/trip/recurringScheduleController.js": {
+    "path": "backend/controllers/trip/recurringScheduleController.js",
+    "name": "recurringScheduleController.js",
+    "imports": [
+      "../../database/models/RecurringSchedule.js"
+    ],
+    "exports": [
+      "createRecurringSchedule",
+      "getRecurringSchedules",
+      "updateRecurringSchedule"
+    ],
+    "size": 1893
+  },
+  "backend/controllers/trip/timetableController.js": {
+    "path": "backend/controllers/trip/timetableController.js",
+    "name": "timetableController.js",
+    "imports": [
+      "../../database/models/Trip.js",
+      "../../database/models/TripStop.js",
+      "../../database/models/RouteStop.js",
+      "../../utils/auditUtils.js"
+    ],
+    "exports": [
+      "getTripTimetable",
+      "updateTripTimetable"
+    ],
+    "size": 4300
+  },
+  "backend/controllers/trip/tripController.js": {
+    "path": "backend/controllers/trip/tripController.js",
+    "name": "tripController.js",
+    "imports": [
+      "../../database/models/Trip.js",
+      "../../database/models/TripStop.js",
+      "../../database/models/RouteStop.js",
+      "../../database/models/Stop.js",
+      "../../database/models/Booking.js",
+      "../../database/models/BookingSeat.js",
+      "../../database/models/BusLayout.js",
+      "../../utils/fareUtils.js",
+      "../../utils/scheduleMaterializer.js"
+    ],
+    "exports": [
+      "searchTrips",
+      "getSeatAvailability",
+      "updateTripStatus"
+    ],
+    "size": 13699
+  },
+  "backend/data/test_search.json": {
+    "path": "backend/data/test_search.json",
+    "name": "test_search.json",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/data/valid.json": {
+    "path": "backend/data/valid.json",
+    "name": "valid.json",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/database/db.js": {
+    "path": "backend/database/db.js",
+    "name": "db.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 642
+  },
+  "backend/database/models/AuditLog.js": {
+    "path": "backend/database/models/AuditLog.js",
+    "name": "AuditLog.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 427
+  },
+  "backend/database/models/Booking.js": {
+    "path": "backend/database/models/Booking.js",
+    "name": "Booking.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 2615
+  },
+  "backend/database/models/BookingAudit.js": {
+    "path": "backend/database/models/BookingAudit.js",
+    "name": "BookingAudit.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 1538
+  },
+  "backend/database/models/BookingSeat.js": {
+    "path": "backend/database/models/BookingSeat.js",
+    "name": "BookingSeat.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 491
+  },
+  "backend/database/models/Bus.js": {
+    "path": "backend/database/models/Bus.js",
+    "name": "Bus.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 664
+  },
+  "backend/database/models/BusLayout.js": {
+    "path": "backend/database/models/BusLayout.js",
+    "name": "BusLayout.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 594
+  },
+  "backend/database/models/Depot.js": {
+    "path": "backend/database/models/Depot.js",
+    "name": "Depot.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 1110
+  },
+  "backend/database/models/Notification.js": {
+    "path": "backend/database/models/Notification.js",
+    "name": "Notification.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 1655
+  },
+  "backend/database/models/Payment.js": {
+    "path": "backend/database/models/Payment.js",
+    "name": "Payment.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 809
+  },
+  "backend/database/models/RecurringSchedule.js": {
+    "path": "backend/database/models/RecurringSchedule.js",
+    "name": "RecurringSchedule.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 1175
+  },
+  "backend/database/models/Review.js": {
+    "path": "backend/database/models/Review.js",
+    "name": "Review.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 456
+  },
+  "backend/database/models/Role.js": {
+    "path": "backend/database/models/Role.js",
+    "name": "Role.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 294
+  },
+  "backend/database/models/Route.js": {
+    "path": "backend/database/models/Route.js",
+    "name": "Route.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 611
+  },
+  "backend/database/models/RouteStop.js": {
+    "path": "backend/database/models/RouteStop.js",
+    "name": "RouteStop.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 522
+  },
+  "backend/database/models/SeatAvailability.js": {
+    "path": "backend/database/models/SeatAvailability.js",
+    "name": "SeatAvailability.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 581
+  },
+  "backend/database/models/Stop.js": {
+    "path": "backend/database/models/Stop.js",
+    "name": "Stop.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 360
+  },
+  "backend/database/models/SystemSetting.js": {
+    "path": "backend/database/models/SystemSetting.js",
+    "name": "SystemSetting.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 310
+  },
+  "backend/database/models/Ticket.js": {
+    "path": "backend/database/models/Ticket.js",
+    "name": "Ticket.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 494
+  },
+  "backend/database/models/Trip.js": {
+    "path": "backend/database/models/Trip.js",
+    "name": "Trip.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 874
+  },
+  "backend/database/models/TripStop.js": {
+    "path": "backend/database/models/TripStop.js",
+    "name": "TripStop.js",
+    "imports": [
+      "mongoose"
+    ],
+    "exports": [],
+    "size": 657
+  },
+  "backend/database/models/User.js": {
+    "path": "backend/database/models/User.js",
+    "name": "User.js",
+    "imports": [
+      "mongoose",
+      "bcrypt"
+    ],
+    "exports": [],
+    "size": 1866
+  },
+  "backend/middleware/authMiddleware.js": {
+    "path": "backend/middleware/authMiddleware.js",
+    "name": "authMiddleware.js",
+    "imports": [
+      "jsonwebtoken",
+      "../database/models/User.js"
+    ],
+    "exports": [
+      "SERVER_RUNTIME_ID",
+      "protect",
+      "requireRole"
+    ],
+    "size": 1911
+  },
+  "backend/middleware/errorMiddleware.js": {
+    "path": "backend/middleware/errorMiddleware.js",
+    "name": "errorMiddleware.js",
+    "imports": [],
+    "exports": [],
+    "size": 273
+  },
+  "backend/middleware/notFoundMiddleware.js": {
+    "path": "backend/middleware/notFoundMiddleware.js",
+    "name": "notFoundMiddleware.js",
+    "imports": [],
+    "exports": [],
+    "size": 177
+  },
+  "backend/middleware/roleMiddleware.js": {
+    "path": "backend/middleware/roleMiddleware.js",
+    "name": "roleMiddleware.js",
+    "imports": [],
+    "exports": [
+      "allowRoles"
+    ],
+    "size": 579
+  },
+  "backend/middleware/uploadMiddleware.js": {
+    "path": "backend/middleware/uploadMiddleware.js",
+    "name": "uploadMiddleware.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/middleware/validateRequest.js": {
+    "path": "backend/middleware/validateRequest.js",
+    "name": "validateRequest.js",
+    "imports": [
+      "zod"
+    ],
+    "exports": [
+      "validateRequest"
+    ],
+    "size": 656
+  },
+  "backend/routes/adminRoutes.js": {
+    "path": "backend/routes/adminRoutes.js",
+    "name": "adminRoutes.js",
+    "imports": [
+      "express",
+      "../controllers/admin/adminController.js",
+      "../middleware/authMiddleware.js"
+    ],
+    "exports": [],
+    "size": 300
+  },
+  "backend/routes/authRoutes.js": {
+    "path": "backend/routes/authRoutes.js",
+    "name": "authRoutes.js",
+    "imports": [
+      "express",
+      "express-rate-limit",
+      "../controllers/auth/authController.js",
+      "../middleware/authMiddleware.js",
+      "../middleware/validateRequest.js",
+      "../validators/authValidators.js"
+    ],
+    "exports": [],
+    "size": 980
+  },
+  "backend/routes/bookingRoutes.js": {
+    "path": "backend/routes/bookingRoutes.js",
+    "name": "bookingRoutes.js",
+    "imports": [
+      "express",
+      "../controllers/booking/bookingCancellationController.js",
+      "../middleware/authMiddleware.js"
+    ],
+    "exports": [],
+    "size": 1010
+  },
+  "backend/routes/busRoutes.js": {
+    "path": "backend/routes/busRoutes.js",
+    "name": "busRoutes.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/routes/dashboardRoutes.js": {
+    "path": "backend/routes/dashboardRoutes.js",
+    "name": "dashboardRoutes.js",
+    "imports": [
+      "express",
+      "../controllers/dashboard/dashboardController.js",
+      "../middleware/authMiddleware.js"
+    ],
+    "exports": [],
+    "size": 290
+  },
+  "backend/routes/depotRoutes.js": {
+    "path": "backend/routes/depotRoutes.js",
+    "name": "depotRoutes.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/routes/paymentRoutes.js": {
+    "path": "backend/routes/paymentRoutes.js",
+    "name": "paymentRoutes.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/routes/reportRoutes.js": {
+    "path": "backend/routes/reportRoutes.js",
+    "name": "reportRoutes.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/routes/scheduleRoutes.js": {
+    "path": "backend/routes/scheduleRoutes.js",
+    "name": "scheduleRoutes.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/routes/stopRoutes.js": {
+    "path": "backend/routes/stopRoutes.js",
+    "name": "stopRoutes.js",
+    "imports": [
+      "express",
+      "../controllers/station/stopController.js"
+    ],
+    "exports": [],
+    "size": 198
+  },
+  "backend/routes/ticketRoutes.js": {
+    "path": "backend/routes/ticketRoutes.js",
+    "name": "ticketRoutes.js",
+    "imports": [],
+    "exports": [],
+    "size": 1
+  },
+  "backend/routes/tripRoutes.js": {
+    "path": "backend/routes/tripRoutes.js",
+    "name": "tripRoutes.js",
+    "imports": [
+      "express",
+      "../controllers/trip/tripController.js",
+      "../controllers/trip/adminInventoryController.js",
+      "../controllers/trip/timetableController.js",
+      "../controllers/trip/recurringScheduleController.js",
+      "../middleware/authMiddleware.js"
+    ],
+    "exports": [],
+    "size": 1621
+  },
+  "backend/routes/userRoutes.js": {
+    "path": "backend/routes/userRoutes.js",
+    "name": "userRoutes.js",
+    "imports": [
+      "express",
+      "../middleware/authMiddleware.js"
+    ],
+    "exports": [],
+    "size": 170
+  },
+  "backend/scripts/mass_seeder.js": {
+    "path": "backend/scripts/mass_seeder.js",
+    "name": "mass_seeder.js",
+    "imports": [
+      "dns",
+      "mongoose",
+      "dotenv",
+      "./database/models/Stop.js",
+      "./database/models/Depot.js",
+      "./database/models/Bus.js",
+      "./database/models/Route.js",
+      "./database/models/RouteStop.js",
+      "./database/models/Trip.js",
+      "./database/models/TripStop.js",
+      "path",
+      "url"
+    ],
+    "exports": [],
+    "size": 9561
+  },
+  "backend/scripts/reset_admin.js": {
+    "path": "backend/scripts/reset_admin.js",
+    "name": "reset_admin.js",
+    "imports": [
+      "mongoose",
+      "bcrypt",
+      "dotenv"
+    ],
+    "exports": [],
+    "size": 1504
+  },
+  "backend/scripts/reset_user.js": {
+    "path": "backend/scripts/reset_user.js",
+    "name": "reset_user.js",
+    "imports": [
+      "mongoose",
+      "bcrypt",
+      "dotenv"
+    ],
+    "exports": [],
+    "size": 1469
+  },
+  "backend/scripts/test_payment.js": {
+    "path": "backend/scripts/test_payment.js",
+    "name": "test_payment.js",
+    "imports": [
+      "crypto"
+    ],
+    "exports": [],
+    "size": 12730
+  },
+  "backend/scripts/validate_db.js": {
+    "path": "backend/scripts/validate_db.js",
+    "name": "validate_db.js",
+    "imports": [
+      "mongoose",
+      "file:///C:/Users/HP/Desktop/B-tech/S5/AWT/project/EnteKsrtc/backend/database/models/Depot.js",
+      "file:///C:/Users/HP/Desktop/B-tech/S5/AWT/project/EnteKsrtc/backend/database/models/Bus.js",
+      "file:///C:/Users/HP/Desktop/B-tech/S5/AWT/project/EnteKsrtc/backend/database/models/Route.js",
+      "file:///C:/Users/HP/Desktop/B-tech/S5/AWT/project/EnteKsrtc/backend/database/models/RouteStop.js",
+      "file:///C:/Users/HP/Desktop/B-tech/S5/AWT/project/EnteKsrtc/backend/database/models/Stop.js",
+      "file:///C:/Users/HP/Desktop/B-tech/S5/AWT/project/EnteKsrtc/backend/database/models/Trip.js",
+      "file:///C:/Users/HP/Desktop/B-tech/S5/AWT/project/EnteKsrtc/backend/database/models/TripStop.js"
+    ],
+    "exports": [],
+    "size": 3625
+  },
+  "backend/services/authService.js": {
+    "path": "backend/services/authService.js",
+    "name": "authService.js",
+    "imports": [
+      "jsonwebtoken",
+      "../database/models/User.js",
+      "./firebaseAdmin.js",
+      "../middleware/authMiddleware.js"
+    ],
+    "exports": [
+      "registerUser",
+      "loginUser",
+      "getCurrentUser",
+      "updateUser"
+    ],
+    "size": 6070
+  },
+  "backend/services/bookingService.js": {
+    "path": "backend/services/bookingService.js",
+    "name": "bookingService.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/services/emailService.js": {
+    "path": "backend/services/emailService.js",
+    "name": "emailService.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/services/firebaseAdmin.js": {
+    "path": "backend/services/firebaseAdmin.js",
+    "name": "firebaseAdmin.js",
+    "imports": [
+      "firebase-admin/app",
+      "firebase-admin/auth"
+    ],
+    "exports": [
+      "verifyFirebaseIdToken"
+    ],
+    "size": 2128
+  },
+  "backend/services/notificationService.js": {
+    "path": "backend/services/notificationService.js",
+    "name": "notificationService.js",
+    "imports": [
+      "../database/models/Notification.js",
+      "./notificationProviders/simulatedEmailProvider.js",
+      "./notificationProviders/simulatedSmsProvider.js",
+      "./notificationProviders/simulatedWhatsAppProvider.js"
+    ],
+    "exports": [
+      "notificationService"
+    ],
+    "size": 3145
+  },
+  "backend/services/paymentService.js": {
+    "path": "backend/services/paymentService.js",
+    "name": "paymentService.js",
+    "imports": [
+      "crypto",
+      "dotenv"
+    ],
+    "exports": [
+      "isRealProviderConfigured",
+      "activeGateway",
+      "getPublicKeyId",
+      "createPaymentOrder",
+      "verifyPayment",
+      "verifyWebhookSignature",
+      "getPaymentStatus",
+      "createRefund"
+    ],
+    "size": 7311
+  },
+  "backend/services/notificationProviders/simulatedEmailProvider.js": {
+    "path": "backend/services/notificationProviders/simulatedEmailProvider.js",
+    "name": "simulatedEmailProvider.js",
+    "imports": [
+      "crypto"
+    ],
+    "exports": [
+      "SimulatedEmailProvider"
+    ],
+    "size": 657
+  },
+  "backend/services/notificationProviders/simulatedSmsProvider.js": {
+    "path": "backend/services/notificationProviders/simulatedSmsProvider.js",
+    "name": "simulatedSmsProvider.js",
+    "imports": [
+      "crypto"
+    ],
+    "exports": [
+      "SimulatedSmsProvider"
+    ],
+    "size": 600
+  },
+  "backend/services/notificationProviders/simulatedWhatsAppProvider.js": {
+    "path": "backend/services/notificationProviders/simulatedWhatsAppProvider.js",
+    "name": "simulatedWhatsAppProvider.js",
+    "imports": [
+      "crypto"
+    ],
+    "exports": [
+      "SimulatedWhatsAppProvider"
+    ],
+    "size": 614
+  },
+  "backend/utils/auditUtils.js": {
+    "path": "backend/utils/auditUtils.js",
+    "name": "auditUtils.js",
+    "imports": [
+      "../database/models/BookingAudit.js"
+    ],
+    "exports": [
+      "auditBooking"
+    ],
+    "size": 1458
+  },
+  "backend/utils/cancellationPolicy.js": {
+    "path": "backend/utils/cancellationPolicy.js",
+    "name": "cancellationPolicy.js",
+    "imports": [],
+    "exports": [
+      "evaluateCancellation"
+    ],
+    "size": 1934
+  },
+  "backend/utils/fareUtils.js": {
+    "path": "backend/utils/fareUtils.js",
+    "name": "fareUtils.js",
+    "imports": [],
+    "exports": [
+      "FARE_CONFIG",
+      "getFareConfig",
+      "calculateFare"
+    ],
+    "size": 2717
+  },
+  "backend/utils/generateTicket.js": {
+    "path": "backend/utils/generateTicket.js",
+    "name": "generateTicket.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/utils/roleUtils.js": {
+    "path": "backend/utils/roleUtils.js",
+    "name": "roleUtils.js",
+    "imports": [],
+    "exports": [
+      "normalizeRole"
+    ],
+    "size": 546
+  },
+  "backend/utils/scheduleMaterializer.js": {
+    "path": "backend/utils/scheduleMaterializer.js",
+    "name": "scheduleMaterializer.js",
+    "imports": [
+      "../database/models/Trip.js",
+      "../database/models/TripStop.js",
+      "../database/models/RecurringSchedule.js",
+      "mongoose"
+    ],
+    "exports": [
+      "materializeTripsForDate"
+    ],
+    "size": 4024
+  },
+  "backend/utils/seatAllocator.js": {
+    "path": "backend/utils/seatAllocator.js",
+    "name": "seatAllocator.js",
+    "imports": [],
+    "exports": [],
+    "size": 0
+  },
+  "backend/validators/authValidators.js": {
+    "path": "backend/validators/authValidators.js",
+    "name": "authValidators.js",
+    "imports": [
+      "zod"
+    ],
+    "exports": [
+      "registerSchema",
+      "loginSchema",
+      "verifyOtpSchema"
+    ],
+    "size": 870
+  },
+  "frontend/index.html": {
+    "path": "frontend/index.html",
+    "name": "index.html",
+    "imports": [],
+    "exports": [],
+    "size": 1777
+  },
+  "frontend/package-lock.json": {
+    "path": "frontend/package-lock.json",
+    "name": "package-lock.json",
+    "imports": [],
+    "exports": [],
+    "size": 269985
+  },
+  "frontend/package.json": {
+    "path": "frontend/package.json",
+    "name": "package.json",
+    "imports": [],
+    "exports": [],
+    "size": 1785
+  },
+  "frontend/postcss.config.js": {
+    "path": "frontend/postcss.config.js",
+    "name": "postcss.config.js",
+    "imports": [],
+    "exports": [],
+    "size": 80
+  },
+  "frontend/tailwind.config.js": {
+    "path": "frontend/tailwind.config.js",
+    "name": "tailwind.config.js",
+    "imports": [],
+    "exports": [],
+    "size": 5528
+  },
+  "frontend/vercel.json": {
+    "path": "frontend/vercel.json",
+    "name": "vercel.json",
+    "imports": [],
+    "exports": [],
+    "size": 251
+  },
+  "frontend/vite.config.js": {
+    "path": "frontend/vite.config.js",
+    "name": "vite.config.js",
+    "imports": [
+      "vite",
+      "@vitejs/plugin-react"
+    ],
+    "exports": [],
+    "size": 305
+  },
+  "frontend/src/App.jsx": {
+    "path": "frontend/src/App.jsx",
+    "name": "App.jsx",
+    "imports": [
+      "react",
+      "react-router-dom",
+      "lucide-react",
+      "./store/useAuthStore",
+      "./store/useAppStore",
+      "./services/authService",
+      "./components/desktop/DesktopLayout",
+      "./components/mobile/MobileLayout"
+    ],
+    "exports": [],
+    "size": 2242
+  },
+  "frontend/src/index.css": {
+    "path": "frontend/src/index.css",
+    "name": "index.css",
+    "imports": [],
+    "exports": [],
+    "size": 39792
+  },
+  "frontend/src/main.jsx": {
+    "path": "frontend/src/main.jsx",
+    "name": "main.jsx",
+    "imports": [
+      "react",
+      "react-dom/client",
+      "react-router-dom",
+      "./App.jsx",
+      "./context/ThemeContext.jsx"
+    ],
+    "exports": [],
+    "size": 439
+  },
+  "frontend/src/components/BorderGlow.css": {
+    "path": "frontend/src/components/BorderGlow.css",
+    "name": "BorderGlow.css",
+    "imports": [],
+    "exports": [],
+    "size": 5915
+  },
+  "frontend/src/components/BorderGlow.jsx": {
+    "path": "frontend/src/components/BorderGlow.jsx",
+    "name": "BorderGlow.jsx",
+    "imports": [
+      "react"
+    ],
+    "exports": [],
+    "size": 5399
+  },
+  "frontend/src/components/ErrorBoundary.jsx": {
+    "path": "frontend/src/components/ErrorBoundary.jsx",
+    "name": "ErrorBoundary.jsx",
+    "imports": [
+      "react"
+    ],
+    "exports": [],
+    "size": 1047
+  },
+  "frontend/src/components/GradualBlur.css": {
+    "path": "frontend/src/components/GradualBlur.css",
+    "name": "GradualBlur.css",
+    "imports": [],
+    "exports": [],
+    "size": 491
+  },
+  "frontend/src/components/GradualBlur.jsx": {
+    "path": "frontend/src/components/GradualBlur.jsx",
+    "name": "GradualBlur.jsx",
+    "imports": [
+      "react"
+    ],
+    "exports": [],
+    "size": 8535
+  },
+  "frontend/src/components/Masonry.css": {
+    "path": "frontend/src/components/Masonry.css",
+    "name": "Masonry.css",
+    "imports": [],
+    "exports": [],
+    "size": 504
+  },
+  "frontend/src/components/Masonry.jsx": {
+    "path": "frontend/src/components/Masonry.jsx",
+    "name": "Masonry.jsx",
+    "imports": [
+      "react",
+      "gsap"
+    ],
+    "exports": [],
+    "size": 7354
+  },
+  "frontend/src/components/desktop/DesktopAuthModal.css": {
+    "path": "frontend/src/components/desktop/DesktopAuthModal.css",
+    "name": "DesktopAuthModal.css",
+    "imports": [],
+    "exports": [],
+    "size": 5541
+  },
+  "frontend/src/components/desktop/DesktopAuthModal.jsx": {
+    "path": "frontend/src/components/desktop/DesktopAuthModal.jsx",
+    "name": "DesktopAuthModal.jsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "../../hooks/useAuthForm"
+    ],
+    "exports": [],
+    "size": 20680
+  },
+  "frontend/src/components/desktop/DesktopDashboard.jsx": {
+    "path": "frontend/src/components/desktop/DesktopDashboard.jsx",
+    "name": "DesktopDashboard.jsx",
+    "imports": [
+      "react",
+      "../../store/useAuthStore",
+      "../../hooks/useDashboardData",
+      "../../utils/roleUtils",
+      "./dashboards/AdminDashboardWidgets",
+      "./dashboards/PassengerDashboardWidgets",
+      "./dashboards/StationMasterDashboard",
+      "./dashboards/ConductorDashboard",
+      "./dashboards/DriverDashboard",
+      "./dashboards/SupportDashboard",
+      "./dashboards/SettingsView",
+      "../ErrorBoundary"
+    ],
+    "exports": [],
+    "size": 12053
+  },
+  "frontend/src/components/desktop/DesktopHome.jsx": {
+    "path": "frontend/src/components/desktop/DesktopHome.jsx",
+    "name": "DesktopHome.jsx",
+    "imports": [
+      "react",
+      "react-router-dom",
+      "../../store/useAuthStore",
+      "../../store/useAppStore",
+      "../../store/useBookingStore",
+      "../../context/ThemeContext",
+      "../../services/authService",
+      "../../hooks/useAppLogic",
+      "../home/GallerySection",
+      "../home/TestimonialsSection",
+      "../home/Marquee",
+      "../../data/mockData",
+      "../shared/StopSearchAutocomplete"
+    ],
+    "exports": [],
+    "size": 20529
+  },
+  "frontend/src/components/desktop/DesktopLayout.jsx": {
+    "path": "frontend/src/components/desktop/DesktopLayout.jsx",
+    "name": "DesktopLayout.jsx",
+    "imports": [
+      "react",
+      "react-router-dom",
+      "../../store/useAuthStore",
+      "../../store/useBookingStore",
+      "../../context/ThemeContext",
+      "../../store/useAppStore",
+      "../../hooks/useAppLogic",
+      "../../services/authService",
+      "./DesktopHome",
+      "./DesktopSearchResults",
+      "./DesktopAuthModal",
+      "./DesktopDashboard",
+      "./DesktopTicketsModal",
+      "../../data/mockData"
+    ],
+    "exports": [],
+    "size": 4181
+  },
+  "frontend/src/components/desktop/DesktopSearchResults.jsx": {
+    "path": "frontend/src/components/desktop/DesktopSearchResults.jsx",
+    "name": "DesktopSearchResults.jsx",
+    "imports": [
+      "react",
+      "react-router-dom",
+      "lucide-react",
+      "../../hooks/useBusSearch",
+      "../../hooks/useSeatGrid",
+      "../shared/SeatGrid",
+      "../shared/StopSearchAutocomplete",
+      "../../store/useBookingStore",
+      "../../utils/pdfUtils.jsx",
+      "../../store/useAuthStore"
+    ],
+    "exports": [],
+    "size": 34190
+  },
+  "frontend/src/components/desktop/DesktopTicketsModal.jsx": {
+    "path": "frontend/src/components/desktop/DesktopTicketsModal.jsx",
+    "name": "DesktopTicketsModal.jsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "../../utils/pdfUtils.jsx",
+      "../../store/useAuthStore"
+    ],
+    "exports": [],
+    "size": 11628
+  },
+  "frontend/src/components/desktop/dashboards/AdminDashboardWidgets.jsx": {
+    "path": "frontend/src/components/desktop/dashboards/AdminDashboardWidgets.jsx",
+    "name": "AdminDashboardWidgets.jsx",
+    "imports": [
+      "react",
+      "lucide-react"
+    ],
+    "exports": [],
+    "size": 11265
+  },
+  "frontend/src/components/desktop/dashboards/ConductorDashboard.jsx": {
+    "path": "frontend/src/components/desktop/dashboards/ConductorDashboard.jsx",
+    "name": "ConductorDashboard.jsx",
+    "imports": [
+      "react"
+    ],
+    "exports": [],
+    "size": 1169
+  },
+  "frontend/src/components/desktop/dashboards/DriverDashboard.jsx": {
+    "path": "frontend/src/components/desktop/dashboards/DriverDashboard.jsx",
+    "name": "DriverDashboard.jsx",
+    "imports": [
+      "react",
+      "lucide-react"
+    ],
+    "exports": [],
+    "size": 3396
+  },
+  "frontend/src/components/desktop/dashboards/PassengerDashboardWidgets.jsx": {
+    "path": "frontend/src/components/desktop/dashboards/PassengerDashboardWidgets.jsx",
+    "name": "PassengerDashboardWidgets.jsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "react-router-dom",
+      "../../../utils/bookingAdapter",
+      "../../../store/useBookingStore",
+      "../../shared/StopSearchAutocomplete",
+      "../../../utils/pdfUtils.jsx",
+      "../../../services/bookingService"
+    ],
+    "exports": [],
+    "size": 40605
+  },
+  "frontend/src/components/desktop/dashboards/SettingsView.jsx": {
+    "path": "frontend/src/components/desktop/dashboards/SettingsView.jsx",
+    "name": "SettingsView.jsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "../../../store/useAuthStore",
+      "../../../context/ThemeContext",
+      "../../../services/authService"
+    ],
+    "exports": [],
+    "size": 14419
+  },
+  "frontend/src/components/desktop/dashboards/StationMasterDashboard.jsx": {
+    "path": "frontend/src/components/desktop/dashboards/StationMasterDashboard.jsx",
+    "name": "StationMasterDashboard.jsx",
+    "imports": [
+      "react"
+    ],
+    "exports": [],
+    "size": 10236
+  },
+  "frontend/src/components/desktop/dashboards/SupportDashboard.jsx": {
+    "path": "frontend/src/components/desktop/dashboards/SupportDashboard.jsx",
+    "name": "SupportDashboard.jsx",
+    "imports": [
+      "react"
+    ],
+    "exports": [],
+    "size": 1395
+  },
+  "frontend/src/components/home/DestinationsSection.jsx": {
+    "path": "frontend/src/components/home/DestinationsSection.jsx",
+    "name": "DestinationsSection.jsx",
+    "imports": [
+      "react"
+    ],
+    "exports": [],
+    "size": 1385
+  },
+  "frontend/src/components/home/GallerySection.jsx": {
+    "path": "frontend/src/components/home/GallerySection.jsx",
+    "name": "GallerySection.jsx",
+    "imports": [
+      "react",
+      "../Masonry",
+      "../BorderGlow"
+    ],
+    "exports": [],
+    "size": 1698
+  },
+  "frontend/src/components/home/LazyLoad.jsx": {
+    "path": "frontend/src/components/home/LazyLoad.jsx",
+    "name": "LazyLoad.jsx",
+    "imports": [
+      "react"
+    ],
+    "exports": [],
+    "size": 676
+  },
+  "frontend/src/components/home/Marquee.jsx": {
+    "path": "frontend/src/components/home/Marquee.jsx",
+    "name": "Marquee.jsx",
+    "imports": [
+      "react"
+    ],
+    "exports": [],
+    "size": 1296
+  },
+  "frontend/src/components/home/TestimonialsSection.jsx": {
+    "path": "frontend/src/components/home/TestimonialsSection.jsx",
+    "name": "TestimonialsSection.jsx",
+    "imports": [
+      "react",
+      "lucide-react"
+    ],
+    "exports": [],
+    "size": 3510
+  },
+  "frontend/src/components/home/TopRoutesSection.jsx": {
+    "path": "frontend/src/components/home/TopRoutesSection.jsx",
+    "name": "TopRoutesSection.jsx",
+    "imports": [
+      "react",
+      "lucide-react"
+    ],
+    "exports": [],
+    "size": 3008
+  },
+  "frontend/src/components/mobile/MobileAppHeader.jsx": {
+    "path": "frontend/src/components/mobile/MobileAppHeader.jsx",
+    "name": "MobileAppHeader.jsx",
+    "imports": [
+      "react",
+      "lucide-react"
+    ],
+    "exports": [],
+    "size": 4529
+  },
+  "frontend/src/components/mobile/MobileBookingWidget.jsx": {
+    "path": "frontend/src/components/mobile/MobileBookingWidget.jsx",
+    "name": "MobileBookingWidget.jsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "../shared/StopSearchAutocomplete"
+    ],
+    "exports": [],
+    "size": 6204
+  },
+  "frontend/src/components/mobile/MobileDashboard.jsx": {
+    "path": "frontend/src/components/mobile/MobileDashboard.jsx",
+    "name": "MobileDashboard.jsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "../../store/useAuthStore",
+      "../../hooks/useDashboardData",
+      "./MobilePassengerDashboardWidgets",
+      "../desktop/dashboards/AdminDashboardWidgets",
+      "../desktop/dashboards/StationMasterDashboard",
+      "../desktop/dashboards/ConductorDashboard",
+      "../desktop/dashboards/DriverDashboard",
+      "../desktop/dashboards/SupportDashboard",
+      "../../utils/roleUtils"
+    ],
+    "exports": [],
+    "size": 9865
+  },
+  "frontend/src/components/mobile/MobileHomeTab.jsx": {
+    "path": "frontend/src/components/mobile/MobileHomeTab.jsx",
+    "name": "MobileHomeTab.jsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "./MobileBookingWidget",
+      "../GradualBlur",
+      "../home/Marquee"
+    ],
+    "exports": [],
+    "size": 11579
+  },
+  "frontend/src/components/mobile/MobileLayout.jsx": {
+    "path": "frontend/src/components/mobile/MobileLayout.jsx",
+    "name": "MobileLayout.jsx",
+    "imports": [
+      "react",
+      "react-router-dom",
+      "../../store/useAuthStore",
+      "../../store/useAppStore",
+      "../../store/useBookingStore",
+      "../../context/ThemeContext",
+      "../../services/authService",
+      "../../hooks/useAppLogic",
+      "./MobileAppHeader",
+      "./MobileLiveTracking",
+      "./MobileTimings",
+      "./MobileSearchResults",
+      "./MobileTicketsTab",
+      "./MobileDashboard",
+      "./MobileHomeTab",
+      "./MobileLoginModal",
+      "lucide-react",
+      "../../data/mockData",
+      "../home/TopRoutesSection",
+      "../home/DestinationsSection",
+      "../home/GallerySection",
+      "../home/TestimonialsSection"
+    ],
+    "exports": [],
+    "size": 13034
+  },
+  "frontend/src/components/mobile/MobileLiveTracking.jsx": {
+    "path": "frontend/src/components/mobile/MobileLiveTracking.jsx",
+    "name": "MobileLiveTracking.jsx",
+    "imports": [
+      "react",
+      "lucide-react"
+    ],
+    "exports": [],
+    "size": 3314
+  },
+  "frontend/src/components/mobile/MobileLoginModal.jsx": {
+    "path": "frontend/src/components/mobile/MobileLoginModal.jsx",
+    "name": "MobileLoginModal.jsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "../../hooks/useAuthForm"
+    ],
+    "exports": [],
+    "size": 17094
+  },
+  "frontend/src/components/mobile/MobilePassengerDashboardWidgets.jsx": {
+    "path": "frontend/src/components/mobile/MobilePassengerDashboardWidgets.jsx",
+    "name": "MobilePassengerDashboardWidgets.jsx",
+    "imports": [
+      "react",
+      "lucide-react"
+    ],
+    "exports": [],
+    "size": 3008
+  },
+  "frontend/src/components/mobile/MobileSearchResults.jsx": {
+    "path": "frontend/src/components/mobile/MobileSearchResults.jsx",
+    "name": "MobileSearchResults.jsx",
+    "imports": [
+      "react",
+      "react-router-dom",
+      "lucide-react",
+      "./MobileBookingWidget",
+      "../../hooks/useBusSearch",
+      "../../hooks/useSeatGrid",
+      "../../context/ThemeContext",
+      "../shared/SeatGrid",
+      "../../utils/pdfUtils.jsx",
+      "../../store/useAuthStore"
+    ],
+    "exports": [],
+    "size": 28680
+  },
+  "frontend/src/components/mobile/MobileTicketsTab.jsx": {
+    "path": "frontend/src/components/mobile/MobileTicketsTab.jsx",
+    "name": "MobileTicketsTab.jsx",
+    "imports": [
+      "react",
+      "lucide-react",
+      "../../utils/pdfUtils.jsx",
+      "../../store/useAuthStore"
+    ],
+    "exports": [],
+    "size": 11688
+  },
+  "frontend/src/components/mobile/MobileTimings.jsx": {
+    "path": "frontend/src/components/mobile/MobileTimings.jsx",
+    "name": "MobileTimings.jsx",
+    "imports": [
+      "react",
+      "lucide-react"
+    ],
+    "exports": [],
+    "size": 2566
+  },
+  "frontend/src/components/shared/PrintableTicket.jsx": {
+    "path": "frontend/src/components/shared/PrintableTicket.jsx",
+    "name": "PrintableTicket.jsx",
+    "imports": [
+      "react",
+      "lucide-react"
+    ],
+    "exports": [],
+    "size": 12113
+  },
+  "frontend/src/components/shared/SeatGrid.jsx": {
+    "path": "frontend/src/components/shared/SeatGrid.jsx",
+    "name": "SeatGrid.jsx",
+    "imports": [
+      "react",
+      "lucide-react"
+    ],
+    "exports": [],
+    "size": 2795
+  },
+  "frontend/src/components/shared/StopSearchAutocomplete.jsx": {
+    "path": "frontend/src/components/shared/StopSearchAutocomplete.jsx",
+    "name": "StopSearchAutocomplete.jsx",
+    "imports": [
+      "react",
+      "../../services/apiClient"
+    ],
+    "exports": [],
+    "size": 3734
+  },
+  "frontend/src/context/ThemeContext.jsx": {
+    "path": "frontend/src/context/ThemeContext.jsx",
+    "name": "ThemeContext.jsx",
+    "imports": [
+      "react"
+    ],
+    "exports": [
+      "ThemeProvider",
+      "useTheme"
+    ],
+    "size": 1068
+  },
+  "frontend/src/data/mockData.js": {
+    "path": "frontend/src/data/mockData.js",
+    "name": "mockData.js",
+    "imports": [],
+    "exports": [
+      "GalleryImages",
+      "TopRoutes",
+      "Destinations",
+      "Testimonials",
+      "MOCK_BUSES",
+      "TRANSLATIONS"
+    ],
+    "size": 6845
+  },
+  "frontend/src/hooks/useAppLogic.js": {
+    "path": "frontend/src/hooks/useAppLogic.js",
+    "name": "useAppLogic.js",
+    "imports": [
+      "react",
+      "../store/useBookingStore",
+      "../store/useAuthStore",
+      "react-router-dom"
+    ],
+    "exports": [
+      "useAppLogic"
+    ],
+    "size": 12080
+  },
+  "frontend/src/hooks/useAuthForm.js": {
+    "path": "frontend/src/hooks/useAuthForm.js",
+    "name": "useAuthForm.js",
+    "imports": [
+      "react",
+      "../services/authService",
+      "../services/firebaseAuth"
+    ],
+    "exports": [
+      "useAuthForm"
+    ],
+    "size": 6872
+  },
+  "frontend/src/hooks/useBusBookingFlow.js": {
+    "path": "frontend/src/hooks/useBusBookingFlow.js",
+    "name": "useBusBookingFlow.js",
+    "imports": [
+      "react",
+      "../services/busService",
+      "../services/busService"
+    ],
+    "exports": [
+      "useBusBookingFlow"
+    ],
+    "size": 1646
+  },
+  "frontend/src/hooks/useBusSearch.js": {
+    "path": "frontend/src/hooks/useBusSearch.js",
+    "name": "useBusSearch.js",
+    "imports": [
+      "react",
+      "../services/busService"
+    ],
+    "exports": [
+      "useBusSearch"
+    ],
+    "size": 5287
+  },
+  "frontend/src/hooks/useDashboardData.js": {
+    "path": "frontend/src/hooks/useDashboardData.js",
+    "name": "useDashboardData.js",
+    "imports": [
+      "react",
+      "../services/dashboardService"
+    ],
+    "exports": [
+      "useDashboardData"
+    ],
+    "size": 611
+  },
+  "frontend/src/hooks/useSeatGrid.js": {
+    "path": "frontend/src/hooks/useSeatGrid.js",
+    "name": "useSeatGrid.js",
+    "imports": [
+      "react",
+      "../services/busService"
+    ],
+    "exports": [
+      "useSeatGrid"
+    ],
+    "size": 2682
+  },
+  "frontend/src/services/apiClient.js": {
+    "path": "frontend/src/services/apiClient.js",
+    "name": "apiClient.js",
+    "imports": [
+      "axios"
+    ],
+    "exports": [
+      "API_BASE_URL",
+      "apiClient",
+      "createServiceError"
+    ],
+    "size": 1673
+  },
+  "frontend/src/services/authService.js": {
+    "path": "frontend/src/services/authService.js",
+    "name": "authService.js",
+    "imports": [
+      "./apiClient"
+    ],
+    "exports": [
+      "registerUser",
+      "verifyOtp",
+      "loginUser",
+      "getCurrentUser",
+      "logoutUser",
+      "updateProfile"
+    ],
+    "size": 1458
+  },
+  "frontend/src/services/bookingService.js": {
+    "path": "frontend/src/services/bookingService.js",
+    "name": "bookingService.js",
+    "imports": [
+      "./apiClient"
+    ],
+    "exports": [
+      "checkout",
+      "verifyPayment",
+      "getMyBookings",
+      "getBooking",
+      "cancelBooking",
+      "loadRazorpayScript",
+      "openRazorpayCheckout"
+    ],
+    "size": 6291
+  },
+  "frontend/src/services/busService.js": {
+    "path": "frontend/src/services/busService.js",
+    "name": "busService.js",
+    "imports": [
+      "./apiClient"
+    ],
+    "exports": [
+      "CITIES",
+      "filterCities",
+      "MOCK_BUSES",
+      "fetchBuses",
+      "generateSeatLayoutData",
+      "getTripSeatAvailability"
+    ],
+    "size": 4300
+  },
+  "frontend/src/services/dashboardService.js": {
+    "path": "frontend/src/services/dashboardService.js",
+    "name": "dashboardService.js",
+    "imports": [
+      "./apiClient"
+    ],
+    "exports": [
+      "getDashboardData"
+    ],
+    "size": 295
+  },
+  "frontend/src/services/firebaseAuth.js": {
+    "path": "frontend/src/services/firebaseAuth.js",
+    "name": "firebaseAuth.js",
+    "imports": [
+      "firebase/auth",
+      "firebase/app"
+    ],
+    "exports": [
+      "sendPhoneOtp",
+      "confirmPhoneOtp"
+    ],
+    "size": 3367
+  },
+  "frontend/src/store/useAppStore.js": {
+    "path": "frontend/src/store/useAppStore.js",
+    "name": "useAppStore.js",
+    "imports": [
+      "zustand"
+    ],
+    "exports": [
+      "useAppStore"
+    ],
+    "size": 1198
+  },
+  "frontend/src/store/useAuthStore.js": {
+    "path": "frontend/src/store/useAuthStore.js",
+    "name": "useAuthStore.js",
+    "imports": [
+      "zustand"
+    ],
+    "exports": [
+      "useAuthStore"
+    ],
+    "size": 2425
+  },
+  "frontend/src/store/useBookingStore.js": {
+    "path": "frontend/src/store/useBookingStore.js",
+    "name": "useBookingStore.js",
+    "imports": [
+      "zustand"
+    ],
+    "exports": [
+      "useBookingStore"
+    ],
+    "size": 1375
+  },
+  "frontend/src/utils/bookingAdapter.js": {
+    "path": "frontend/src/utils/bookingAdapter.js",
+    "name": "bookingAdapter.js",
+    "imports": [],
+    "exports": [
+      "normalizeBooking"
+    ],
+    "size": 1250
+  },
+  "frontend/src/utils/fareUtils.js": {
+    "path": "frontend/src/utils/fareUtils.js",
+    "name": "fareUtils.js",
+    "imports": [],
+    "exports": [
+      "calculateDynamicFare"
+    ],
+    "size": 1092
+  },
+  "frontend/src/utils/pdfUtils.jsx": {
+    "path": "frontend/src/utils/pdfUtils.jsx",
+    "name": "pdfUtils.jsx",
+    "imports": [
+      "react",
+      "react-dom/client",
+      "jspdf",
+      "html2canvas",
+      "../components/shared/PrintableTicket"
+    ],
+    "exports": [
+      "downloadTicketPDF"
+    ],
+    "size": 1795
+  },
+  "frontend/src/utils/roleUtils.js": {
+    "path": "frontend/src/utils/roleUtils.js",
+    "name": "roleUtils.js",
+    "imports": [],
+    "exports": [
+      "ROLES",
+      "normalizeRole"
+    ],
+    "size": 590
+  }
+}

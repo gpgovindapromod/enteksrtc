@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation, Navigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useAppStore } from '../../store/useAppStore';
 import { useBookingStore } from '../../store/useBookingStore';
@@ -15,8 +15,9 @@ import MobileTicketsTab from './MobileTicketsTab';
 import MobileDashboard from './MobileDashboard';
 import MobileHomeTab from './MobileHomeTab';
 import MobileLoginModal from './MobileLoginModal';
-import { Search, Compass, Ticket, User } from 'lucide-react';
+import { Search, Compass, Ticket, User, Bus, MapPin, Calendar, Clock, CreditCard, LayoutDashboard, Users, TrendingUp, AlertTriangle, Route as RouteIcon, Star, Settings, LifeBuoy, Coffee } from 'lucide-react';
 import { GalleryImages, TopRoutes, Destinations, Testimonials, TRANSLATIONS } from '../../data/mockData';
+import { ROLES, normalizeRole } from '../../utils/roleUtils';
 
 import TopRoutesSection from '../home/TopRoutesSection';
 import DestinationsSection from '../home/DestinationsSection';
@@ -51,17 +52,67 @@ const MobileLayout = () => {
     faqExpanded, setFaqExpanded
   } = useAppStore();
 
+  const [searchParams] = useSearchParams();
+  const activeDashboardTab = searchParams.get('tab');
+
   const {
-    isUserLoggedIn, showLoginModal, setShowLoginModal, setAuthSession, clearAuthSession
+    isUserLoggedIn, showLoginModal, setShowLoginModal, setAuthSession, clearAuthSession, user
   } = useAuthStore();
   
+  const activeRole = normalizeRole(user?.role);
+
+  const getSidebarLinks = () => {
+    switch (activeRole) {
+      case ROLES.ADMIN:
+        return [
+          { id: 'Overview', icon: LayoutDashboard, label: 'Overview' },
+          { id: 'Fleet', icon: Bus, label: 'Fleet' },
+          { id: 'Stations', icon: MapPin, label: 'Stations' },
+          { id: 'Users', icon: Users, label: 'Users' },
+          { id: 'Revenue', icon: TrendingUp, label: 'Revenue' }
+        ];
+      case ROLES.STATION_MASTER:
+        return [
+          { id: 'Tracking', icon: LayoutDashboard, label: 'Tracking' },
+          { id: 'Schedules', icon: Clock, label: 'Schedules' },
+          { id: 'Platforms', icon: MapPin, label: 'Platforms' },
+          { id: 'Alerts', icon: AlertTriangle, label: 'Alerts' }
+        ];
+      case ROLES.CONDUCTOR:
+        return [
+          { id: 'My Route', icon: RouteIcon, label: 'My Route' },
+          { id: 'Manifest', icon: Users, label: 'Manifest' },
+          { id: 'Scan Tickets', icon: Ticket, label: 'Scan Tickets' }
+        ];
+      case ROLES.DRIVER:
+        return [
+          { id: 'My Route', icon: RouteIcon, label: 'My Route' },
+          { id: 'Schedule', icon: Clock, label: 'Schedule' },
+          { id: 'Vehicle Alerts', icon: AlertTriangle, label: 'Alerts' }
+        ];
+      case ROLES.SUPPORT:
+        return [
+          { id: 'Tickets', icon: LayoutDashboard, label: 'Tickets' },
+          { id: 'Refunds', icon: CreditCard, label: 'Refunds' },
+          { id: 'Feedback', icon: Star, label: 'Feedback' }
+        ];
+      default:
+        return [
+          { id: 'Home', icon: Search, label: 'Search' },
+          { id: 'Dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+          { id: 'Tickets', icon: Ticket, label: 'Bookings' },
+          { id: 'Profile', icon: User, label: 'Profile' }
+        ];
+    }
+  };
+
   const { searchError, handleSearchClick, handleCheckout, handleCancelBooking, handleBookRoute, isCheckingOut } = useAppLogic();
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Derive active tab from location for the bottom navbar styling
-  const activeMobileTab = location.pathname === '/profile' || location.pathname === '/dashboard' ? 'profile' : location.pathname === '/tickets' ? 'tickets' : 'home';
+  const activeMobileTab = activeDashboardTab || (location.pathname === '/profile' || location.pathname === '/dashboard' ? 'Dashboard' : location.pathname === '/tickets' ? 'Tickets' : 'Home');
   const isSearching = location.pathname === '/search';
   
   const t = TRANSLATIONS[language] || TRANSLATIONS.en;
@@ -183,6 +234,7 @@ const MobileLayout = () => {
                   faqExpanded={faqExpanded}
                   setFaqExpanded={setFaqExpanded}
                   onLogout={handleLogout}
+                  activeDashboardTab={activeDashboardTab}
                   t={t}
                 />
               </main>
@@ -216,6 +268,7 @@ const MobileLayout = () => {
                   faqExpanded={faqExpanded}
                   setFaqExpanded={setFaqExpanded}
                   onLogout={handleLogout}
+                  activeDashboardTab={activeDashboardTab}
                   t={t}
                 />
               </main>
@@ -275,60 +328,63 @@ const MobileLayout = () => {
 
       {/* Sticky Persistent Mobile Bottom Navbar */}
       <nav className="mobile-bottom-navbar">
-        <button
-          className={`navbar-tab-item ${activeMobileTab === 'home' ? 'active' : ''}`}
-          onClick={() => {
-            navigate('/');
-            setSelectedBus(null);
-          }}
-        >
-          <Search size={22} />
-          <span>Home</span>
-        </button>
-        <button
-          className="navbar-tab-item"
-          onClick={() => {
-            navigate('/');
-            setSelectedBus(null);
-            setTimeout(() => {
-              document.getElementById('mobile-routes-section')?.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-          }}
-        >
-          <Compass size={22} />
-          <span>Routes</span>
-        </button>
-        <button
-          className="navbar-tab-item"
-          onClick={() => {
-            navigate('/');
-            setSelectedBus(null);
-            setTimeout(() => {
-              document.getElementById('mobile-gallery-section')?.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-          }}
-        >
-          <Compass size={22} style={{ transform: 'rotate(45deg)' }} />
-          <span>Gallery</span>
-        </button>
-
-        {isUserLoggedIn && (
-          <button
-            className={`navbar-tab-item ${activeMobileTab === 'tickets' ? 'active' : ''}`}
-            onClick={() => navigate('/tickets')}
-          >
-            <Ticket size={22} />
-            <span>Tickets</span>
-          </button>
-        )}
-        {isUserLoggedIn && (
-          <button
-            className={`navbar-tab-item ${activeMobileTab === 'profile' ? 'active' : ''}`}
-            onClick={() => navigate('/profile')}
-          >
-            <User size={22} />
-            <span>Dashboard</span>
-          </button>
+        {!isUserLoggedIn ? (
+          <>
+            <button
+              className={`navbar-tab-item ${activeMobileTab === 'Home' ? 'active' : ''}`}
+              onClick={() => {
+                navigate('/');
+                setSelectedBus(null);
+              }}
+            >
+              <Search size={22} />
+              <span>Search</span>
+            </button>
+            <button
+              className="navbar-tab-item"
+              onClick={() => {
+                navigate('/');
+                setSelectedBus(null);
+                setTimeout(() => document.getElementById('mobile-routes-section')?.scrollIntoView({ behavior: 'smooth' }), 100);
+              }}
+            >
+              <Compass size={22} />
+              <span>Routes</span>
+            </button>
+            <button
+              className="navbar-tab-item"
+              onClick={() => {
+                navigate('/');
+                setSelectedBus(null);
+                setTimeout(() => document.getElementById('mobile-gallery-section')?.scrollIntoView({ behavior: 'smooth' }), 100);
+              }}
+            >
+              <Compass size={22} style={{ transform: 'rotate(45deg)' }} />
+              <span>Gallery</span>
+            </button>
+          </>
+        ) : (
+          getSidebarLinks().map((link) => {
+            const Icon = link.icon;
+            return (
+              <button
+                key={link.id}
+                className={`navbar-tab-item ${activeMobileTab === link.id ? 'active' : ''}`}
+                onClick={() => {
+                  if (activeRole === ROLES.PASSENGER) {
+                    if (link.id === 'Home') navigate('/');
+                    else if (link.id === 'Tickets') navigate('/tickets');
+                    else if (link.id === 'Dashboard' || link.id === 'Profile') navigate('/profile');
+                  } else {
+                    navigate(`/profile?tab=${link.id}`);
+                  }
+                }}
+              >
+                <Icon size={22} />
+                <span>{link.label}</span>
+              </button>
+            );
+          })
         )}
       </nav>
     </div>

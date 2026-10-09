@@ -4,7 +4,7 @@ import { downloadTicketPDF } from '../../utils/pdfUtils.jsx';
 import { useAuthStore } from '../../store/useAuthStore';
 
 const statusColors = {
-  CONFIRMED: { cls: 'pulsing-live', label: '● Confirmed', color: '#10b981' },
+  CONFIRMED: { cls: 'pulsing-live', label: '● Confirmed', color: '#1a7a40' },
   PENDING:   { cls: '',            label: '⏳ Pending',  color: '#f59e0b' },
   CANCELLED: { cls: '',            label: '✕ Cancelled', color: '#ef4444' },
   FAILED:    { cls: '',            label: '✕ Failed',    color: '#ef4444' },
@@ -114,7 +114,7 @@ const MobileTicketsTab = ({
                       </div>
                       <div className="info-cell">
                         <span className="cell-label">Payment</span>
-                        <span className="cell-val" style={{ color: ticket.paymentStatus === 'PAID' ? '#10b981' : ticket.paymentStatus === 'FAILED' ? '#ef4444' : '#f59e0b' }}>
+                        <span className="cell-val" style={{ color: ticket.paymentStatus === 'PAID' ? '#1a7a40' : ticket.paymentStatus === 'FAILED' ? '#ef4444' : '#f59e0b' }}>
                           {ticket.paymentStatus || '—'}
                         </span>
                       </div>
@@ -174,7 +174,7 @@ const MobileTicketsTab = ({
                     <div className="ticket-actions-group">
                       {ticket.bookingStatus !== 'CANCELLED' && (
                         <button
-                          className="btn-share-ticket" style={{color: '#10b981', borderColor: '#10b981'}}
+                          className="btn-share-ticket" style={{color: '#1a7a40', borderColor: '#1a7a40'}}
                           onClick={() => downloadTicketPDF(ticket, useAuthStore.getState().user, 'KSRTC_Ticket_' + (ticket.bookingNumber || ticket.id) + '.pdf')}
                         >
                           <Download size={16} /> Download
