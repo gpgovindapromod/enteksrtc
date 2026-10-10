@@ -78,10 +78,12 @@ app.get("/", (req, res) => {
 });
 
 import adminRoutes from "./routes/adminRoutes.js";
+import stationMasterRoutes from "./routes/stationMasterRoutes.js";
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/station-master", stationMasterRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/trips", tripRoutes);
 app.use("/api/bookings", bookingRoutes);

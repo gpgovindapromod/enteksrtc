@@ -99,3 +99,12 @@ The application supports both a `SIMULATED` mode and a real `RAZORPAY` test mode
 - **RAZORPAY**: To activate, set `PAYMENT_PROVIDER=RAZORPAY` in your `backend/.env` file and provide `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, and `RAZORPAY_WEBHOOK_SECRET`. Use Razorpay **TEST MODE** credentials only. Never expose the `KEY_SECRET` to the frontend.
 
 A webhook route is available at `POST /api/bookings/webhook`. Configure it in the Razorpay Dashboard to listen to `payment.captured`, `payment.failed`, and `order.paid` events.
+
+## Roles & Dashboards
+
+The platform implements robust Role-Based Access Control (RBAC) and tailored dashboards for various user types:
+
+- **Passenger**: The default role. Can search routes, view seating layouts, book tickets, process payments, and cancel bookings.
+- **Admin**: Has global access to all users, depots, buses, and financial analytics. Can generate advanced charts and view real-time system logs.
+- **Station Master**: Securely scoped to their assigned depot. Can manage local staff (drivers and conductors), update local fleet status (active/maintenance), assign conductors to trips, and monitor trip lifecycles (Scheduled -> Open -> Boarding -> Departed -> Completed). Can view real-time passenger manifests for their depot's trips.
+- **Conductor / Driver**: (To be fully implemented) Scoped access to view their assigned upcoming trips and manifests.

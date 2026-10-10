@@ -24,7 +24,7 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
   const [selectedRole, setSelectedRole] = useState('ALL');
   
   const [busForm, setBusForm] = useState({ busNumber: '', registrationNumber: '', busType: 'Standard', capacity: 40, depotId: '' });
-  const [userForm, setUserForm] = useState({ firstName: '', lastName: '', email: '', phone: '', role: 'USER', password: '' });
+  const [userForm, setUserForm] = useState({ firstName: '', lastName: '', email: '', phone: '', role: 'USER', password: '', depotId: '' });
   const [stationForm, setStationForm] = useState({ depotCode: '', depotName: '', address: '', city: '', district: '', pincode: '', phone: '', email: '', totalPlatforms: 1 });
   
   const [localStations, setLocalStations] = useState([]);
@@ -45,18 +45,7 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
   
   const observer = useRef();
   
-  const lastBookingElementRef = useCallback(node => {
-    if (isLoadingBookings) return;
-    if (observer.current) observer.current.disconnect();
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        fetchBookings(nextCursor);
-      }
-    });
-    if (node) observer.current.observe(node);
-  }, [isLoadingBookings, hasMore, nextCursor]);
-
-  const fetchBookings = async (cursor = null) => {
+  const fetchBookings = useCallback(async (cursor = null) => {
     setIsLoadingBookings(true);
     try {
       const res = await getAdminBookings({ ...filters, cursor });
@@ -70,7 +59,17 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
     } finally {
       setIsLoadingBookings(false);
     }
-  };
+  }, [filters]);
+  const lastBookingElementRef = useCallback(node => {
+    if (isLoadingBookings) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        fetchBookings(nextCursor);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [isLoadingBookings, hasMore, nextCursor, fetchBookings]);
 
   const groupedBookings = useMemo(() => {
     const groups = {};
@@ -94,18 +93,7 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
   
   const activityObserver = useRef();
   
-  const lastActivityElementRef = useCallback(node => {
-    if (isLoadingActivity) return;
-    if (activityObserver.current) activityObserver.current.disconnect();
-    activityObserver.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMoreActivity) {
-        fetchActivity(activityCursor);
-      }
-    });
-    if (node) activityObserver.current.observe(node);
-  }, [isLoadingActivity, hasMoreActivity, activityCursor]);
-
-  const fetchActivity = async (cursor = null) => {
+  const fetchActivity = useCallback(async (cursor = null) => {
     setIsLoadingActivity(true);
     try {
       const res = await getAdminActivity({ ...filters, cursor });
@@ -119,7 +107,17 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
     } finally {
       setIsLoadingActivity(false);
     }
-  };
+  }, [filters]);
+  const lastActivityElementRef = useCallback(node => {
+    if (isLoadingActivity) return;
+    if (activityObserver.current) activityObserver.current.disconnect();
+    activityObserver.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMoreActivity) {
+        fetchActivity(activityCursor);
+      }
+    });
+    if (node) activityObserver.current.observe(node);
+  }, [isLoadingActivity, hasMoreActivity, activityCursor, fetchActivity]);
 
   // Debounce search input
   const [searchInput, setSearchInput] = useState(filters?.search || '');
@@ -138,7 +136,7 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
       fetchBookings(null);
       fetchActivity(null);
     }
-  }, [filters, activeTab]);
+  }, [filters, activeTab, fetchBookings, fetchActivity]);
 
   useEffect(() => {
     const fetchTabData = async () => {
@@ -216,7 +214,7 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
 
   const openAddUserModal = () => {
     setEditingUser(null);
-    setUserForm({ firstName: '', lastName: '', email: '', phone: '', role: 'USER', password: '' });
+    setUserForm({ firstName: '', lastName: '', email: '', phone: '', role: 'USER', password: '', depotId: '' });
     setShowUserModal(true);
   };
 
@@ -228,7 +226,8 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
       email: user.email, 
       phone: user.phone, 
       role: user.role, 
-      password: '' 
+      password: '',
+      depotId: user.depotId?._id || user.depotId || ''
     });
     setShowUserModal(true);
   };
@@ -719,8 +718,10 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
                     <span className="font-bold">{station.totalPlatforms || 0}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Station Masters</span>
-                    <span className="font-bold text-blue-500">{station.stationMasters?.length || 0}</span>
+                    <span className="text-slate-500">Station Master</span>
+                    <span className={`font-bold ${station.stationMasterId ? 'text-blue-500' : 'text-slate-400'}`}>
+                      {station.stationMasterId ? 'Assigned' : 'Unassigned'}
+                    </span>
                   </div>
                 </div>
                 <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
@@ -1043,6 +1044,19 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
                     {!editingUser && <option value="ADMIN">Admin</option>}
                   </select>
                 </div>
+                {['STATION_MASTER', 'DRIVER', 'CONDUCTOR'].includes(userForm.role) && (
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Assigned Depot</label>
+                    <select required={userForm.role === 'STATION_MASTER'} value={userForm.depotId} onChange={e => setUserForm({...userForm, depotId: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1a7a40]">
+                      <option value="">-- Select Depot --</option>
+                      {localStations.map(station => (
+                        <option key={station._id} value={station._id}>
+                          {station.depotName} ({station.depotCode})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 {!editingUser && (
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Temporary Password</label>

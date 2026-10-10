@@ -62,13 +62,36 @@ This document outlines all the current REST API endpoints configured in the back
 
 ---
 
-## 6. User & Admin (Placeholders)
-*Files exist but no specific functional routes are exported yet.*
+## 6. Station Master (`/api/station-master`)
+*Handles depot-level operations for fleet, staff, and trip management. Secured by `checkDepotAssignment`.*
 
-| Base Route | Details | Protected |
-| :--- | :--- | :--- |
-| `/api/user` | User management placeholder (`userRoutes.js`) | **Yes** |
-| `/api/admin` | Admin management placeholder (`adminRoutes.js`) | **Yes** (Admin) |
+| HTTP Method | Endpoint | Description | Protected |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/station-master/dashboard` | Get dashboard overview data for the assigned depot | **Yes** (Station Master) |
+| `GET` | `/api/station-master/staff` | List all conductors and drivers for the depot | **Yes** (Station Master) |
+| `POST` | `/api/station-master/staff` | Add a new staff member to the depot | **Yes** (Station Master) |
+| `PUT` | `/api/station-master/staff/:id` | Update staff status (Active/Suspended) | **Yes** (Station Master) |
+| `GET` | `/api/station-master/fleet` | List all buses assigned to the depot | **Yes** (Station Master) |
+| `PUT` | `/api/station-master/fleet/:id` | Update bus status (Active/Maintenance/Retired) | **Yes** (Station Master) |
+| `GET` | `/api/station-master/trips` | View today's trips for the depot | **Yes** (Station Master) |
+| `PUT` | `/api/station-master/trips/:id` | Update trip status and assign conductor | **Yes** (Station Master) |
+| `GET` | `/api/station-master/trips/:id/manifest` | Get passenger booking manifest for a trip | **Yes** (Station Master) |
+
+---
+
+## 7. Admin (`/api/admin`)
+*System-wide management of users, financial analytics, and comprehensive activity tracking.*
+
+| HTTP Method | Endpoint | Description | Protected |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/admin/users` | List all platform users with filtering | **Yes** (Admin) |
+| `POST` | `/api/admin/users` | Create new users (including Station Masters) | **Yes** (Admin) |
+| `PUT` | `/api/admin/users/:id` | Update user details, role, or status | **Yes** (Admin) |
+| `GET` | `/api/admin/fleet` | Retrieve system-wide fleet and route data | **Yes** (Admin) |
+| `GET` | `/api/admin/revenue` | Paginated revenue and payment transactions | **Yes** (Admin) |
+| `POST` | `/api/admin/revenue/refund/:id` | Process payment refunds | **Yes** (Admin) |
+| `GET` | `/api/admin/bookings` | System-wide booking records | **Yes** (Admin) |
+| `GET` | `/api/admin/activity` | Audit logs of platform activity | **Yes** (Admin) |
 
 ---
 **Note:** All endpoints marked as **Protected** require a valid JSON Web Token (JWT) either passed via cookies or `Authorization: Bearer <token>` header depending on the `authMiddleware` configuration.

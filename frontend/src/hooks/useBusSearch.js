@@ -155,7 +155,6 @@ export const useBusSearch = ({
     handleSwap,
     handleModify,
     handleCheckboxChange,
-    seatGridData: null,  // use useSeatGrid hook instead
-    availableBusTypes
+    seatGridData: null  // use useSeatGrid hook instead
   };
 };

@@ -12,18 +12,7 @@ const AdminRevenueTab = ({ filters }) => {
 
   const observer = useRef();
   
-  const lastElementRef = useCallback(node => {
-    if (loading) return;
-    if (observer.current) observer.current.disconnect();
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        fetchRevenue(cursor);
-      }
-    });
-    if (node) observer.current.observe(node);
-  }, [loading, hasMore, cursor]);
-
-  const fetchRevenue = async (currentCursor = null) => {
+  const fetchRevenue = useCallback(async (currentCursor = null) => {
     setLoading(true);
     try {
       const res = await getAdminRevenue({ ...filters, cursor: currentCursor });
@@ -38,7 +27,17 @@ const AdminRevenueTab = ({ filters }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
+  const lastElementRef = useCallback(node => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        fetchRevenue(cursor);
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, [loading, hasMore, cursor, fetchRevenue]);
 
   // Re-fetch when filters change
   useEffect(() => {
@@ -46,7 +45,7 @@ const AdminRevenueTab = ({ filters }) => {
     setCursor(null);
     setHasMore(true);
     fetchRevenue(null);
-  }, [filters.startDate, filters.endDate, filters.paymentStatus, filters.search]);
+  }, [filters.startDate, filters.endDate, filters.paymentStatus, filters.search, fetchRevenue]);
 
   const handleRefund = async (paymentId) => {
     if (!window.confirm("Are you sure you want to process a full refund for this payment?")) return;

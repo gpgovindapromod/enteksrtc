@@ -125,6 +125,7 @@ const MobileLayout = () => {
   ];
 
   const handleLogout = async () => {
+    if (!window.confirm("Are you sure you want to log out?")) return;
     try {
       await logoutUser();
     } finally {

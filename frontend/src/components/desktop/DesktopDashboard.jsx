@@ -33,7 +33,7 @@ const ROLE_COMPONENTS = {
 };
 
 const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
-  const { user } = useAuthStore();
+  const user = useAuthStore(state => state.user);
   
   const activeRole = normalizeRole(user?.role);
   const [activeTab, setActiveTab] = useState('Home');
@@ -52,6 +52,10 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
   // Sync activeTab if role changes
   useEffect(() => {
     if (activeRole === ROLES.ADMIN) setActiveTab('Overview');
+    else if (activeRole === ROLES.STATION_MASTER) setActiveTab('Overview');
+    else if (activeRole === ROLES.CONDUCTOR) setActiveTab('My Route');
+    else if (activeRole === ROLES.DRIVER) setActiveTab('My Route');
+    else if (activeRole === ROLES.SUPPORT) setActiveTab('Tickets');
     else if (activeRole === ROLES.PASSENGER) setActiveTab('Home');
     else setActiveTab('');
   }, [activeRole]);
@@ -71,10 +75,10 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
         ];
       case ROLES.STATION_MASTER:
         return [
-          { id: 'Tracking', icon: LayoutDashboard, label: 'Tracking' },
-          { id: 'Schedules', icon: Clock, label: 'Schedules' },
-          { id: 'Platforms', icon: MapPin, label: 'Platforms' },
-          { id: 'Alerts', icon: AlertTriangle, label: 'Alerts' }
+          { id: 'Overview', icon: LayoutDashboard, label: 'Overview' },
+          { id: 'Trips', icon: Route, label: 'Trips' },
+          { id: 'Staff', icon: Users, label: 'Staff' },
+          { id: 'Fleet', icon: Bus, label: 'Fleet' }
         ];
       case ROLES.CONDUCTOR:
         return [
@@ -267,7 +271,7 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
           <div className="flex-1 transition-all duration-300">
             {activeTab === 'Settings' ? (
               <SettingsView />
-            ) : activeTab === 'Home' || activeTab === 'Overview' || activeTab === 'Tracking' || activeTab === 'My Route' || activeTab === 'Tickets' || activeTab === 'Stations' || activeTab === 'Bookings' || activeTab === 'Loyalty' || activeTab === 'Support' || activeTab === 'Amenities' || activeTab === 'Fleet' || activeTab === 'Users' || activeTab === 'Revenue' ? (
+            ) : activeTab === 'Home' || activeTab === 'Overview' || activeTab === 'Tracking' || activeTab === 'My Route' || activeTab === 'Tickets' || activeTab === 'Stations' || activeTab === 'Bookings' || activeTab === 'Loyalty' || activeTab === 'Support' || activeTab === 'Amenities' || activeTab === 'Fleet' || activeTab === 'Users' || activeTab === 'Revenue' || activeTab === 'Staff' || activeTab === 'Trips' ? (
               <ActiveDashboardComponent data={dashboardData} loading={loading} user={user} activeTab={activeTab} setActiveTab={setActiveTab} filters={filters} setFilters={setFilters} />
             ) : (
               <div className="flex flex-col items-center justify-center h-[60vh] border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/50 rounded-3xl mt-12 w-full animate-fade-in-up">

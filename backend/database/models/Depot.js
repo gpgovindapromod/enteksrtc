@@ -66,6 +66,11 @@ const depotSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true
+    },
+    stationMasterId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null
     }
   },
   {

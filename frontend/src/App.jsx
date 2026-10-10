@@ -9,8 +9,11 @@ import DesktopLayout from './components/desktop/DesktopLayout';
 import MobileLayout from './components/mobile/MobileLayout';
 
 function App() {
-  const { isMobile, setIsMobile, forceMobilePreview } = useAppStore();
-  const { setAuthSession, clearAuthSession } = useAuthStore();
+  const isMobile = useAppStore(state => state.isMobile);
+  const setIsMobile = useAppStore(state => state.setIsMobile);
+  const forceMobilePreview = useAppStore(state => state.forceMobilePreview);
+  const setAuthSession = useAuthStore(state => state.setAuthSession);
+  const clearAuthSession = useAuthStore(state => state.clearAuthSession);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -49,7 +52,8 @@ function App() {
     return () => {
       isMounted = false;
     };
-  }, [setAuthSession, clearAuthSession]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (isLoading) {
     return (

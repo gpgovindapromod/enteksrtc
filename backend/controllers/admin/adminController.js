@@ -174,7 +174,10 @@ export const getAdminFleet = async (req, res, next) => {
 
 export const getAdminUsers = async (req, res, next) => {
     try {
-        const users = await User.find({ role: { $nin: ['ADMIN', 'admin'] } }).select('-password -__v').lean();
+        const users = await User.find({ role: { $nin: ['ADMIN', 'admin'] } })
+            .select('-password -__v')
+            .populate('depotId', 'depotName')
+            .lean();
         res.status(200).json({ success: true, data: users });
     } catch (error) {
         next(error);
@@ -194,11 +197,29 @@ export const addAdminFleet = async (req, res, next) => {
 
 export const addAdminUser = async (req, res, next) => {
     try {
-        const { firstName, lastName, email, phone, role, password } = req.body;
+        const { firstName, lastName, email, phone, role, password, depotId } = req.body;
+        
+        if (role === 'STATION_MASTER') {
+            if (!depotId) return res.status(400).json({ success: false, message: 'Depot is required for Station Master' });
+            
+            const existingDepot = await Depot.findById(depotId);
+            if (!existingDepot) return res.status(404).json({ success: false, message: 'Depot not found' });
+            
+            if (existingDepot.stationMasterId) {
+                return res.status(400).json({ success: false, message: 'This Depot already has an active Station Master.' });
+            }
+        }
+        
         const newUser = await User.create({ 
             firstName, lastName, fullName: `${firstName} ${lastName}`.trim(), 
-            email, phone, role, password 
+            email, phone, role, password, depotId: depotId || null
         });
+        
+        if (role === 'STATION_MASTER' && depotId) {
+            await Depot.findByIdAndUpdate(depotId, { stationMasterId: newUser._id });
+        }
+        
+        await newUser.populate('depotId', 'depotName');
         res.status(201).json({ success: true, data: newUser.toSafeJSON() });
     } catch (error) {
         next(error);
@@ -208,10 +229,25 @@ export const addAdminUser = async (req, res, next) => {
 export const editAdminUser = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { firstName, lastName, email, phone, role } = req.body;
+        const { firstName, lastName, email, phone, role, depotId } = req.body;
         
         const user = await User.findById(id);
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+        
+        const oldRole = user.role;
+        const oldDepotId = user.depotId;
+        const isBecomingSM = role === 'STATION_MASTER';
+        const isCurrentlySM = oldRole === 'STATION_MASTER';
+        
+        if (isBecomingSM && user.isActive) {
+            if (!depotId) return res.status(400).json({ success: false, message: 'Depot is required for Station Master' });
+            const existingDepot = await Depot.findById(depotId);
+            if (!existingDepot) return res.status(404).json({ success: false, message: 'Depot not found' });
+            
+            if (existingDepot.stationMasterId && existingDepot.stationMasterId.toString() !== user._id.toString()) {
+                return res.status(400).json({ success: false, message: 'This Depot already has an active Station Master.' });
+            }
+        }
         
         if (firstName) user.firstName = firstName;
         if (lastName) user.lastName = lastName;
@@ -219,8 +255,23 @@ export const editAdminUser = async (req, res, next) => {
         if (email) user.email = email;
         if (phone) user.phone = phone;
         if (role) user.role = role;
+        if (depotId !== undefined) user.depotId = depotId || null;
         
         await user.save();
+        
+        // Handle Depot Sync
+        if (isCurrentlySM && oldDepotId) {
+            // Unassign from old depot if role changed or depot changed
+            if (!isBecomingSM || (depotId && oldDepotId.toString() !== depotId.toString())) {
+                await Depot.findByIdAndUpdate(oldDepotId, { stationMasterId: null });
+            }
+        }
+        
+        if (isBecomingSM && depotId && user.isActive) {
+            await Depot.findByIdAndUpdate(depotId, { stationMasterId: user._id });
+        }
+        
+        await user.populate('depotId', 'depotName');
         res.status(200).json({ success: true, data: user.toSafeJSON() });
     } catch (error) {
         next(error);
@@ -235,6 +286,10 @@ export const deleteAdminUser = async (req, res, next) => {
         
         if (user.role === 'ADMIN' || user.role === 'admin') {
             return res.status(403).json({ success: false, message: 'Cannot delete admin users' });
+        }
+        
+        if (user.role === 'STATION_MASTER' && user.depotId) {
+            await Depot.findByIdAndUpdate(user.depotId, { stationMasterId: null });
         }
         
         await User.findByIdAndDelete(id);
@@ -255,6 +310,26 @@ export const toggleUserStatus = async (req, res, next) => {
         user.isActive = !user.isActive;
         await user.save();
         
+        if (user.role === 'STATION_MASTER' && user.depotId) {
+            if (user.isActive) {
+                // Reactivating: check if depot is already assigned
+                const depot = await Depot.findById(user.depotId);
+                if (depot && depot.stationMasterId && depot.stationMasterId.toString() !== user._id.toString()) {
+                    // Depot has another SM. Cancel reactivation!
+                    user.isActive = false;
+                    await user.save();
+                    return res.status(400).json({ success: false, message: 'Cannot reactivate. Depot already has an active Station Master.' });
+                }
+                if (depot) {
+                    await Depot.findByIdAndUpdate(user.depotId, { stationMasterId: user._id });
+                }
+            } else {
+                // Suspending: remove from depot
+                await Depot.findByIdAndUpdate(user.depotId, { stationMasterId: null });
+            }
+        }
+        
+        await user.populate('depotId', 'depotName');
         res.status(200).json({ success: true, data: user.toSafeJSON() });
     } catch (error) {
         next(error);
@@ -265,6 +340,25 @@ export const addAdminStation = async (req, res, next) => {
     try {
         const stationData = req.body;
         const newStation = await Depot.create(stationData);
+        
+        const smEmail = `sm.${newStation.depotCode.toLowerCase()}@enteksrtc.com`;
+        const existingSM = await User.findOne({ email: smEmail });
+        
+        if (!existingSM) {
+            const sm = await User.create({
+                firstName: newStation.depotName,
+                lastName: 'SM',
+                fullName: `${newStation.depotName} Station Master`,
+                email: smEmail,
+                phone: newStation.phone || '0000000000',
+                role: 'STATION_MASTER',
+                password: `master123`,
+                depotId: newStation._id
+            });
+            newStation.stationMasterId = sm._id;
+            await newStation.save();
+        }
+
         res.status(201).json({ success: true, data: newStation });
     } catch (error) {
         next(error);

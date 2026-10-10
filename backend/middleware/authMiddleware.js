@@ -37,7 +37,8 @@ export const protect = async (req, res, next) => {
         req.user = {
             id: user._id.toString(),
             role: user.role || "passenger",
-            email: user.email
+            email: user.email,
+            depotId: user.depotId ? user.depotId.toString() : null
         };
         next();
     } catch (error) {
@@ -60,4 +61,14 @@ export const requireRole = (roles) => {
     };
 };
 
-export default { protect, requireRole };
+export const checkDepotAssignment = (req, res, next) => {
+    if (!req.user || !req.user.depotId) {
+        return res.status(403).json({
+            success: false,
+            message: "Forbidden: No depot assigned to this account."
+        });
+    }
+    next();
+};
+
+export default { protect, requireRole, checkDepotAssignment };
