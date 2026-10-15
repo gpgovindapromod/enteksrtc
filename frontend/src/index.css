@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
 
 
 /* src/index.css */
@@ -47,6 +63,71 @@
   /* Transitions */
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Brand Emerald Tokens */
+  --brand-emerald-500: #10b981;
+  --brand-emerald-600: #059669;
+  --brand-emerald-700: #047857;
+  --brand-navy-900: #0b132b;
+  --brand-navy-950: #070d1e;
+}
+
+/* Ente KSRTC Brand Identity System */
+.ente-card-glass {
+  background: #ffffff;
+  border-radius: 28px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 30px 70px -15px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .ente-card-glass {
+  background: #0b132b;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 30px 80px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.ente-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.ente-btn-emerald {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  font-weight: 700;
+  box-shadow: 0 10px 24px -6px rgba(16, 185, 129, 0.4);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.ente-btn-emerald:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -4px rgba(16, 185, 129, 0.5);
+}
+
+.ente-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
 }
 
 
@@ -879,12 +960,19 @@ button:active,
 
 .mobile-bottom-sheet {
   background-color: var(--white);
-  border-radius: 28px 28px 0 0;
+  border-radius: 32px 32px 0 0;
   width: 100%;
   max-width: 480px;
-  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 20px;
-  box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 24px 20px;
+  box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .mobile-bottom-sheet {
+  background: #0b132b;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 
@@ -900,11 +988,11 @@ button:active,
 
 
 .sheet-handle {
-  width: 40px;
-  height: 4px;
-  background-color: var(--gray-light);
-  border-radius: 2px;
-  margin: 0 auto 16px auto;
+  width: 44px;
+  height: 5px;
+  background-color: rgba(148, 163, 184, 0.4);
+  border-radius: 9999px;
+  margin: 0 auto 18px auto;
 }
 
 
@@ -912,19 +1000,34 @@ button:active,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 
 .sheet-header h3 {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 
 .sheet-close {
-  background: transparent;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(148, 163, 184, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(148, 163, 184, 0.2);
   color: var(--dark);
+  transition: all 0.2s ease;
+}
+
+.sheet-close:hover {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
 }
 
 

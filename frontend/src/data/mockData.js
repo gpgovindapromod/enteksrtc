@@ -1,20 +1,114 @@
 export const GalleryImages = [
-  { id: "1", img: "./assets/images/gallery_1.webp", url: "#", height: 400 },
-  { id: "2", img: "./assets/images/gallery_2.webp", url: "#", height: 250 },
-  { id: "3", img: "./assets/images/gallery_3.webp", url: "#", height: 600 },
-  { id: "4", img: "./assets/images/gallery_4.webp", url: "#", height: 350 },
-  { id: "5", img: "./assets/images/gallery_4.webp", url: "#", height: 300 },
-  { id: "6", img: "./assets/images/gallery_6.webp", url: "#", height: 500 },
-  { id: "7", img: "./assets/images/gallery_7.webp", url: "#", height: 450 },
-  { id: "8", img: "./assets/images/gallery_8.webp", url: "#", height: 300 },
-  { id: "9", img: "./assets/images/gallery_9.webp", url: "#", height: 380 },
-  { id: "10", img: "./assets/images/gallery_10.webp", url: "#", height: 320 },
-  { id: "11", img: "./assets/images/route_munnar.webp", url: "#", height: 400 },
-  { id: "12", img: "./assets/images/dest_alleppey.webp", url: "#", height: 280 },
-  { id: "13", img: "./assets/images/dest_kochi.webp", url: "#", height: 450 },
-  { id: "14", img: "./assets/images/route_bangalore.webp", url: "#", height: 320 },
-  { id: "15", img: "./assets/images/dest_varkala.webp", url: "#", height: 380 },
-  { id: "16", img: "./assets/images/dest_wayanad.webp", url: "#", height: 500 },
+  { 
+    id: "1", 
+    img: "./assets/images/route_munnar.webp", 
+    title: "Munnar Misty Pass", 
+    location: "Idukki Hills", 
+    category: "scenic", 
+    tag: "High Ranges", 
+    featured: true, 
+    height: 400 
+  },
+  { 
+    id: "2", 
+    img: "./assets/images/dest_alleppey.webp", 
+    title: "Alleppey Backwaters", 
+    location: "Alappuzha", 
+    category: "coastal", 
+    tag: "Scenic Canal", 
+    height: 250 
+  },
+  { 
+    id: "3", 
+    img: "./assets/images/premium_hero_1.webp", 
+    title: "Swift Super Deluxe Fleet", 
+    location: "Statewide Express", 
+    category: "fleet", 
+    tag: "Premium Fleet", 
+    featured: true, 
+    height: 600 
+  },
+  { 
+    id: "4", 
+    img: "./assets/images/dest_wayanad.webp", 
+    title: "Thamarassery Churam", 
+    location: "Wayanad Ghats", 
+    category: "scenic", 
+    tag: "9 Hairpin Bends", 
+    height: 350 
+  },
+  { 
+    id: "5", 
+    img: "./assets/images/dest_kochi.webp", 
+    title: "Historic Fort Kochi Route", 
+    location: "Ernakulam", 
+    category: "culture", 
+    tag: "Heritage Coastal", 
+    height: 300 
+  },
+  { 
+    id: "6", 
+    img: "./assets/images/dest_gavi.webp", 
+    title: "Gavi Forest Safari", 
+    location: "Pathanamthitta", 
+    category: "scenic", 
+    tag: "Eco Tourism", 
+    height: 500 
+  },
+  { 
+    id: "7", 
+    img: "./assets/images/gallery_1.webp", 
+    title: "Dawn Departure", 
+    location: "Central Depot", 
+    category: "fleet", 
+    tag: "Depot Life", 
+    height: 450 
+  },
+  { 
+    id: "8", 
+    img: "./assets/images/dest_varkala.webp", 
+    title: "Varkala Cliff Coastline", 
+    location: "Varkala Cliff", 
+    category: "coastal", 
+    tag: "Arabian Sea", 
+    height: 300 
+  },
+  { 
+    id: "9", 
+    img: "./assets/images/dest_vagamon.webp", 
+    title: "Vagamon Pine Valley", 
+    location: "Kottayam - Idukki", 
+    category: "scenic", 
+    tag: "Mist & Pines", 
+    height: 380 
+  },
+  { 
+    id: "10", 
+    img: "./assets/images/gallery_6.webp", 
+    title: "Minnal Night Express", 
+    location: "Trivandrum - Kasaragod", 
+    category: "fleet", 
+    tag: "Lightning Express", 
+    height: 320 
+  },
+  { 
+    id: "11", 
+    img: "./assets/images/dest_kovalam.webp", 
+    title: "Kovalam Beach Promenade", 
+    location: "Thiruvananthapuram", 
+    category: "coastal", 
+    tag: "Southern Shores", 
+    height: 400 
+  },
+  { 
+    id: "12", 
+    img: "./assets/images/gallery_7.webp", 
+    title: "Rainy Day Ghat Journey", 
+    location: "Western Ghats", 
+    category: "scenic", 
+    tag: "Monsoon Drive", 
+    height: 280 
+  },
 ];
 export const TopRoutes = [
   { from: 'Trivandrum', to: 'Kanyakumari', img: './assets/images/route_kanyakumari.webp', duration: '2h 30m', price: '₹150' },

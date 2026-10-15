@@ -61,6 +61,10 @@ bookingSchema.index({
   holdExpiresAt: 1,
 });
 
+// Optimized compound indexes for passenger bookings & dashboard sorting
+bookingSchema.index({ passengerId: 1, createdAt: -1 });
+bookingSchema.index({ bookingStatus: 1, createdAt: -1 });
+
 // Index for webhook/verify lookup by paymentOrderId (auto-created by sparse: true on field)
 
 export default mongoose.model('Booking', bookingSchema);

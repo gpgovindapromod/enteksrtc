@@ -1,0 +1,13 @@
+# Ente KSRTC - Kerala State Road Transport Corporation
+
+> Ente KSRTC is the official digital booking, route discovery, and real-time fleet service for the Kerala State Road Transport Corporation.
+
+## Main Navigation & Pages
+- [Bus Search and Booking](http://localhost:5173/search): Search bus schedules, view seat layouts, and reserve seats between Kerala cities.
+- [Ente KSRTC Home](http://localhost:5173/): Explore top routes, premium K-Swift fleet, travel destinations, and customer reviews.
+- [User Dashboard](http://localhost:5173/dashboard): Manage active bookings, view passenger tickets, download PDF boarding passes, and view profile history.
+
+## Public Transit APIs
+- [Trips Search API](http://localhost:5011/api/trips/search): Query real-time bus schedules by origin stop, destination stop, and departure date.
+- [Stops Autocomplete API](http://localhost:5011/api/stops/search): Search bus stations, depots, and boarding points across Kerala.
+- [Active Bookings API](http://localhost:5011/api/bookings): Retrieve user reservation details and payment statuses.

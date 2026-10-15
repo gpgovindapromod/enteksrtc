@@ -436,6 +436,17 @@ const confirmBookingPayment = async ({ bookingId, transactionId, gateway }) => {
 
           const textMessage = `Ente KSRTC: Booking confirmed.\nPNR: ${booking.bookingNumber}\nRoute: ${booking.boardingSequence} to ${booking.droppingSequence}\nSeat(s): Confirmed\nThank you for travelling with Ente KSRTC.`;
 
+          // IN_APP notification
+          notificationService.dispatchNotification({
+            ...basePayload,
+            channel: 'IN_APP',
+            recipient: String(p._id),
+            title: 'Booking Confirmed',
+            subject: `Ente KSRTC Booking Confirmed - PNR ${booking.bookingNumber}`,
+            message: `Booking #${booking.bookingNumber} confirmed. Have a safe journey!`,
+            metadata: { bookingNumber: booking.bookingNumber }
+          });
+
           if (p.email) {
             notificationService.dispatchNotification({
               ...basePayload,
@@ -555,6 +566,25 @@ export const verifyPaymentHandler = async (req, res) => {
         await Booking.findByIdAndUpdate(bookingId, { paymentStatus: 'FAILED' });
       }
       console.warn('[VerifyPayment] Signature verification failed', { bookingId, orderId });
+
+      setImmediate(async () => {
+        try {
+          await notificationService.dispatchNotification({
+            userId: booking.passengerId,
+            bookingId: booking._id,
+            tripId: booking.tripId,
+            channel: 'IN_APP',
+            eventType: 'PAYMENT_FAILED',
+            recipient: String(booking.passengerId),
+            title: 'Payment Failed',
+            subject: 'Payment Verification Failed',
+            message: `Payment verification failed for booking #${booking.bookingNumber}. Please try again.`
+          });
+        } catch (e) {
+          console.warn('[VerifyPayment] Failed to send failure notification:', e.message);
+        }
+      });
+
       return res.status(402).json({ success: false, message: 'Payment verification failed' });
     }
 
@@ -579,6 +609,29 @@ export const verifyPaymentHandler = async (req, res) => {
         paidAt: new Date(),
       });
     }
+
+    // Safe confirmation notification on verify payment
+    setImmediate(async () => {
+      try {
+        const User = (await import('../../database/models/User.js')).default;
+        const p = await User.findById(booking.passengerId);
+        if (p) {
+          await notificationService.dispatchNotification({
+            userId: p._id,
+            bookingId: booking._id,
+            tripId: booking.tripId,
+            channel: 'IN_APP',
+            eventType: 'PAYMENT_SUCCESS',
+            recipient: String(p._id),
+            title: 'Payment Successful',
+            subject: `Payment Successful - PNR ${booking.bookingNumber}`,
+            message: `Payment of ₹${(booking.farePaise / 100).toFixed(2)} received. Booking #${booking.bookingNumber} confirmed!`
+          });
+        }
+      } catch (e) {
+        console.warn('[VerifyPayment] Failed to send confirmation notification:', e.message);
+      }
+    });
 
     console.info('[VerifyPayment] Booking confirmed', { bookingId, orderId, transactionId });
 

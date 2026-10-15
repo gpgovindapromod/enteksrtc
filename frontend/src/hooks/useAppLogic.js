@@ -103,7 +103,13 @@ export function useAppLogic() {
   }), []);
 
   // ── Fetch all bookings from backend ─────────────────────────────────────
+  const isFetchingBookingsRef = useRef(false);
   const fetchBookings = useCallback(async () => {
+    if (isFetchingBookingsRef.current) return;
+    // Skip redundant network fetch if bookings are already available in store
+    if (useBookingStore.getState().activeBookings?.length > 0) return;
+
+    isFetchingBookingsRef.current = true;
     try {
       const resData = await getMyBookings(1, 10);
       if (resData && resData.bookings) {
@@ -111,6 +117,8 @@ export function useAppLogic() {
       }
     } catch (e) {
       console.error('fetchBookings error:', e);
+    } finally {
+      isFetchingBookingsRef.current = false;
     }
   }, [mapBooking, setActiveBookings]);
 
@@ -145,7 +153,7 @@ export function useAppLogic() {
   const handleCheckout = async (selectedBusObj) => {
     if (selectedSeats.length === 0 || !selectedBusObj) return;
     if (isCheckingOutRef.current) return; // Prevent double-submission
-    
+
     isCheckingOutRef.current = true;
     setCheckoutError('');
     setIsCheckingOut(true);
@@ -159,8 +167,8 @@ export function useAppLogic() {
       for (const seatNo of selectedSeats) {
         const details = passengerDetails[seatNo] || {};
         const parsedAge = parseInt(details.age, 10);
-        if (isNaN(parsedAge) || parsedAge < 1 || parsedAge > 120) {
-          throw new Error(`Invalid age for seat ${seatNo}. Age must be between 1 and 120.`);
+        if (isNaN(parsedAge) || parsedAge < 1 || parsedAge > 90) {
+          throw new Error(`Invalid age for seat ${seatNo}. Age must be between 1 and 90.`);
         }
       }
 
@@ -300,7 +308,12 @@ export function useAppLogic() {
       }
       alert('Booking cancelled successfully');
     } catch (error) {
-      alert('Cancel failed: ' + (error?.message || JSON.stringify(error)));
+      const errorMsg =
+        error?.response?.data?.message ||
+        error?.message ||
+        (typeof error === 'string' ? error : null) ||
+        'Unable to cancel booking. Please try again.';
+      alert(errorMsg);
     }
   };
 

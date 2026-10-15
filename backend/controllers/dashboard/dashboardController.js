@@ -56,29 +56,81 @@ const getAdminDashboard = async (userId, filters = {}) => {
         if (endDate) dateMatch.createdAt.$lte = new Date(endDate);
     }
 
-    // 1. Total Users
-    const totalUsers = await User.countDocuments(dateMatch);
-    
-    // 2. Total Passengers (Users with role 'PASSENGER')
-    const totalPassengers = await User.countDocuments({ role: 'PASSENGER', ...dateMatch });
-
-    // 3. Active Fleet (Buses)
-    const activeBuses = await Bus.countDocuments({ status: 'ACTIVE' });
-    const totalBuses = await Bus.countDocuments();
-    const totalRoutes = await Route.countDocuments();
-    const totalScheduledTrips = await Trip.countDocuments(dateMatch);
-
-    // 4. Booking Status Breakdown & Total Bookings
-    const bookingMatch = { ...dateMatch };
-    if (bookingStatus) {
-        bookingMatch.bookingStatus = bookingStatus;
-    }
-    
-    const bookingAggregation = await Booking.aggregate([
-        { $match: bookingMatch },
-        { $group: { _id: '$bookingStatus', count: { $sum: 1 } } }
+    // Execute all independent dashboard queries in parallel to eliminate sequential roundtrips
+    const [
+        totalUsers,
+        totalPassengers,
+        activeBuses,
+        totalBuses,
+        totalRoutes,
+        totalScheduledTrips,
+        bookingAggregation,
+        revenueAggregation,
+        recentBookings,
+        totalStations,
+        stations,
+        stationMasters,
+        trendsAggregation
+    ] = await Promise.all([
+        User.countDocuments(dateMatch),
+        User.countDocuments({ role: 'PASSENGER', ...dateMatch }),
+        Bus.countDocuments({ status: 'ACTIVE' }),
+        Bus.countDocuments(),
+        Route.countDocuments(),
+        Trip.countDocuments(dateMatch),
+        Booking.aggregate([
+            { $match: bookingMatch },
+            { $group: { _id: '$bookingStatus', count: { $sum: 1 } } }
+        ]),
+        Booking.aggregate([
+            { $match: { paymentStatus: { $in: ['PAID', 'REFUND_REQUESTED', 'REFUNDED'] }, ...dateMatch } },
+            { 
+                $group: { 
+                    _id: null, 
+                    totalRevenuePaise: { $sum: { $subtract: [{ $ifNull: ['$farePaise', 0] }, { $ifNull: ['$refundAmountPaise', 0] }] } } 
+                } 
+            }
+        ]),
+        Booking.find(bookingMatch)
+            .sort({ createdAt: -1 })
+            .limit(10)
+            .populate('passengerId', 'fullName email phone')
+            .populate({
+                path: 'tripId',
+                populate: [
+                    { path: 'routeId', populate: ['sourceStop', 'destinationStop'] },
+                    { path: 'busId' }
+                ]
+            })
+            .lean(),
+        Depot.countDocuments(),
+        Depot.find().lean(),
+        User.find({ role: 'STATION_MASTER' }).select('fullName email phone depotId isActive').lean(),
+        Booking.aggregate([
+            { $match: { ...dateMatch } },
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" },
+                        month: { $month: "$createdAt" },
+                        day: { $dayOfMonth: "$createdAt" }
+                    },
+                    bookingCount: { $sum: 1 },
+                    revenuePaise: {
+                        $sum: {
+                            $cond: [
+                                { $in: ["$paymentStatus", ["PAID", "REFUND_REQUESTED", "REFUNDED"]] },
+                                { $subtract: [{ $ifNull: ["$farePaise", 0] }, { $ifNull: ["$refundAmountPaise", 0] }] },
+                                0
+                            ]
+                        }
+                    }
+                }
+            },
+            { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
+        ])
     ]);
-    
+
     let totalBookings = 0;
     let bookingStatusBreakdown = {};
     bookingAggregation.forEach(status => {
@@ -86,37 +138,7 @@ const getAdminDashboard = async (userId, filters = {}) => {
         totalBookings += status.count;
     });
 
-    // 5. Total Revenue (from authoritative payment records, subtracting refunds)
-    const revenueAggregation = await Booking.aggregate([
-        { $match: { paymentStatus: { $in: ['PAID', 'REFUND_REQUESTED', 'REFUNDED'] }, ...dateMatch } },
-        { 
-            $group: { 
-                _id: null, 
-                totalRevenuePaise: { $sum: { $subtract: ['$farePaise', '$refundAmountPaise'] } } 
-            } 
-        }
-    ]);
     const totalRevenue = revenueAggregation.length > 0 ? (revenueAggregation[0].totalRevenuePaise / 100) : 0;
-    
-    // 6. Recent Bookings (with filters)
-    const recentBookings = await Booking.find(bookingMatch)
-        .sort({ createdAt: -1 })
-        .limit(10) // Changed to 10 to feed lazy load initially, full pagination comes later
-        .populate('passengerId', 'fullName email phone')
-        .populate({
-            path: 'tripId',
-            populate: [
-                { path: 'routeId', populate: ['sourceStop', 'destinationStop'] },
-                { path: 'busId' }
-            ]
-        });
-
-    // 7. Stations (Depots)
-    const totalStations = await Depot.countDocuments();
-    const stations = await Depot.find().lean();
-    
-    // 8. Station Masters (Assigned to Depots)
-    const stationMasters = await User.find({ role: 'STATION_MASTER' }).select('fullName email phone depotId isActive').lean();
     
     const stationsData = stations.map(station => {
         const assignedMasters = stationMasters.filter(sm => String(sm.depotId) === String(station._id));
@@ -126,40 +148,13 @@ const getAdminDashboard = async (userId, filters = {}) => {
         };
     });
 
-    // 9. Chart Aggregations (Revenue and Booking trends over time)
-    // We group by day for the charts.
-    const trendsAggregation = await Booking.aggregate([
-        { $match: { ...dateMatch } },
-        {
-            $group: {
-                _id: {
-                    year: { $year: "$createdAt" },
-                    month: { $month: "$createdAt" },
-                    day: { $dayOfMonth: "$createdAt" }
-                },
-                bookingCount: { $sum: 1 },
-                revenuePaise: {
-                    $sum: {
-                        $cond: [
-                            { $in: ["$paymentStatus", ["PAID", "REFUND_REQUESTED", "REFUNDED"]] },
-                            { $subtract: ["$farePaise", "$refundAmountPaise"] },
-                            0
-                        ]
-                    }
-                }
-            }
-        },
-        { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
-    ]);
-
     const chartData = trendsAggregation.map(item => {
-        // Pad month and day with leading zero
         const month = String(item._id.month).padStart(2, '0');
         const day = String(item._id.day).padStart(2, '0');
         return {
             date: `${item._id.year}-${month}-${day}`,
             bookings: item.bookingCount,
-            revenue: item.revenuePaise / 100 // Convert to Rupees
+            revenue: item.revenuePaise / 100
         };
     });
 
@@ -198,7 +193,8 @@ const getPassengerDashboard = async (userId) => {
         })
         .populate('boardingStop')
         .populate('droppingStop')
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 })
+        .lean();
 
     const now = new Date();
     const upcomingTrips = [];

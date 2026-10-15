@@ -442,50 +442,52 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
       {/* Overview & Revenue: Top Stats Grid */}
       {['Overview', 'Revenue'].includes(activeTab) && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+          <div className="ente-card-glass p-6 hover:border-emerald-500/30 transition-all">
             <div className="flex justify-between items-start mb-4">
-              <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-[#1a7a40]">
+              <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500">
                 <TrendingUp size={24} />
               </div>
+              <span className="ente-badge-pill py-0.5 px-2 text-[10px]">Settled</span>
             </div>
-            <p className="text-3xl font-bold font-outfit text-slate-900 dark:text-white">₹{data?.totalRevenue?.toLocaleString() || 0}</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-1">Realized Revenue</p>
+            <p className="text-3xl font-black font-outfit text-slate-900 dark:text-white tracking-tight">₹{data?.totalRevenue?.toLocaleString() || 0}</p>
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Realized Revenue</p>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+          <div className="ente-card-glass p-6 hover:border-emerald-500/30 transition-all">
             <div className="flex justify-between items-start mb-4">
               <div className="w-12 h-12 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-500">
                 <Users size={24} />
               </div>
             </div>
-            <p className="text-3xl font-bold font-outfit text-slate-900 dark:text-white">
+            <p className="text-3xl font-black font-outfit text-slate-900 dark:text-white tracking-tight">
               {data?.totalUsers?.toLocaleString() || 0} 
-              <span className="text-sm font-normal text-slate-500 ml-2">({data?.totalPassengers || 0} Pax)</span>
+              <span className="text-sm font-medium text-slate-400 ml-2">({data?.totalPassengers || 0} Pax)</span>
             </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-1">Total Users</p>
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Registered Users</p>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+          <div className="ente-card-glass p-6 hover:border-emerald-500/30 transition-all">
             <div className="flex justify-between items-start mb-4">
               <div className="w-12 h-12 bg-orange-500/10 rounded-2xl flex items-center justify-center text-orange-500">
                 <Bus size={24} />
               </div>
-              <span className="w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900 shadow-sm animate-pulse"></span>
+              <span className="w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-[#0b132b] shadow-sm animate-pulse"></span>
             </div>
-            <p className="text-3xl font-bold font-outfit text-slate-900 dark:text-white">{data?.activeBuses || 0} / {data?.totalBuses || 0}</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider mt-1">Active / Total Fleet</p>
+            <p className="text-3xl font-black font-outfit text-slate-900 dark:text-white tracking-tight">{data?.activeBuses || 0} / {data?.totalBuses || 0}</p>
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Active / Total Fleet</p>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+          <div className="ente-card-glass p-6 hover:border-emerald-500/30 transition-all">
             <div className="flex justify-between items-start mb-4">
               <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500">
                 <CreditCard size={24} />
               </div>
             </div>
-            <p className="text-3xl font-bold font-outfit text-slate-900 dark:text-white">{data?.totalBookings || 0}</p>
-            <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1 flex gap-2">
-              <span className="text-[#1a7a40]">{data?.bookingStatusBreakdown?.CONFIRMED || 0} C</span>
-              <span className="text-red-500">{data?.bookingStatusBreakdown?.CANCELLED || 0} X</span>
+            <p className="text-3xl font-black font-outfit text-slate-900 dark:text-white tracking-tight">{data?.totalBookings || 0}</p>
+            <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1 flex gap-2">
+              <span className="text-emerald-500">{data?.bookingStatusBreakdown?.CONFIRMED || 0} Confirmed</span>
+              <span>&bull;</span>
+              <span className="text-red-500">{data?.bookingStatusBreakdown?.CANCELLED || 0} Cancelled</span>
             </div>
           </div>
         </div>

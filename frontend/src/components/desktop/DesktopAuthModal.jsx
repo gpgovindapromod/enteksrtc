@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, Bus, ArrowRight, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Bus, ArrowRight, Eye, EyeOff, CheckCircle, ShieldCheck, Sparkles, MapPin, Ticket } from 'lucide-react';
 import { useAuthForm } from '../../hooks/useAuthForm';
 import './DesktopAuthModal.css';
 
@@ -31,125 +31,240 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
 
   if (!show) return null;
 
+  const isSignup = authMode === 'signup';
+
   return (
-    <div className="boarding-pass-overlay" onClick={onClose}>
-      <div className="boarding-pass-wrapper animate-fade-in-up" onClick={(e) => e.stopPropagation()}>
-        <button className="bp-close" onClick={onClose}>
-          <X size={24} />
+    <div className="auth-stage-overlay" onClick={onClose}>
+      <div
+        className={`auth-card-stage ${isSignup ? 'mode-signup' : 'mode-signin'}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          className="auth-stage-close"
+          onClick={onClose}
+          aria-label="Close modal"
+        >
+          <X size={20} />
         </button>
 
-        <div className="bp-main">
-          <div className="bp-airline">
-            <Bus size={18} /> ENTE KSRTC PREMIUM
-          </div>
-          <h2 className="bp-title">
-            {authMode === 'login' ? 'Passenger Check-In' : 'New Passenger Registration'}
-          </h2>
+        {/* CONTAINER FOR SLIDING FORMS AND HERO PANEL */}
+        <div className="auth-slider-container">
 
-          <div className="bp-tabs">
-            <button className={`bp-tab ${authMode === 'login' ? 'active' : ''}`} onClick={() => setAuthMode('login')}>
-              Sign In
-            </button>
-            <button className={`bp-tab ${authMode === 'signup' ? 'active' : ''}`} onClick={() => setAuthMode('signup')}>
-              Sign Up
-            </button>
+          {/* ===================== SIGN IN FORM CONTAINER ===================== */}
+          <div className="auth-form-side sign-in-side">
+            <div className="auth-form-scroll-wrapper">
+              <div className="auth-form-content">
+                <div className="brand-badge">
+                  <Bus size={18} className="text-emerald-500 animate-pulse" />
+                  <span>Ente KSRTC Premium</span>
+                </div>
+
+                <div className="auth-title-block">
+                  <h2 className="auth-main-title">Welcome Back</h2>
+                  <p className="auth-sub-title">Sign in to manage your bookings and live tracking</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="auth-interactive-form">
+                  <div className="auth-field-group">
+                    <label className="auth-label">Email Address</label>
+                    <div className="auth-input-wrapper">
+                      <input
+                        type="email"
+                        className={`auth-input ${fieldErrors.email ? 'has-error' : ''}`}
+                        placeholder="passenger@enteksrtc.com"
+                        value={loginForm.email}
+                        onChange={(e) => {
+                          setLoginForm((prev) => ({ ...prev, email: e.target.value }));
+                          if (fieldErrors.email) validateLoginField('email', e.target.value);
+                        }}
+                        onBlur={(e) => validateLoginField('email', e.target.value)}
+                        required
+                      />
+                    </div>
+                    {fieldErrors.email && (
+                      <span className="auth-field-error">{fieldErrors.email}</span>
+                    )}
+                  </div>
+
+                  <div className="auth-field-group">
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="auth-label">Password</label>
+                      <a href="#" className="auth-link-forgot" onClick={(e) => e.preventDefault()}>
+                        Forgot password?
+                      </a>
+                    </div>
+                    <div className="auth-input-wrapper password-wrapper">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        className={`auth-input ${fieldErrors.password ? 'has-error' : ''}`}
+                        placeholder="••••••••"
+                        value={loginForm.password}
+                        onChange={(e) => {
+                          setLoginForm((prev) => ({ ...prev, password: e.target.value }));
+                          if (fieldErrors.password) validateLoginField('password', e.target.value);
+                        }}
+                        onBlur={(e) => validateLoginField('password', e.target.value)}
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="password-toggle-btn"
+                        aria-label="Toggle password visibility"
+                      >
+                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
+                    {fieldErrors.password && (
+                      <span className="auth-field-error">{fieldErrors.password}</span>
+                    )}
+                  </div>
+
+                  {authError && authMode === 'login' && (
+                    <div className="auth-alert-box error">
+                      <span>{authError}</span>
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    className="auth-btn-primary"
+                    disabled={isSubmitting}
+                  >
+                    <span>{isSubmitting ? 'Signing in...' : 'Sign In'}</span>
+                    <ArrowRight size={18} />
+                  </button>
+
+                  <div className="auth-switch-mobile-prompt">
+                    <span>Don't have an account?</span>
+                    <button
+                      type="button"
+                      onClick={() => setAuthMode('signup')}
+                      className="auth-switch-text-btn"
+                    >
+                      Sign Up
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="bp-form">
-            <div id="desktop-recaptcha-container" />
-            {authMode === 'signup' && (
-              <>
-                <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+          {/* ===================== SIGN UP FORM CONTAINER ===================== */}
+          <div className="auth-form-side sign-up-side">
+            <div className="auth-form-scroll-wrapper">
+              <div className="auth-form-content">
+                <div className="brand-badge">
+                  <Sparkles size={16} className="text-emerald-500" />
+                  <span>Create Account</span>
+                </div>
+
+                <div className="auth-title-block">
+                  <h2 className="auth-main-title">Join Ente KSRTC</h2>
+                  <p className="auth-sub-title">Register for instant ticketing and priority bookings</p>
+                </div>
+
+                <div className="signup-tabs-pill">
                   <button
                     type="button"
-                    className={`bp-subtab ${signupTab === 'mandatory' ? 'active' : ''}`}
+                    className={`signup-pill-btn ${signupTab === 'mandatory' ? 'active' : ''}`}
                     onClick={() => setSignupTab('mandatory')}
                   >
-                    Mandatory Info
+                    Required Info
                   </button>
                   <button
                     type="button"
-                    className={`bp-subtab ${signupTab === 'optional' ? 'active' : ''}`}
+                    className={`signup-pill-btn ${signupTab === 'optional' ? 'active' : ''}`}
                     onClick={() => setSignupTab('optional')}
                   >
                     Optional Info
                   </button>
                 </div>
 
-                {signupTab === 'mandatory' ? (
-                  <div className="fade-in" style={{ overflowY: 'auto', paddingRight: '8px', maxHeight: '320px' }}>
-                    <div className="bp-input-row">
-                      <div className="bp-input-group">
-                        <label className="bp-label">Name</label>
-                        <input
-                          type="text"
-                          className="bp-input"
-                          placeholder="NAME"
-                          value={signupForm.fullName}
-                          onChange={(e) => {
+                <form onSubmit={handleSubmit} className="auth-interactive-form">
+                  <div id="desktop-recaptcha-container" />
+
+                  {signupTab === 'mandatory' ? (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="col-span-2 auth-field-group">
+                          <label className="auth-label">Full Name</label>
+                          <input
+                            type="text"
+                            className="auth-input"
+                            placeholder="Enter Your Name"
+                            value={signupForm.fullName}
+                            onChange={(e) => {
                               setSignupForm((prev) => ({ ...prev, fullName: e.target.value }));
                               if (fieldErrors.signup_fullName) validateSignupField('fullName', e.target.value, signupForm);
                             }}
                             onBlur={(e) => validateSignupField('fullName', e.target.value, signupForm)}
-                          required
-                        />
-                      </div>
-                      <div className="bp-input-group">
-                        <label className="bp-label">Age</label>
-                        <input
-                          type="number"
-                          className="bp-input"
-                          placeholder="AGE"
-                          value={signupForm.age}
-                          onChange={(e) => {
+                            required
+                          />
+                          {fieldErrors.signup_fullName && (
+                            <span className="auth-field-error">{fieldErrors.signup_fullName}</span>
+                          )}
+                        </div>
+
+                        <div className="auth-field-group">
+                          <label className="auth-label">Age</label>
+                          <input
+                            type="number"
+                            className="auth-input"
+                            placeholder="Age"
+                            value={signupForm.age}
+                            onChange={(e) => {
                               setSignupForm((prev) => ({ ...prev, age: e.target.value }));
                               if (fieldErrors.signup_age) validateSignupField('age', e.target.value, signupForm);
                             }}
                             onBlur={(e) => validateSignupField('age', e.target.value, signupForm)}
-                          required
-                        />
+                            required
+                          />
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="bp-input-row">
-                      <div className="bp-input-group">
-                        <label className="bp-label">Email ID</label>
-                        <input
-                          type="email"
-                          className="bp-input"
-                          placeholder="EMAIL ID"
-                          value={signupForm.email}
-                          onChange={(e) => {
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="col-span-2 auth-field-group">
+                          <label className="auth-label">Email Address</label>
+                          <input
+                            type="email"
+                            className="auth-input"
+                            placeholder="name@domain.com"
+                            value={signupForm.email}
+                            onChange={(e) => {
                               setSignupForm((prev) => ({ ...prev, email: e.target.value }));
                               if (fieldErrors.signup_email) validateSignupField('email', e.target.value, signupForm);
                             }}
                             onBlur={(e) => validateSignupField('email', e.target.value, signupForm)}
-                          required
-                        />
-                      </div>
-                      <div className="bp-input-group">
-                        <label className="bp-label">Gender</label>
-                        <select
-                          className="bp-input bg-transparent"
-                          value={signupForm.gender}
-                          onChange={(e) => setSignupForm((prev) => ({ ...prev, gender: e.target.value }))}
-                          required
-                        >
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </div>
-                    </div>
+                            required
+                          />
+                          {fieldErrors.signup_email && (
+                            <span className="auth-field-error">{fieldErrors.signup_email}</span>
+                          )}
+                        </div>
 
-                    <div className="bp-input-row">
-                      <div className="bp-input-group" style={{ flex: 1 }}>
-                        <label className="bp-label">Mobile Number</label>
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <div className="auth-field-group">
+                          <label className="auth-label">Gender</label>
+                          <select
+                            className="auth-input bg-transparent"
+                            value={signupForm.gender}
+                            onChange={(e) => setSignupForm((prev) => ({ ...prev, gender: e.target.value }))}
+                            required
+                          >
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="auth-field-group">
+                        <label className="auth-label">Mobile Number (Phone OTP)</label>
+                        <div className="flex gap-2">
                           <input
                             type="tel"
-                            className="bp-input"
-                            placeholder="MOBILE NUMBER"
+                            className="auth-input flex-1"
+                            placeholder="+91 98765 43210"
                             value={signupForm.phone}
                             onChange={(e) => {
                               setSignupForm((prev) => ({ ...prev, phone: e.target.value }));
@@ -162,273 +277,206 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                           {!otpVerified && (
                             <button
                               type="button"
-                              className="btn-primary"
+                              className="auth-btn-action"
                               onClick={handleSendOtp}
                               disabled={sendingOtp || !signupForm.phone || otpSent}
-                              style={{ height: '42px', whiteSpace: 'nowrap' }}
                             >
                               {sendingOtp ? 'Sending...' : otpSent ? 'Sent' : 'Send OTP'}
                             </button>
                           )}
-                          {otpVerified && <CheckCircle size={20} color="var(--primary)" />}
+                          {otpVerified && (
+                            <div className="flex items-center gap-1 text-emerald-600 font-bold text-xs px-2 bg-emerald-50 dark:bg-emerald-950/60 rounded-xl">
+                              <CheckCircle size={16} /> Verified
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </div>
 
-                    {otpSent && !otpVerified && (
-                      <div className="bp-input-row fade-in">
-                        <div className="bp-input-group" style={{ flex: 1 }}>
-                          <label className="bp-label">OTP</label>
-                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      {otpSent && !otpVerified && (
+                        <div className="auth-field-group animate-fade-in-up">
+                          <label className="auth-label">Enter 6-digit OTP</label>
+                          <div className="flex gap-2">
                             <input
                               type="text"
                               inputMode="numeric"
-                              autoComplete="one-time-code"
-                              className="bp-input"
-                              placeholder="ENTER OTP"
+                              className="auth-input flex-1"
+                              placeholder="123456"
                               value={signupForm.otp}
                               onChange={(e) => {
-                              setSignupForm((prev) => ({ ...prev, otp: e.target.value.replace(/\D/g, '').slice(0, 6) }));
-                              if (fieldErrors.signup_otp) validateSignupField('otp', e.target.value.replace(/\D/g, '').slice(0, 6), signupForm);
-                            }}
-                            onBlur={(e) => validateSignupField('otp', e.target.value.replace(/\D/g, '').slice(0, 6), signupForm)}
+                                setSignupForm((prev) => ({ ...prev, otp: e.target.value.replace(/\D/g, '').slice(0, 6) }));
+                              }}
                               required
                             />
                             <button
                               type="button"
-                              className="btn-primary"
+                              className="auth-btn-action"
                               onClick={handleVerifyOtp}
                               disabled={verifyingOtp || signupForm.otp.length !== 6}
-                              style={{ height: '42px', whiteSpace: 'nowrap' }}
                             >
                               {verifyingOtp ? 'Verifying...' : 'Verify'}
                             </button>
                           </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
-
-
-                    {otpVerified && (
-                      <div className="bp-input-row fade-in">
-                        <div className="bp-input-group" style={{ position: 'relative' }}>
-                          <label className="bp-label">Password</label>
-                          <input
-                            type={showPassword ? 'text' : 'password'}
-                            className="bp-input"
-                            placeholder="PASSWORD"
-                            value={signupForm.password}
-                            onChange={(e) => {
-                              setSignupForm((prev) => ({ ...prev, password: e.target.value }));
-                              if (fieldErrors.signup_password) validateSignupField('password', e.target.value, signupForm);
-                            }}
-                            onBlur={(e) => validateSignupField('password', e.target.value, signupForm)}
-                            required
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            style={{ position: 'absolute', right: '0', bottom: '12px', color: '#94a3b8', background: 'none', border: 'none' }}
-                          >
-                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                          </button>
+                      {otpVerified && (
+                        <div className="grid grid-cols-2 gap-3 animate-fade-in-up">
+                          <div className="auth-field-group password-wrapper">
+                            <label className="auth-label">Create Password</label>
+                            <input
+                              type={showPassword ? 'text' : 'password'}
+                              className="auth-input"
+                              placeholder="••••••••"
+                              value={signupForm.password}
+                              onChange={(e) => setSignupForm((prev) => ({ ...prev, password: e.target.value }))}
+                              required
+                            />
+                          </div>
+                          <div className="auth-field-group">
+                            <label className="auth-label">Confirm Password</label>
+                            <input
+                              type={showPassword ? 'text' : 'password'}
+                              className="auth-input"
+                              placeholder="••••••••"
+                              value={signupForm.confirmPassword}
+                              onChange={(e) => setSignupForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+                              required
+                            />
+                          </div>
                         </div>
-                        <div className="bp-input-group" style={{ position: 'relative' }}>
-                          <label className="bp-label">Confirm Password</label>
-                          <input
-                            type={showPassword ? 'text' : 'password'}
-                            className="bp-input"
-                            placeholder="CONFIRM PASSWORD"
-                            value={signupForm.confirmPassword}
-                            onChange={(e) => {
-                              setSignupForm((prev) => ({ ...prev, confirmPassword: e.target.value }));
-                              if (fieldErrors.signup_confirmPassword) validateSignupField('confirmPassword', e.target.value, signupForm);
-                            }}
-                            onBlur={(e) => validateSignupField('confirmPassword', e.target.value, signupForm)}
-                            required
-                          />
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="auth-field-group">
+                          <label className="auth-label">GST Company (Optional)</label>
+                          <input type="text" className="auth-input" placeholder="Company Name" />
+                        </div>
+                        <div className="auth-field-group">
+                          <label className="auth-label">GST Number (Optional)</label>
+                          <input type="text" className="auth-input" placeholder="32AAAAA0000A1Z5" />
                         </div>
                       </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="fade-in" style={{ overflowY: 'auto', paddingRight: '8px', maxHeight: '320px' }}>
-                    <div className="bp-input-row">
-                      <div className="bp-input-group">
-                        <label className="bp-label">GST Company</label>
-                        <input type="text" className="bp-input" placeholder="GST COMPANY" />
-                      </div>
-                      <div className="bp-input-group">
-                        <label className="bp-label">GST Number</label>
-                        <input type="text" className="bp-input" placeholder="GST NUMBER" />
+
+                      <div className="auth-field-group">
+                        <label className="auth-label">Date of Birth</label>
+                        <input type="date" className="auth-input" />
                       </div>
                     </div>
+                  )}
 
-                    <div className="bp-input-row" style={{ marginBottom: '16px' }}>
-                      <div className="bp-input-group">
-                        <label className="bp-label">Date of Birth</label>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}>
-                            <option>Day</option>
-                            <option>01</option>
-                            <option>02</option>
-                          </select>
-                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}>
-                            <option>Month</option>
-                            <option>Jan</option>
-                            <option>Feb</option>
-                          </select>
-                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}>
-                            <option>Year</option>
-                            <option>2000</option>
-                            <option>1999</option>
-                          </select>
-                        </div>
-                      </div>
+                  {authError && authMode === 'signup' && (
+                    <div className="auth-alert-box error mt-2">
+                      <span>{authError}</span>
                     </div>
+                  )}
 
-                    <div className="bp-input-row">
-                      <div className="bp-input-group">
-                        <label className="bp-label">Date of Anniversary</label>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}>
-                            <option>Day</option>
-                            <option>01</option>
-                            <option>02</option>
-                          </select>
-                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}>
-                            <option>Month</option>
-                            <option>Jan</option>
-                            <option>Feb</option>
-                          </select>
-                          <select className="bp-input bg-transparent" style={{ padding: '4px 0' }}>
-                            <option>Year</option>
-                            <option>2000</option>
-                            <option>1999</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
+                  <button
+                    type="submit"
+                    className="auth-btn-primary mt-4"
+                    disabled={isSubmitting || (signupTab === 'mandatory' && !otpVerified)}
+                  >
+                    <span>{isSubmitting ? 'Registering...' : 'Create Account'}</span>
+                    <ArrowRight size={18} />
+                  </button>
 
-            {authMode === 'login' && (
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <div className="bp-input-row">
-                  <div className="bp-input-group">
-                    <label className="bp-label">Email Address</label>
-                    <input
-                      type="email"
-                      className="bp-input"
-                      placeholder="Email Address"
-                      value={loginForm.email}
-                      onChange={(e) => setLoginForm((prev) => ({ ...prev, email: e.target.value }))}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="bp-input-row" style={{ marginBottom: '16px' }}>
-                  <div className="bp-input-group" style={{ position: 'relative' }}>
-                    <label className="bp-label">Password</label>
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      className="bp-input"
-                      placeholder="Password"
-                      value={loginForm.password}
-                      onChange={(e) => {
-                              setLoginForm((prev) => ({ ...prev, password: e.target.value }));
-                              if (fieldErrors.password) validateLoginField('password', e.target.value);
-                            }}
-                            onBlur={(e) => validateLoginField('password', e.target.value)}
-                      required
-                    />
-                    {fieldErrors.password && <span className="auth-error-text" style={{color: '#ef4444', fontSize: '11px', position: 'absolute', bottom: '-18px'}}>{fieldErrors.password}</span>}
+                  <div className="auth-switch-mobile-prompt">
+                    <span>Already have an account?</span>
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      style={{ position: 'absolute', right: '0', bottom: '12px', color: '#94a3b8', background: 'none', border: 'none' }}
+                      onClick={() => setAuthMode('login')}
+                      className="auth-switch-text-btn"
                     >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      Sign In
                     </button>
                   </div>
-                </div>
+                </form>
+              </div>
+            </div>
+          </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', fontSize: '12px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94a3b8', cursor: 'pointer' }}>
-                    <input type="checkbox" aria-label="Remember me" style={{ accentColor: '#1a7a40' }} /> Remember me
-                  </label>
-                  <a href="#" style={{ color: '#1a7a40', textDecoration: 'none' }}>
-                    Forgot Password?
-                  </a>
+          {/* ===================== THE SLIDING HERO PANEL ===================== */}
+          <div className="auth-hero-slider-panel">
+            <div className="auth-hero-backdrop">
+              <img
+                src="/assets/images/premium_hero_1.webp"
+                alt="Kerala Scenic Bus Travel"
+                className="auth-hero-img"
+              />
+              <div className="auth-hero-overlay"></div>
+            </div>
+
+            {/* Content for Sign In (When on the right side) */}
+            <div className="hero-content-view hero-for-signin">
+              <div className="hero-icon-bubble">
+                <Ticket size={28} className="text-emerald-400" />
+              </div>
+              <h3 className="hero-headline">Seamless Travel Across God's Own Country</h3>
+              <p className="hero-description">
+                Experience comfort, verified seat bookings, live bus telemetry, and instant refunds with Kerala's premier transit network.
+              </p>
+
+              <div className="hero-perks-list">
+                <div className="hero-perk-item">
+                  <ShieldCheck size={18} className="text-emerald-400 shrink-0" />
+                  <span>100% Verified Secure Check-in</span>
+                </div>
+                <div className="hero-perk-item">
+                  <MapPin size={18} className="text-emerald-400 shrink-0" />
+                  <span>Over 2,400+ Daily Routes Connected</span>
                 </div>
               </div>
-            )}
 
-            {authError && (
-              <div style={{ color: '#ef4444', fontSize: '12px', marginBottom: '12px' }}>
-                {authError}
-              </div>
-            )}
-
-            <div style={{ display: 'flex', gap: '16px', marginTop: 'auto' }}>
-              <button type="submit" className="bp-button" style={{ flex: 1 }} disabled={isSubmitting}>
-                {isSubmitting ? 'Please wait...' : authMode === 'login' ? 'Sign In' : 'Create Account'}{' '}
-                {!isSubmitting && <ArrowRight size={18} className="inline ml-2" />}
-              </button>
-
-              {authMode === 'login' && (
+              <div className="hero-switch-card">
+                <span>New to Ente KSRTC?</span>
                 <button
                   type="button"
-                  className="bp-button"
-                  style={{ background: '#334155', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                  onClick={() => setAuthMode('signup')}
+                  className="hero-switch-btn"
                 >
-                  <img src="/assets/images/google_icon.svg" alt="Google" width="18" />
-                  Google
+                  Create Account
+                  <ArrowRight size={16} />
                 </button>
-              )}
-            </div>
-          </form>
-        </div>
-
-        <div className="boarding-pass-divider"></div>
-
-        <div className="bp-stub">
-          <div className="bp-stub-top">
-            <div className="bp-label">Boarding Pass</div>
-            <div className="bp-title" style={{ fontSize: '20px' }}>
-              FIRST CLASS
+              </div>
             </div>
 
-            <div className="bp-barcode"></div>
-            <div className="bp-barcode-text">KSRTC-90210-VIP</div>
+            {/* Content for Sign Up (When on the left side) */}
+            <div className="hero-content-view hero-for-signup">
+              <div className="hero-icon-bubble">
+                <Bus size={28} className="text-emerald-400" />
+              </div>
+              <h3 className="hero-headline">Your Gateway to Kerala's Scenic Routes</h3>
+              <p className="hero-description">
+                Already registered? Sign back in to access your saved boarding passes, journey history, and station updates.
+              </p>
+
+              <div className="hero-perks-list">
+                <div className="hero-perk-item">
+                  <Sparkles size={18} className="text-emerald-400 shrink-0" />
+                  <span>Exclusive Express & K-Swift Services</span>
+                </div>
+                <div className="hero-perk-item">
+                  <ShieldCheck size={18} className="text-emerald-400 shrink-0" />
+                  <span>Instant Cancellation & Automated Refunds</span>
+                </div>
+              </div>
+
+              <div className="hero-switch-card">
+                <span>Have an existing account?</span>
+                <button
+                  type="button"
+                  onClick={() => setAuthMode('login')}
+                  className="hero-switch-btn"
+                >
+                  Sign In
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+            </div>
+
           </div>
 
-          <div className="bp-flight-info">
-            <div>
-              <div className="bp-label">CLASS</div>
-              <div className="val text-[#1a7a40]">VIP</div>
-            </div>
-            <div>
-              <div className="bp-label">GATE</div>
-              <div className="val">A1</div>
-            </div>
-            <div>
-              <div className="bp-label">SEAT</div>
-              <div className="val">TBD</div>
-            </div>
-          </div>
-
-          <div>
-            <div className="bp-label text-center">Status</div>
-            <div className="font-bold text-emerald-500 text-center">
-              {authMode === 'login' ? 'AWAITING CHECK-IN' : 'PENDING REGISTRATION'}
-            </div>
-            <p className="bp-subtext">Present this ticket at the counter for seamless travel.</p>
-          </div>
         </div>
       </div>
     </div>

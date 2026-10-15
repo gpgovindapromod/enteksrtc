@@ -16,6 +16,7 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (isLocalhost ? 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
+  timeout: 8000, // 8s timeout to prevent infinite blocking on dead/slow endpoints
 });
 
 const getAuthToken = () => {

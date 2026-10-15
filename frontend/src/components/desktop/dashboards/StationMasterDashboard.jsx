@@ -1,26 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { getStationMasterDashboard, getDepotStaff, getDepotFleet, updateDepotFleet, getDepotTrips, getDepotManifest, updateDepotTrip } from '../../../services/stationMasterService';
+import { getStationMasterDashboard, getDepotStaff, addDepotStaff, updateDepotStaff, getDepotFleet, updateDepotFleet, getDepotTrips, getDepotManifest, updateDepotTrip } from '../../../services/stationMasterService';
 import { Users, Bus, Route, MapPin, CheckCircle, AlertTriangle, Play, X, User as UserIcon } from 'lucide-react';
+import { useNotifications } from '../../../hooks/useNotifications';
+import { NotificationItem } from '../../notifications/NotificationItem';
 
 const OverviewTab = ({ data }) => {
+  const { notifications, unreadCount, markOneRead } = useNotifications();
   return (
     <div className="space-y-8 animate-fade-in-up">
       {/* Header section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+          <div className="ente-badge-pill mb-2">
+            <Route size={12} />
+            <span>Depot Authority</span>
+          </div>
+          <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white tracking-tight">
             {data?.depot?.name ? `${data.depot.name} (${data.depot.code})` : 'Station Master Dashboard'}
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">
             {data?.depot?.address || 'Loading depot info...'}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-3 w-3">
+        <div className="flex items-center gap-2 ente-badge-pill">
+          <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
-          <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">System Online</span>
+          <span className="text-xs font-bold text-emerald-500">System Online</span>
         </div>
       </div>
 
@@ -28,30 +35,30 @@ const OverviewTab = ({ data }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         
         {/* Fleet */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="ente-card-glass p-6 hover:border-emerald-500/30 transition-all">
           <div className="flex justify-between items-start mb-4">
-            <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-600">
-              <span className="material-symbols-outlined text-[24px]">directions_bus</span>
+            <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500">
+              <Bus size={24} />
             </div>
-            <span className="text-xs font-bold px-2 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded-lg">
+            <span className="ente-badge-pill py-0.5 px-2 text-[10px]">
               {data?.fleet?.active || 0} Active
             </span>
           </div>
-          <p className="text-3xl font-bold font-outfit text-slate-900 dark:text-white">{data?.fleet?.total || 0}</p>
-          <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1">Total Fleet</p>
+          <p className="text-3xl font-black font-outfit text-slate-900 dark:text-white tracking-tight">{data?.fleet?.total || 0}</p>
+          <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1">Total Fleet</p>
         </div>
 
         {/* Staff */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="ente-card-glass p-6 hover:border-emerald-500/30 transition-all">
           <div className="flex justify-between items-start mb-4">
-            <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-600">
-              <span className="material-symbols-outlined text-[24px]">badge</span>
+            <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500">
+              <Users size={24} />
             </div>
           </div>
-          <p className="text-3xl font-bold font-outfit text-slate-900 dark:text-white">
+          <p className="text-3xl font-black font-outfit text-slate-900 dark:text-white tracking-tight">
             {(data?.staff?.drivers || 0) + (data?.staff?.conductors || 0)}
           </p>
-          <div className="text-xs text-slate-500 font-bold uppercase tracking-wider mt-1 flex gap-2">
+          <div className="text-xs text-slate-400 font-bold uppercase tracking-wider mt-1 flex gap-2">
             <span>{data?.staff?.drivers || 0} Drivers</span>
             <span>&bull;</span>
             <span>{data?.staff?.conductors || 0} Conductors</span>
@@ -93,6 +100,36 @@ const OverviewTab = ({ data }) => {
           </div>
         </div>
 
+      </div>
+
+      {/* Station Operations Alert Feed */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold">
+              <span className="material-symbols-outlined text-[20px]">notifications</span>
+            </div>
+            <div>
+              <h3 className="font-bold text-base text-slate-900 dark:text-white">Depot Operational Alerts</h3>
+              <p className="text-xs text-slate-400">Live seat releases, cancellations, and fleet alerts</p>
+            </div>
+          </div>
+          {unreadCount > 0 && (
+            <span className="text-xs font-bold px-2.5 py-1 bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 rounded-lg">
+              {unreadCount} unread
+            </span>
+          )}
+        </div>
+
+        <div className="divide-y divide-slate-100 dark:divide-slate-800/60 max-h-72 overflow-y-auto">
+          {notifications.length === 0 ? (
+            <div className="py-6 text-center text-sm text-slate-400">No recent alerts for this depot.</div>
+          ) : (
+            notifications.slice(0, 8).map((notif) => (
+              <NotificationItem key={notif._id} notification={notif} onMarkRead={markOneRead} />
+            ))
+          )}
+        </div>
       </div>
 
       <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-2xl border border-blue-100 dark:border-blue-900/30">

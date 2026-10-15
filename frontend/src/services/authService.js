@@ -27,9 +27,12 @@ export const loginUser = async (payload) => {
   }
 };
 
-export const getCurrentUser = async () => {
+export const getCurrentUser = async (options = {}) => {
   try {
-    const response = await apiClient.get('/api/auth/me');
+    const response = await apiClient.get('/api/auth/me', {
+      timeout: options.timeout || 5000,
+      ...options,
+    });
     return response.data;
   } catch (error) {
     createServiceError(error, 'Unable to fetch user profile.');

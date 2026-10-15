@@ -1,7 +1,8 @@
 import React from 'react';
-import { CheckCircle2, XCircle, Clock, X, Bus, MapPin, User, CreditCard, Hash, ArrowRight, Download } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, X, Bus, MapPin, User, CreditCard, Hash, ArrowRight, Download, AlertCircle } from 'lucide-react';
 import { downloadTicketPDF } from '../../utils/pdfUtils.jsx';
 import { useAuthStore } from '../../store/useAuthStore';
+import { getCancellationEligibility } from '../../utils/cancellationUtils';
 
 const statusColors = {
   CONFIRMED: { bg: 'bg-emerald-50 dark:bg-emerald-900/20', text: 'text-emerald-700 dark:text-emerald-400', dot: 'bg-emerald-500', label: '✓ Confirmed' },
@@ -22,32 +23,39 @@ const DesktopTicketsModal = ({ show, onClose, activeBookings, handleCancelBookin
 
   return (
     <div
-      className="desktop-modal-overlay fixed inset-0 z-[10000] flex justify-center items-center backdrop-blur-sm bg-black/60"
+      className="ente-modal-overlay p-4"
       onClick={onClose}
     >
       <div
-        className="desktop-modal-content bg-white dark:bg-slate-900 text-gray-900 dark:text-white rounded-3xl p-7 w-full max-w-3xl shadow-2xl max-h-[88vh] overflow-y-auto relative"
+        className="ente-card-glass text-gray-900 dark:text-white p-7 w-full max-w-3xl max-h-[88vh] overflow-y-auto relative animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100 dark:border-white/10">
           <div>
-            <h2 className="text-2xl font-extrabold m-0 text-gray-900 dark:text-white">My Boarding Passes</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{activeBookings.length} ticket(s)</p>
+            <div className="ente-badge-pill mb-2">
+              <Bus size={12} />
+              <span>Digital Manifest</span>
+            </div>
+            <h2 className="text-2xl font-black m-0 text-gray-900 dark:text-white tracking-tight">My Boarding Passes</h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">{activeBookings.length} ticket(s) issued</p>
           </div>
           <button
             onClick={onClose}
-            className="w-9 h-9 rounded-full bg-gray-100 dark:bg-slate-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
+            className="w-10 h-10 rounded-full bg-gray-100 dark:bg-slate-800/80 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-red-500 hover:text-white dark:hover:bg-red-500 dark:hover:text-white hover:border-red-500 transition-all duration-200 shadow-sm"
+            aria-label="Close Tickets Modal"
           >
-            <X size={18} className="text-gray-700 dark:text-gray-300" />
+            <X size={18} />
           </button>
         </div>
 
         {activeBookings.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#9ca3af' }}>
-            <Bus size={52} style={{ margin: '0 auto 16px', opacity: 0.4 }} />
-            <p style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 6 }}>No Tickets Found</p>
-            <p style={{ fontSize: '0.9rem' }}>Book your journey from the home screen.</p>
+          <div className="text-center py-16 px-4 text-gray-400 dark:text-gray-500">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+              <Bus size={32} />
+            </div>
+            <p className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-1">No Tickets Found</p>
+            <p className="text-sm">Book your journey across God's Own Country from the home screen.</p>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -59,19 +67,16 @@ const DesktopTicketsModal = ({ show, onClose, activeBookings, handleCancelBookin
               return (
                 <div
                   key={ticket.id}
+                  className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 bg-white dark:bg-slate-900/60 shadow-md transition-all hover:border-emerald-500/40"
                   style={{
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '16px',
-                    overflow: 'hidden',
                     opacity: isCancelled ? 0.7 : 1,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                   }}
                 >
                   {/* Status Bar */}
-                  <div className={bStatus.bg} style={{ padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: bStatus.dot === 'bg-emerald-500' ? '#1a7a40' : bStatus.dot === 'bg-amber-500' ? '#f59e0b' : '#ef4444' }} />
+                  <div className={`${bStatus.bg} px-4 py-2 flex items-center gap-2 border-b border-gray-100 dark:border-white/5`}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: bStatus.dot === 'bg-emerald-500' ? '#10b981' : bStatus.dot === 'bg-amber-500' ? '#f59e0b' : '#ef4444' }} />
                     <span className={bStatus.text} style={{ fontSize: '0.8rem', fontWeight: 700 }}>{bStatus.label}</span>
-                    <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: '#9ca3af', fontFamily: 'monospace' }}>{ticket.bookingNumber || ticket.id}</span>
+                    <span className="ml-auto text-xs text-gray-400 dark:text-gray-500 font-mono tracking-wider">{ticket.bookingNumber || ticket.id}</span>
                   </div>
 
                   {/* Main body */}
@@ -157,27 +162,49 @@ const DesktopTicketsModal = ({ show, onClose, activeBookings, handleCancelBookin
                       </div>
                     </div>
 
-                                        {/* Actions */}
-                    <div className="flex justify-end gap-2 border-t border-gray-100 dark:border-white/5 pt-4 mt-4">
-                      {!isCancelled && (
-                        <button
-                          onClick={() => {
-                            if (window.confirm('Cancel this booking?')) handleCancelBooking(ticket.id);
-                          }}
-                          className="px-4 py-1.5 border border-red-500 text-red-500 rounded-lg text-sm font-bold hover:bg-red-500 hover:text-white transition-colors"
-                        >
-                          Cancel Booking
-                        </button>
-                      )}
-                      {ticket.bookingStatus !== 'CANCELLED' && (
-                        <button
-                          onClick={() => downloadTicketPDF(ticket, useAuthStore.getState().user, 'KSRTC_Ticket_' + (ticket.bookingNumber || ticket.id) + '.pdf')}
-                          className="px-4 py-1.5 border border-emerald-500 text-emerald-500 rounded-lg text-sm font-bold hover:bg-emerald-500 hover:text-white transition-colors flex items-center gap-2"
-                        >
-                          <Download size={14} /> Download
-                        </button>
-                      )}
-                    </div>
+                    {/* Actions & Cancellation Policies */}
+                    {(() => {
+                      const eligibility = getCancellationEligibility(ticket);
+
+                      return (
+                        <div className="border-t border-gray-100 dark:border-white/10 pt-4 mt-4">
+                          {!isCancelled && !eligibility.tripStarted && !eligibility.canCancel && (
+                            <div className="mb-3 px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-[11px] flex items-center gap-2 font-medium">
+                              <AlertCircle size={14} className="shrink-0" />
+                              <span>{eligibility.message}</span>
+                            </div>
+                          )}
+
+                          <div className="flex justify-end items-center gap-3">
+                            {!isCancelled && !eligibility.tripStarted && (
+                              <button
+                                onClick={() => {
+                                  if (!eligibility.canCancel) return;
+                                  if (window.confirm('Cancel this booking?')) handleCancelBooking(ticket.id);
+                                }}
+                                disabled={!eligibility.canCancel}
+                                title={!eligibility.canCancel ? eligibility.message : 'Cancel this ticket'}
+                                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm ${
+                                  eligibility.canCancel
+                                    ? 'border border-red-500/40 text-red-500 hover:bg-red-500 hover:text-white cursor-pointer'
+                                    : 'border border-gray-300 dark:border-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed bg-gray-100/50 dark:bg-slate-800/50 opacity-60'
+                                }`}
+                              >
+                                Cancel Booking
+                              </button>
+                            )}
+                            {ticket.bookingStatus !== 'CANCELLED' && (
+                              <button
+                                onClick={() => downloadTicketPDF(ticket, useAuthStore.getState().user, 'KSRTC_Ticket_' + (ticket.bookingNumber || ticket.id) + '.pdf')}
+                                className="ente-btn-emerald px-4 py-2 text-xs font-bold flex items-center gap-2"
+                              >
+                                <Download size={14} /> Download PDF
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               );

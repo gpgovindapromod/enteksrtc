@@ -1,7 +1,8 @@
 import React from 'react';
-import { Ticket, Share2, Bus, MapPin, User, CreditCard, Hash, ArrowRight, X, Download } from 'lucide-react';
+import { Ticket, Share2, Bus, MapPin, User, CreditCard, Hash, ArrowRight, X, Download, AlertCircle } from 'lucide-react';
 import { downloadTicketPDF } from '../../utils/pdfUtils.jsx';
 import { useAuthStore } from '../../store/useAuthStore';
+import { getCancellationEligibility } from '../../utils/cancellationUtils';
 
 const statusColors = {
   CONFIRMED: { cls: 'pulsing-live', label: '● Confirmed', color: '#1a7a40' },
@@ -170,35 +171,54 @@ const MobileTicketsTab = ({
                       <span className="text-xs text-gray-500 mt-2">{t?.tapToScan || 'Tap QR to scan at boarding'}</span>
                     </div>
 
-                                        {/* Actions */}
-                    <div className="ticket-actions-group">
-                      {ticket.bookingStatus !== 'CANCELLED' && (
-                        <button
-                          className="btn-share-ticket" style={{color: '#1a7a40', borderColor: '#1a7a40'}}
-                          onClick={() => downloadTicketPDF(ticket, useAuthStore.getState().user, 'KSRTC_Ticket_' + (ticket.bookingNumber || ticket.id) + '.pdf')}
-                        >
-                          <Download size={16} /> Download
-                        </button>
-                      )}
-                      {!isCancelled && (
-                        <button
-                          className="btn-cancel-ticket"
-                          onClick={() => {
-                            if (window.confirm('Cancel this booking? Refund will be processed if applicable.')) {
-                              handleCancelBooking(ticket.id);
-                            }
-                          }}
-                        >
-                          Cancel Journey
-                        </button>
-                      )}
-                      <button
-                        className="btn-share-ticket"
-                        onClick={() => alert(`Sharing Ticket ${ticket.id} …`)}
-                      >
-                        <Share2 size={16} /> Share Pass
-                      </button>
-                    </div>
+                                        {/* Actions & Restrictions */}
+                    {(() => {
+                      const eligibility = getCancellationEligibility(ticket);
+
+                      return (
+                        <div>
+                          {!isCancelled && !eligibility.tripStarted && !eligibility.canCancel && (
+                            <div className="mb-2 p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 text-xs flex items-center gap-1.5 font-medium">
+                              <AlertCircle size={14} className="shrink-0" />
+                              <span>{eligibility.message}</span>
+                            </div>
+                          )}
+
+                          <div className="ticket-actions-group">
+                            {ticket.bookingStatus !== 'CANCELLED' && (
+                              <button
+                                className="btn-share-ticket" style={{color: '#1a7a40', borderColor: '#1a7a40'}}
+                                onClick={() => downloadTicketPDF(ticket, useAuthStore.getState().user, 'KSRTC_Ticket_' + (ticket.bookingNumber || ticket.id) + '.pdf')}
+                              >
+                                <Download size={16} /> Download
+                              </button>
+                            )}
+                            {!isCancelled && !eligibility.tripStarted && (
+                              <button
+                                className="btn-cancel-ticket"
+                                disabled={!eligibility.canCancel}
+                                title={!eligibility.canCancel ? eligibility.message : 'Cancel Journey'}
+                                style={!eligibility.canCancel ? { opacity: 0.5, cursor: 'not-allowed', borderColor: '#9ca3af', color: '#9ca3af' } : {}}
+                                onClick={() => {
+                                  if (!eligibility.canCancel) return;
+                                  if (window.confirm('Cancel this booking? Refund will be processed if applicable.')) {
+                                    handleCancelBooking(ticket.id);
+                                  }
+                                }}
+                              >
+                                Cancel Journey
+                              </button>
+                            )}
+                            <button
+                              className="btn-share-ticket"
+                              onClick={() => alert(`Sharing Ticket ${ticket.id} …`)}
+                            >
+                              <Share2 size={16} /> Share Pass
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
               </div>

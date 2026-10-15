@@ -79,6 +79,7 @@ app.get("/", (req, res) => {
 
 import adminRoutes from "./routes/adminRoutes.js";
 import stationMasterRoutes from "./routes/stationMasterRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
@@ -88,6 +89,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/trips", tripRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/stops", stopRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use(notFoundMiddleware);
 

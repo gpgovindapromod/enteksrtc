@@ -37,13 +37,27 @@ export const useBusSearch = ({
   // Fetch buses once when route/date changes
   useEffect(() => {
     const fetchBusesData = async () => {
-      if (!isSearching) return;
+      if (!isSearching) {
+        setIsLoading(false);
+        return;
+      }
+
+      const trimmedOrigin = (initialOrigin || '').trim();
+      const trimmedDestination = (initialDestination || '').trim();
+
+      if (!trimmedOrigin || !trimmedDestination) {
+        setIsLoading(false);
+        setAllBuses([]);
+        setFilteredBuses([]);
+        setAvailableBusTypes([]);
+        return;
+      }
       
       setIsLoading(true);
       try {
         const buses = await fetchBuses({
-          origin: initialOrigin,
-          destination: initialDestination,
+          origin: trimmedOrigin,
+          destination: trimmedDestination,
           date: initialJourneyDate
         });
         setAllBuses(buses);

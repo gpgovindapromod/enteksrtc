@@ -22,9 +22,15 @@ export const MOCK_BUSES = [
 import apiClient from './apiClient';
 
 export const fetchBuses = async ({ origin = '', destination = '', date = '' }) => {
+  const trimmedOrigin = (origin || '').trim();
+  const trimmedDestination = (destination || '').trim();
+  if (!trimmedOrigin || !trimmedDestination || !date) {
+    return [];
+  }
+
   try {
     const response = await apiClient.get('/api/trips/search', {
-      params: { from: origin, to: destination, date }
+      params: { from: trimmedOrigin, to: trimmedDestination, date }
     });
     
     return (response.data.trips || []).map(tripData => {

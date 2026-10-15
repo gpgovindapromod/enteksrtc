@@ -21,14 +21,12 @@ export const searchTrips = async (req, res) => {
     await materializeTripsForDate(date);
 
     console.time(`Stop Validation - ${tId}`);
-    const fromStop = await Stop.findOne({ stopName: new RegExp(`^${from}$`, 'i') }).lean();
-    const toStop = await Stop.findOne({ stopName: new RegExp(`^${to}$`, 'i') }).lean();
+    const [fromStop, toStop] = await Promise.all([
+      Stop.findOne({ stopName: new RegExp(`^${from.trim()}$`, 'i') }).select('_id stopName').lean(),
+      Stop.findOne({ stopName: new RegExp(`^${to.trim()}$`, 'i') }).select('_id stopName').lean()
+    ]);
 
     if (!fromStop || !toStop) {
-      console.log('Search Error - Invalid Stops:');
-      console.log(`Requested from: "${from}", to: "${to}"`);
-      console.log(`Found fromStop: ${fromStop ? fromStop.stopName : 'NULL'}`);
-      console.log(`Found toStop: ${toStop ? toStop.stopName : 'NULL'}`);
       console.timeEnd(`Stop Validation - ${tId}`);
       console.timeEnd(`Total Search Time - ${tId}`);
       return res.status(404).json({ success: false, message: 'Invalid stops' });
@@ -44,8 +42,8 @@ export const searchTrips = async (req, res) => {
     console.time(`Route Filtering - ${tId}`);
     // Find all routeStops for fromStop and toStop
     const [fromRouteStops, toRouteStops] = await Promise.all([
-      RouteStop.find({ stopId: fromStop._id }).lean(),
-      RouteStop.find({ stopId: toStop._id }).lean()
+      RouteStop.find({ stopId: fromStop._id }).select('routeId sequence distanceFromSource').lean(),
+      RouteStop.find({ stopId: toStop._id }).select('routeId sequence distanceFromSource').lean()
     ]);
 
     // Create a map of routeId -> sequence for fromStops

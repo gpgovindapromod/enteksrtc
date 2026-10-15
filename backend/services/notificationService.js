@@ -13,7 +13,7 @@ class NotificationService {
   }
 
   /**
-   * Safe asynchronous dispatcher. Will not throw exceptions back to the caller.
+   * Safe dispatcher for single notification. Will not throw exceptions to the caller.
    */
   async dispatchNotification(payload) {
     try {
@@ -21,26 +21,28 @@ class NotificationService {
         userId,
         bookingId,
         tripId,
-        channel,
+        channel = 'IN_APP',
         eventType,
         recipient,
+        title,
         subject,
         message,
         metadata
       } = payload;
 
-      // 1. Idempotency Check using atomic insert
-      // Mongoose sparse unique index on { bookingId, eventType, channel } handles this natively
       const notification = new Notification({
         userId,
         bookingId,
         tripId,
         channel,
         eventType,
-        recipient,
+        recipient: recipient || (userId ? String(userId) : 'system'),
+        title: title || subject || 'Notification',
         subject,
         message,
-        status: 'PENDING',
+        status: channel === 'IN_APP' ? 'SENT' : 'PENDING',
+        provider: channel === 'IN_APP' ? 'INTERNAL' : 'SIMULATED',
+        sentAt: new Date(),
         metadata
       });
 
@@ -48,24 +50,107 @@ class NotificationService {
         await notification.save();
       } catch (err) {
         if (err.code === 11000) {
-          console.log(`[NotificationService] Duplicate notification blocked (${eventType} / ${channel} for booking ${bookingId})`);
+          console.log(`[NotificationService] Duplicate notification blocked (${eventType} / ${channel} for ${recipient || userId})`);
           return null; // Successfully deduplicated
         }
         throw err;
       }
 
-      // 2. Dispatch to provider asynchronously
-      // We do not await this so it doesn't block the request if the provider is slow
-      this._processDelivery(notification).catch(err => {
-        console.error('[NotificationService] Background delivery error:', err);
-      });
+      // If channel is external (EMAIL, SMS, WHATSAPP), dispatch to provider asynchronously
+      if (channel !== 'IN_APP') {
+        this._processDelivery(notification).catch(err => {
+          console.error('[NotificationService] Background delivery error:', err);
+        });
+      }
 
       return notification;
     } catch (error) {
       console.error('[NotificationService] Dispatch error:', error.message);
-      // We swallow the error so we NEVER break the primary business transaction
+      // Swallow error so we NEVER break the primary business transaction
       return null; 
     }
+  }
+
+  /**
+   * Dispatch notifications to multiple recipients safely (e.g., all Station Masters for a depot)
+   */
+  async dispatchBulk(recipients, basePayload) {
+    if (!Array.isArray(recipients) || recipients.length === 0) return [];
+    const results = [];
+    for (const recipient of recipients) {
+      const payload = {
+        ...basePayload,
+        userId: recipient.userId || recipient._id || basePayload.userId,
+        recipient: recipient.recipient || recipient.email || recipient.phone || String(recipient.userId || recipient._id)
+      };
+      const res = await this.dispatchNotification(payload);
+      if (res) results.push(res);
+    }
+    return results;
+  }
+
+  /**
+   * Paginated list of notifications for a user
+   */
+  async getUserNotifications(userId, { page = 1, limit = 20, unreadOnly = false } = {}) {
+    const query = { userId };
+    if (unreadOnly) {
+      query.isRead = false;
+    }
+
+    const skip = (Math.max(1, parseInt(page, 10)) - 1) * Math.min(100, Math.max(1, parseInt(limit, 10)));
+    const parsedLimit = Math.min(100, Math.max(1, parseInt(limit, 10)));
+
+    const [notifications, total, unreadCount] = await Promise.all([
+      Notification.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(parsedLimit)
+        .lean(),
+      Notification.countDocuments(query),
+      Notification.countDocuments({ userId, isRead: false })
+    ]);
+
+    return {
+      notifications,
+      pagination: {
+        page: parseInt(page, 10),
+        limit: parsedLimit,
+        total,
+        totalPages: Math.ceil(total / parsedLimit) || 1
+      },
+      unreadCount
+    };
+  }
+
+  /**
+   * Get total unread count for a user
+   */
+  async getUnreadCount(userId) {
+    return await Notification.countDocuments({ userId, isRead: false });
+  }
+
+  /**
+   * Mark a single notification as read
+   */
+  async markAsRead(notificationId, userId) {
+    const notification = await Notification.findOneAndUpdate(
+      { _id: notificationId, userId },
+      { isRead: true, readAt: new Date() },
+      { new: true }
+    );
+    return notification;
+  }
+
+  /**
+   * Mark all notifications as read for a user
+   */
+  async markAllAsRead(userId) {
+    const result = await Notification.updateMany(
+      { userId, isRead: false },
+      { isRead: true, readAt: new Date() }
+    );
+    return { modifiedCount: result.modifiedCount };
   }
 
   async _processDelivery(notification) {

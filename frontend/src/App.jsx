@@ -32,15 +32,26 @@ function App() {
     let isMounted = true;
 
     const restoreSession = async () => {
+      // Check if user has an auth token stored in Zustand / localStorage
+      const token = useAuthStore.getState().token;
+      if (!token) {
+        // No token present: unauthenticated or first-time visitor.
+        // Immediately unlock the app without waiting for an unnecessary 401 network call.
+        if (isMounted) setIsLoading(false);
+        return;
+      }
+
       try {
-        const result = await getCurrentUser();
+        const result = await getCurrentUser({ timeout: 4000 });
         if (!isMounted) return;
-        setAuthSession({ user: result.user });
+        if (result?.user) {
+          setAuthSession({ user: result.user });
+        }
       } catch (error) {
         if (!isMounted) return;
+        // Clear invalid / expired session tokens on 401
         if (error.statusCode === 401) {
           clearAuthSession();
-          navigate('/login', { replace: true });
         }
       } finally {
         if (isMounted) setIsLoading(false);

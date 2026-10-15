@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Bus, MapPin, Calendar, ArrowRightLeft, Star, CreditCard, ChevronRight, Coffee, Ticket, Loader2, Download } from 'lucide-react';
+import { Bus, MapPin, Calendar, ArrowRightLeft, Star, CreditCard, ChevronRight, Coffee, Ticket, Loader2, Download, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { normalizeBooking } from '../../../utils/bookingAdapter';
 import { useBookingStore } from '../../../store/useBookingStore';
 import StopSearchAutocomplete from '../../shared/StopSearchAutocomplete';
 import { downloadTicketPDF } from '../../../utils/pdfUtils.jsx';
+import { getCancellationEligibility } from '../../../utils/cancellationUtils';
 
 import { getMyBookings, cancelBooking } from '../../../services/bookingService';
 
@@ -303,36 +304,65 @@ const PassengerDashboardWidgets = ({ data, loading, user, activeTab = 'Home', se
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-3">
-                      {trip.id && !isCancelled && (
-                        <>
-                          <button
-                            onClick={() => typeof downloadTicketPDF === 'function' ? downloadTicketPDF(trip, user, 'KSRTC_Ticket_' + (trip.bookingNumber || trip.id) + '.pdf') : console.error('downloadTicketPDF not found')}
-                            className="w-full py-4 bg-slate-900 dark:bg-slate-800 text-white rounded-xl font-bold shadow-lg shadow-slate-900/20 active:scale-95 transition-transform flex items-center justify-center gap-2"
-                          >
-                            <Download size={18} />
-                            Download PDF
-                          </button>
-                          <button
-                            onClick={async () => {
-                              if (window.confirm('Are you sure you want to cancel this ticket?')) {
-                                try {
-                                  await cancelBooking(trip._id);
-                                  alert('Booking cancelled');
-                                  await loadBookings(1, false);
-                                  setExpandedTicketId(null);
-                                } catch (error) {
-                                  alert('Cancel failed');
-                                }
-                              }
-                            }}
-                            className="w-full py-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 rounded-xl font-bold transition-colors text-sm"
-                          >
-                            Cancel Ticket
-                          </button>
-                        </>
-                      )}
-                    </div>
+                    {(() => {
+                      const eligibility = getCancellationEligibility(trip);
+
+                      return (
+                        <div className="flex flex-col gap-3">
+                          {trip.id && !isCancelled && (
+                            <>
+                              <button
+                                onClick={() => typeof downloadTicketPDF === 'function' ? downloadTicketPDF(trip, user, 'KSRTC_Ticket_' + (trip.bookingNumber || trip.id) + '.pdf') : console.error('downloadTicketPDF not found')}
+                                className="w-full py-4 bg-slate-900 dark:bg-slate-800 text-white rounded-xl font-bold shadow-lg shadow-slate-900/20 active:scale-95 transition-transform flex items-center justify-center gap-2"
+                              >
+                                <Download size={18} />
+                                Download PDF
+                              </button>
+
+                              {!eligibility.tripStarted && !eligibility.canCancel && (
+                                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 text-xs flex items-center gap-2 font-medium">
+                                  <AlertCircle size={15} className="shrink-0" />
+                                  <span>{eligibility.message}</span>
+                                </div>
+                              )}
+
+                              {!eligibility.tripStarted && (
+                                <button
+                                  disabled={!eligibility.canCancel}
+                                  title={!eligibility.canCancel ? eligibility.message : 'Cancel Ticket'}
+                                  onClick={async () => {
+                                    if (!eligibility.canCancel) return;
+                                    if (window.confirm('Are you sure you want to cancel this ticket?')) {
+                                      try {
+                                        await cancelBooking(trip._id);
+                                        alert('Booking cancelled successfully');
+                                        await loadBookings(1, false);
+                                        setExpandedTicketId(null);
+                                      } catch (error) {
+                                        const errorMsg =
+                                          error?.response?.data?.message ||
+                                          error?.message ||
+                                          (typeof error === 'string' ? error : null) ||
+                                          'Cancellation failed. Please try again.';
+                                        alert(errorMsg);
+                                        // Button remains available/restored because trip._id state is intact and not marked cancelled
+                                      }
+                                    }
+                                  }}
+                                  className={`w-full py-3 rounded-xl font-bold transition-colors text-sm ${
+                                    eligibility.canCancel
+                                      ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 cursor-pointer'
+                                      : 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-gray-500 cursor-not-allowed opacity-60'
+                                  }`}
+                                >
+                                  Cancel Ticket
+                                </button>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
 
                 </div>

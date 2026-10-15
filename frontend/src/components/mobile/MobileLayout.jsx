@@ -8,13 +8,14 @@ import { logoutUser } from '../../services/authService';
 import { useAppLogic } from '../../hooks/useAppLogic';
 
 import MobileAppHeader from './MobileAppHeader';
-import MobileLiveTracking from './MobileLiveTracking';
-import MobileTimings from './MobileTimings';
-import MobileSearchResults from './MobileSearchResults';
-import MobileTicketsTab from './MobileTicketsTab';
-import MobileDashboard from './MobileDashboard';
 import MobileHomeTab from './MobileHomeTab';
-import MobileLoginModal from './MobileLoginModal';
+
+const MobileLiveTracking = React.lazy(() => import('./MobileLiveTracking'));
+const MobileTimings = React.lazy(() => import('./MobileTimings'));
+const MobileSearchResults = React.lazy(() => import('./MobileSearchResults'));
+const MobileTicketsTab = React.lazy(() => import('./MobileTicketsTab'));
+const MobileDashboard = React.lazy(() => import('./MobileDashboard'));
+const MobileLoginModal = React.lazy(() => import('./MobileLoginModal'));
 import { Search, Compass, Ticket, User, Bus, MapPin, Calendar, Clock, CreditCard, LayoutDashboard, Users, TrendingUp, AlertTriangle, Route as RouteIcon, Star, Settings, LifeBuoy, Coffee } from 'lucide-react';
 import { GalleryImages, TopRoutes, Destinations, Testimonials, TRANSLATIONS } from '../../data/mockData';
 import { ROLES, normalizeRole } from '../../utils/roleUtils';
@@ -137,8 +138,13 @@ const MobileLayout = () => {
   return (
     <div className="mobile-app-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
       
-      <Routes>
-        <Route path="/" element={isUserLoggedIn ? <Navigate to="/profile" replace /> : (
+      <React.Suspense fallback={
+        <div className="flex-1 flex items-center justify-center py-20">
+          <div className="w-8 h-8 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin"></div>
+        </div>
+      }>
+        <Routes>
+          <Route path="/" element={isUserLoggedIn ? <Navigate to="/profile" replace /> : (
           <div className="tab-view-fadein" style={{ paddingBottom: '120px', overflowY: 'auto', flex: 1 }}>
             <MobileHomeTab
               origin={origin}
@@ -281,51 +287,60 @@ const MobileLayout = () => {
       </Routes>
 
       {/* Dynamic Modals / Bottom Sheets */}
-      <MobileLiveTracking
-        showLiveTracking={showLiveTracking}
-        setShowLiveTracking={setShowLiveTracking}
-        trackingStep={trackingStep}
-        setTrackingStep={setTrackingStep}
-        t={t}
-      />
-      <MobileTimings
-        showTimingsModal={showTimingsModal}
-        setShowTimingsModal={setShowTimingsModal}
-        t={t}
-      />
-      <MobileSearchResults
-        isSearching={isSearching}
-        setIsSearching={(val) => { if(!val) navigate('/'); else navigate('/search'); }}
-        origin={origin}
-        setOrigin={setOrigin}
-        destination={destination}
-        setDestination={setDestination}
-        journeyDate={journeyDate}
-        setJourneyDate={setJourneyDate}
-        selectedBus={selectedBus}
-        setSelectedBus={setSelectedBus}
-        selectedSeats={selectedSeats}
-        setSelectedSeats={setSelectedSeats}
-        passengerDetails={passengerDetails}
-        setPassengerDetails={setPassengerDetails}
-        isBookingSuccess={isBookingSuccess}
-        setIsBookingSuccess={setIsBookingSuccess}
-        handleCheckout={handleCheckout}
-        isCheckingOut={isCheckingOut}
-        setHasActivatedWebApp={setHasActivatedWebApp}
-        setActiveMobileTab={(tab) => navigate(tab === 'home' ? '/' : `/${tab}`)}
-        t={t}
-        isUserLoggedIn={isUserLoggedIn}
-        setShowLoginModal={setShowLoginModal}
-      />
-      <MobileLoginModal
-        showLoginModal={showLoginModal}
-        setShowLoginModal={setShowLoginModal}
-        onLoginSuccess={(user, token) => {
-          setAuthSession({ user, token });
-          navigate('/profile');
-        }}
-      />
+      {showLiveTracking && (
+        <MobileLiveTracking
+          showLiveTracking={showLiveTracking}
+          setShowLiveTracking={setShowLiveTracking}
+          trackingStep={trackingStep}
+          setTrackingStep={setTrackingStep}
+          t={t}
+        />
+      )}
+      {showTimingsModal && (
+        <MobileTimings
+          showTimingsModal={showTimingsModal}
+          setShowTimingsModal={setShowTimingsModal}
+          t={t}
+        />
+      )}
+      {isSearching && (
+        <MobileSearchResults
+          isSearching={isSearching}
+          setIsSearching={(val) => { if(!val) navigate('/'); else navigate('/search'); }}
+          origin={origin}
+          setOrigin={setOrigin}
+          destination={destination}
+          setDestination={setDestination}
+          journeyDate={journeyDate}
+          setJourneyDate={setJourneyDate}
+          selectedBus={selectedBus}
+          setSelectedBus={setSelectedBus}
+          selectedSeats={selectedSeats}
+          setSelectedSeats={setSelectedSeats}
+          passengerDetails={passengerDetails}
+          setPassengerDetails={setPassengerDetails}
+          isBookingSuccess={isBookingSuccess}
+          setIsBookingSuccess={setIsBookingSuccess}
+          handleCheckout={handleCheckout}
+          isCheckingOut={isCheckingOut}
+          setHasActivatedWebApp={setHasActivatedWebApp}
+          setActiveMobileTab={(tab) => navigate(tab === 'home' ? '/' : `/${tab}`)}
+          t={t}
+          isUserLoggedIn={isUserLoggedIn}
+          setShowLoginModal={setShowLoginModal}
+        />
+      )}
+      {showLoginModal && (
+        <MobileLoginModal
+          showLoginModal={showLoginModal}
+          setShowLoginModal={setShowLoginModal}
+          onLoginSuccess={(user, token) => {
+            setAuthSession({ user, token });
+            navigate('/profile');
+          }}
+        />
+      )}
+      </React.Suspense>
 
       {/* Sticky Persistent Mobile Bottom Navbar */}
       <nav className="mobile-bottom-navbar">

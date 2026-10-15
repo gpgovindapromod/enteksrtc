@@ -71,7 +71,17 @@ export const useSeatGrid = (selectedBus) => {
 
     fetchSeats();
 
-    return () => { cancelled = true; };
+    // Revalidate seats every 10 seconds while viewing the bus seat grid
+    const intervalId = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        fetchSeats();
+      }
+    }, 10000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(intervalId);
+    };
   }, [selectedBus]);
 
   return { seatGridData, isLoadingSeats, bookedSeats };

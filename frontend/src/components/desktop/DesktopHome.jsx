@@ -128,7 +128,10 @@ const DesktopHome = () => {
               dashGap={2}
               specks={15}
               color="#ffffff"
-              accentColor="#ffffff"
+              accentColor="#10b981"
+              selection={true}
+              labels={true}
+              sweep={true}
             />
           </div>
 

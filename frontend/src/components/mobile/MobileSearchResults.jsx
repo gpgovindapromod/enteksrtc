@@ -50,16 +50,16 @@ const MobileSearchResults = ({
   const [fieldErrors, setFieldErrors] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
   
+  const effectiveOrigin = searchParams.get('from') || origin;
+  const effectiveDestination = searchParams.get('to') || destination;
+  const effectiveDate = searchParams.get('date') || journeyDate;
+
   React.useEffect(() => {
-    const fromParam = searchParams.get('from');
-    const toParam = searchParams.get('to');
-    const dateParam = searchParams.get('date');
-    
-    if (fromParam && fromParam !== origin) setOrigin(fromParam);
-    if (toParam && toParam !== destination) setDestination(toParam);
-    if (dateParam && dateParam !== journeyDate) setJourneyDate(dateParam);
+    if (effectiveOrigin && effectiveOrigin !== origin) setOrigin(effectiveOrigin);
+    if (effectiveDestination && effectiveDestination !== destination) setDestination(effectiveDestination);
+    if (effectiveDate && effectiveDate !== journeyDate) setJourneyDate(effectiveDate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams.toString()]);
+  }, [effectiveOrigin, effectiveDestination, effectiveDate]);
 
   const { theme } = useTheme();
   
@@ -77,9 +77,9 @@ const MobileSearchResults = ({
     seatGridData,
     availableBusTypes
   } = useBusSearch({
-    initialOrigin: origin,
-    initialDestination: destination,
-    initialJourneyDate: journeyDate,
+    initialOrigin: effectiveOrigin,
+    initialDestination: effectiveDestination,
+    initialJourneyDate: effectiveDate,
     setOrigin,
     setDestination,
     setJourneyDate,
@@ -205,7 +205,7 @@ const MobileSearchResults = ({
                             <Clock size={14} /> On Time
                           </div>
                         </div>
-                        <span className="text-[10px] uppercase tracking-widest font-black text-gray-400 dark:text-gray-500">{bus.brand}</span>
+                        <span className="text-[10px] uppercase tracking-widest font-bold text-slate-600 dark:text-slate-300">{bus.brand}</span>
                       </div>
                       
                       <div className="mb-4">
@@ -217,11 +217,11 @@ const MobileSearchResults = ({
                       <div className="flex items-center gap-4 py-2 mb-4">
                         <div className="text-center shrink-0">
                           <div className="text-xl font-bold font-outfit text-gray-900 dark:text-white">{bus.departure}</div>
-                          <div className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest max-w-[80px] truncate mt-1">{origin || 'Origin'}</div>
+                          <div className="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest max-w-[80px] truncate mt-1">{origin || 'Origin'}</div>
                         </div>
 
                         <div className="flex-1 flex flex-col items-center px-2">
-                          <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 mb-2 bg-gray-100 dark:bg-white/10 px-2 py-1 rounded-full">{bus.duration}</span>
+                          <span className="text-[10px] font-bold text-slate-700 dark:text-slate-200 mb-2 bg-slate-200 dark:bg-white/15 px-2.5 py-1 rounded-full">{bus.duration}</span>
                           <div className="w-full h-px bg-gray-300 dark:bg-white/20 relative">
                             <div className="absolute top-1/2 left-0 -translate-y-1/2 w-2 h-2 rounded-full border-2 border-gray-400 dark:border-white/40 bg-white dark:bg-slate-900"></div>
                             <div className="absolute top-1/2 right-0 -translate-y-1/2 w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
@@ -231,19 +231,19 @@ const MobileSearchResults = ({
 
                         <div className="text-center shrink-0">
                           <div className="text-xl font-bold font-outfit text-gray-900 dark:text-white">{bus.arrival}</div>
-                          <div className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest max-w-[80px] truncate mt-1">{destination || 'Destination'}</div>
+                          <div className="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest max-w-[80px] truncate mt-1">{destination || 'Destination'}</div>
                         </div>
                       </div>
                       
                       <div className="flex justify-between items-end pt-4 border-t border-gray-100 dark:border-white/10">
                         <div className="flex flex-col gap-1">
-                          <span className="text-[10px] uppercase tracking-widest font-black text-gray-400 dark:text-gray-500">Starting From</span>
+                          <span className="text-[10px] uppercase tracking-widest font-bold text-slate-600 dark:text-slate-300">Starting From</span>
                           <span className="text-2xl font-black font-outfit text-emerald-500">₹{bus.fare}</span>
                         </div>
                         <div className="flex flex-col items-end gap-2">
                           <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 px-2 py-1 bg-gray-100 dark:bg-white/5 rounded-full">18 Seats left</span>
                           <button 
-                            className="bg-emerald-500 text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-lg shadow-emerald-500/20 active:scale-95 transition-transform"
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow-lg shadow-emerald-600/20 active:scale-95 transition-transform"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleBusSelection(bus);

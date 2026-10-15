@@ -268,7 +268,63 @@ export const updateDepotTrip = async (req, res, next) => {
         }
 
         await trip.save();
-        
+
+        // ── Safe Asynchronous Notification Dispatch ──────────────────────
+        setImmediate(async () => {
+          try {
+            const { notificationService } = await import('../../services/notificationService.js');
+            const Booking = (await import('../../database/models/Booking.js')).default;
+            
+            // If trip is CANCELLED, notify all confirmed passengers and conductor
+            if (status === 'CANCELLED') {
+              const confirmedBookings = await Booking.find({ tripId: trip._id, bookingStatus: 'CONFIRMED' });
+              for (const b of confirmedBookings) {
+                await notificationService.dispatchNotification({
+                  userId: b.passengerId,
+                  bookingId: b._id,
+                  tripId: trip._id,
+                  channel: 'IN_APP',
+                  eventType: 'TRIP_CANCELLED',
+                  recipient: String(b.passengerId),
+                  title: 'Trip Cancelled',
+                  subject: 'Trip Cancelled by Station Master',
+                  message: `Your trip (Booking #${b.bookingNumber}) has been cancelled by station operations. Full refund processing initiated.`,
+                  metadata: { tripId: trip._id, bookingNumber: b.bookingNumber }
+                });
+              }
+
+              if (trip.conductorId) {
+                await notificationService.dispatchNotification({
+                  userId: trip.conductorId,
+                  tripId: trip._id,
+                  channel: 'IN_APP',
+                  eventType: 'TRIP_CANCELLED',
+                  recipient: String(trip.conductorId),
+                  title: 'Assigned Trip Cancelled',
+                  subject: 'Assigned Trip Cancelled',
+                  message: 'Your assigned trip has been cancelled by the Station Master.',
+                  metadata: { tripId: trip._id }
+                });
+              }
+            } else if (conductorId) {
+              // Conductor assigned notification
+              await notificationService.dispatchNotification({
+                userId: conductorId,
+                tripId: trip._id,
+                channel: 'IN_APP',
+                eventType: 'TIMETABLE_CHANGED',
+                recipient: String(conductorId),
+                title: 'New Trip Assignment',
+                subject: 'Trip Assigned',
+                message: 'You have been assigned to a trip by the Station Master.',
+                metadata: { tripId: trip._id }
+              });
+            }
+          } catch (e) {
+            console.error('[StationMaster] Trip notification error:', e.message);
+          }
+        });
+
         const updatedTrip = await Trip.findById(tripId)
             .populate('routeId', 'routeName routeNumber')
             .populate('busId', 'busNumber registrationNumber')

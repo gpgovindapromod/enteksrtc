@@ -17,13 +17,24 @@ export const getUserBookings = async (req, res) => {
       .populate('boardingStop droppingStop')
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
-    const results = [];
-    for (const b of bookings) {
-      const seats = await BookingSeat.find({ bookingId: b._id });
-      results.push({ ...b.toObject(), seats });
+    const bookingIds = bookings.map(b => b._id);
+    let seatsByBooking = new Map();
+    if (bookingIds.length > 0) {
+      const allSeats = await BookingSeat.find({ bookingId: { $in: bookingIds } }).lean();
+      allSeats.forEach(seat => {
+        const bIdStr = seat.bookingId.toString();
+        if (!seatsByBooking.has(bIdStr)) seatsByBooking.set(bIdStr, []);
+        seatsByBooking.get(bIdStr).push(seat);
+      });
     }
+
+    const results = bookings.map(b => ({
+      ...b,
+      seats: seatsByBooking.get(b._id.toString()) || []
+    }));
 
     return res.json({ 
       success: true, 

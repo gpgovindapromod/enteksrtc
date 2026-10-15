@@ -8,11 +8,12 @@ import { useAppLogic } from '../../hooks/useAppLogic';
 import { logoutUser } from '../../services/authService';
 
 import DesktopHome from './DesktopHome';
-import DesktopSearchResults from './DesktopSearchResults';
-import DesktopAuthModal from './DesktopAuthModal';
-import DesktopDashboard from './DesktopDashboard';
-import DesktopTicketsModal from './DesktopTicketsModal';
 import { TRANSLATIONS } from '../../data/mockData';
+
+const DesktopSearchResults = React.lazy(() => import('./DesktopSearchResults'));
+const DesktopAuthModal = React.lazy(() => import('./DesktopAuthModal'));
+const DesktopDashboard = React.lazy(() => import('./DesktopDashboard'));
+const DesktopTicketsModal = React.lazy(() => import('./DesktopTicketsModal'));
 
 const DesktopLayout = () => {
   const navigate = useNavigate();
@@ -50,64 +51,74 @@ const DesktopLayout = () => {
 
   return (
     <>
-      <Routes>
-        <Route path="/" element={isUserLoggedIn ? <Navigate to="/dashboard" replace /> : <DesktopHome />} />
-        <Route path="/login" element={isUserLoggedIn ? <Navigate to="/dashboard" replace /> : <Navigate to="/" replace />} />
-        <Route path="/register" element={isUserLoggedIn ? <Navigate to="/dashboard" replace /> : <Navigate to="/" replace />} />
-        
-        <Route path="/search" element={
-          <DesktopSearchResults
-            onBack={() => navigate(isUserLoggedIn ? '/dashboard' : '/')}
-            theme={theme}
-            toggleTheme={toggleTheme}
-            origin={origin}
-            setOrigin={setOrigin}
-            destination={destination}
-            setDestination={setDestination}
-            journeyDate={journeyDate}
-            setJourneyDate={setJourneyDate}
-            selectedBus={selectedBus}
-            setSelectedBus={setSelectedBus}
-            selectedSeats={selectedSeats}
-            setSelectedSeats={setSelectedSeats}
-            passengerDetails={passengerDetails}
-            setPassengerDetails={setPassengerDetails}
-            isBookingSuccess={isBookingSuccess}
-            setIsBookingSuccess={setIsBookingSuccess}
-            handleCheckout={handleCheckout}
-            isCheckingOut={isCheckingOut}
-            setShowDesktopTicketsModal={setShowDesktopTicketsModal}
-            t={t}
-            isUserLoggedIn={isUserLoggedIn}
-            setShowLoginModal={setShowLoginModal}
+      <React.Suspense fallback={
+        <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin"></div>
+        </div>
+      }>
+        <Routes>
+          <Route path="/" element={isUserLoggedIn ? <Navigate to="/dashboard" replace /> : <DesktopHome />} />
+          <Route path="/login" element={isUserLoggedIn ? <Navigate to="/dashboard" replace /> : <Navigate to="/" replace />} />
+          <Route path="/register" element={isUserLoggedIn ? <Navigate to="/dashboard" replace /> : <Navigate to="/" replace />} />
+          
+          <Route path="/search" element={
+            <DesktopSearchResults
+              onBack={() => navigate(isUserLoggedIn ? '/dashboard' : '/')}
+              theme={theme}
+              toggleTheme={toggleTheme}
+              origin={origin}
+              setOrigin={setOrigin}
+              destination={destination}
+              setDestination={setDestination}
+              journeyDate={journeyDate}
+              setJourneyDate={setJourneyDate}
+              selectedBus={selectedBus}
+              setSelectedBus={setSelectedBus}
+              selectedSeats={selectedSeats}
+              setSelectedSeats={setSelectedSeats}
+              passengerDetails={passengerDetails}
+              setPassengerDetails={setPassengerDetails}
+              isBookingSuccess={isBookingSuccess}
+              setIsBookingSuccess={setIsBookingSuccess}
+              handleCheckout={handleCheckout}
+              isCheckingOut={isCheckingOut}
+              setShowDesktopTicketsModal={setShowDesktopTicketsModal}
+              t={t}
+              isUserLoggedIn={isUserLoggedIn}
+              setShowLoginModal={setShowLoginModal}
+            />
+          } />
+
+          <Route path="/dashboard" element={
+            isUserLoggedIn ? (
+              <div style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 99999, overflowY: 'auto', backgroundColor: 'var(--bg-color)' }}>
+              <DesktopDashboard theme={theme} toggleTheme={toggleTheme} onLogout={handleLogout} />
+              </div>
+            ) : (
+              <Navigate to="/" replace />
+            )
+          } />
+        </Routes>
+
+        {showLoginModal && (
+          <DesktopAuthModal
+            show={showLoginModal}
+            onClose={() => setShowLoginModal(false)}
+            onLoginSuccess={(user, token) => {
+              setAuthSession({ user, token });
+              navigate('/dashboard');
+            }}
           />
-        } />
-
-        <Route path="/dashboard" element={
-          isUserLoggedIn ? (
-            <div style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 99999, overflowY: 'auto', backgroundColor: 'var(--bg-color)' }}>
-            <DesktopDashboard theme={theme} toggleTheme={toggleTheme} onLogout={handleLogout} />
-            </div>
-          ) : (
-            <Navigate to="/" replace />
-          )
-        } />
-      </Routes>
-
-      <DesktopAuthModal
-        show={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        onLoginSuccess={(user, token) => {
-          setAuthSession({ user, token });
-          navigate('/dashboard');
-        }}
-      />
-      <DesktopTicketsModal
-        show={showDesktopTicketsModal}
-        onClose={() => setShowDesktopTicketsModal(false)}
-        activeBookings={activeBookings}
-        handleCancelBooking={handleCancelBooking}
-      />
+        )}
+        {showDesktopTicketsModal && (
+          <DesktopTicketsModal
+            show={showDesktopTicketsModal}
+            onClose={() => setShowDesktopTicketsModal(false)}
+            activeBookings={activeBookings}
+            handleCancelBooking={handleCancelBooking}
+          />
+        )}
+      </React.Suspense>
     </>
   );
 };

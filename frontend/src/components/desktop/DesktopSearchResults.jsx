@@ -50,16 +50,16 @@ const DesktopSearchResults = ({
   const [fieldErrors, setFieldErrors] = useState({});
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const effectiveOrigin = searchParams.get('from') || origin;
+  const effectiveDestination = searchParams.get('to') || destination;
+  const effectiveDate = searchParams.get('date') || journeyDate;
+
   useEffect(() => {
-    const fromParam = searchParams.get('from');
-    const toParam = searchParams.get('to');
-    const dateParam = searchParams.get('date');
-    
-    if (fromParam && fromParam !== origin) setOrigin(fromParam);
-    if (toParam && toParam !== destination) setDestination(toParam);
-    if (dateParam && dateParam !== journeyDate) setJourneyDate(dateParam);
+    if (effectiveOrigin && effectiveOrigin !== origin) setOrigin(effectiveOrigin);
+    if (effectiveDestination && effectiveDestination !== destination) setDestination(effectiveDestination);
+    if (effectiveDate && effectiveDate !== journeyDate) setJourneyDate(effectiveDate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams.toString()]);
+  }, [effectiveOrigin, effectiveDestination, effectiveDate]);
 
   const {
     isLoading,
@@ -84,9 +84,9 @@ const DesktopSearchResults = ({
     seatGridData,
     availableBusTypes
   } = useBusSearch({
-    initialOrigin: origin,
-    initialDestination: destination,
-    initialJourneyDate: journeyDate,
+    initialOrigin: effectiveOrigin,
+    initialDestination: effectiveDestination,
+    initialJourneyDate: effectiveDate,
     setOrigin,
     setDestination,
     setJourneyDate,
@@ -215,7 +215,7 @@ const DesktopSearchResults = ({
             <div className="space-y-8">
               {/* Departure Time */}
               <div>
-                <h3 className="text-sm font-bold text-gray-500 dark:text-white/50 mb-4 uppercase tracking-wider">Departure Time</h3>
+                <h2 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-4 uppercase tracking-wider">Departure Time</h2>
                 <div className="grid grid-cols-2 gap-2">
                   {['Before 6 AM', '6 AM to 12 PM', '12 PM to 6 PM', 'After 6 PM'].map((time) => (
                     <button
@@ -233,9 +233,18 @@ const DesktopSearchResults = ({
               </div>
 
               {/* Bus Type */}
-              {availableBusTypes && availableBusTypes.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-bold text-gray-500 dark:text-white/50 mb-4 uppercase tracking-wider">Bus Type</h3>
+              <div>
+                <h2 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-4 uppercase tracking-wider">Bus Type</h2>
+                {isLoading ? (
+                  <div className="space-y-3">
+                    {[1, 2, 3, 4].map((item) => (
+                      <div key={item} className="flex items-center gap-3">
+                        <div className="w-4 h-4 rounded bg-gray-200 dark:bg-white/10 animate-pulse"></div>
+                        <div className="h-4 w-28 rounded bg-gray-200 dark:bg-white/10 animate-pulse"></div>
+                      </div>
+                    ))}
+                  </div>
+                ) : availableBusTypes && availableBusTypes.length > 0 ? (
                   <div className="space-y-3">
                     {availableBusTypes.map((type) => (
                       <label key={type} className="flex items-center gap-3 cursor-pointer group">
@@ -249,13 +258,22 @@ const DesktopSearchResults = ({
                       </label>
                     ))}
                   </div>
-                </div>
-              )}
+                ) : (
+                  <p className="text-xs text-gray-500 dark:text-gray-400">All available types shown</p>
+                )}
+              </div>
             </div>
 
             {/* Promo Card */}
             <div className="mt-8 relative rounded-2xl overflow-hidden group cursor-pointer aspect-video lg:aspect-square shadow-lg">
-              <img src="/assets/images/premium_hero_1.webp" alt="Explore Fleet" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <img
+                src="/assets/images/premium_hero_1.webp"
+                alt="Explore Fleet"
+                width="400"
+                height="400"
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex items-end p-5">
                 <p className="font-bold text-sm text-white drop-shadow-md">Explore K-Swift Fleet</p>
               </div>
@@ -275,9 +293,11 @@ const DesktopSearchResults = ({
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-gray-500 dark:text-white/50">Sort by:</span>
+              <label htmlFor="bus-sort-select" className="text-sm font-bold text-gray-700 dark:text-gray-300">Sort by:</label>
               <div className="relative">
                 <select
+                  id="bus-sort-select"
+                  aria-label="Sort buses by"
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="appearance-none bg-gray-50 dark:bg-white/10 border border-gray-200 dark:border-white/10 rounded-xl text-sm font-bold text-gray-800 dark:text-white py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
@@ -465,7 +485,7 @@ const DesktopSearchResults = ({
                     </div>
 
                     <div className="flex-1 flex flex-col items-center px-4">
-                      <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500 mb-2 bg-gray-100 dark:bg-white/10 px-2 py-1 rounded-full">{bus.duration}</span>
+                      <span className="text-[10px] font-bold text-slate-700 dark:text-slate-200 mb-2 bg-slate-200 dark:bg-white/15 px-2.5 py-1 rounded-full">{bus.duration}</span>
                       <div className="w-full h-px bg-gray-300 dark:bg-white/20 relative">
                         <div className="absolute top-1/2 left-0 -translate-y-1/2 w-2 h-2 rounded-full border-2 border-gray-400 dark:border-white/40 bg-white dark:bg-slate-900"></div>
                         <div className="absolute top-1/2 right-0 -translate-y-1/2 w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
@@ -475,20 +495,20 @@ const DesktopSearchResults = ({
 
                     <div className="text-center shrink-0">
                       <div className="text-2xl font-bold font-outfit text-gray-900 dark:text-white">{bus.arrival}</div>
-                      <div className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest max-w-[100px] truncate mt-1">{destination || 'Destination'}</div>
+                      <div className="text-[10px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-widest max-w-[100px] truncate mt-1">{destination || 'Destination'}</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Right Section: Price & CTA */}
                 <div className="w-full md:w-[240px] md:border-l border-gray-200 dark:border-white/10 md:ml-8 md:pl-8 mt-6 md:mt-0 flex flex-col justify-center items-center md:items-end gap-1">
-                  <p className="text-[10px] uppercase tracking-widest font-black text-gray-400 dark:text-gray-500">Starting From</p>
+                  <p className="text-[10px] uppercase tracking-widest font-bold text-slate-600 dark:text-slate-300">Starting From</p>
                   <div className="text-4xl font-black font-outfit text-emerald-500 mb-1">
                     ₹{bus.fare.toLocaleString()}
                   </div>
                   <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mb-6 px-3 py-1 bg-gray-100 dark:bg-white/5 rounded-full">18 Seats left</p>
 
-                  <button onClick={() => handleBusSelection(bus)} className="w-full bg-emerald-500 text-white font-bold text-sm py-4 px-6 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-emerald-500/20">
+                  <button onClick={() => handleBusSelection(bus)} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm py-4 px-6 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-emerald-600/25">
                     Book Tickets
                   </button>
                 </div>
