@@ -91,8 +91,8 @@ const DesktopLayout = () => {
 
           <Route path="/dashboard" element={
             isUserLoggedIn ? (
-              <div style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 99999, overflowY: 'auto', backgroundColor: 'var(--bg-color)' }}>
-              <DesktopDashboard theme={theme} toggleTheme={toggleTheme} onLogout={handleLogout} />
+              <div className={`w-screen h-screen fixed top-0 left-0 z-[99999] overflow-y-auto ${theme === 'dark' ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`}>
+                <DesktopDashboard theme={theme} toggleTheme={toggleTheme} onLogout={handleLogout} />
               </div>
             ) : (
               <Navigate to="/" replace />

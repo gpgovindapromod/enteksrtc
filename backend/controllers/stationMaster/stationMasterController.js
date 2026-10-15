@@ -176,6 +176,7 @@ export const getDepotTrips = async (req, res, next) => {
             .populate('routeId', 'routeName routeNumber')
             .populate('busId', 'busNumber registrationNumber')
             .populate('conductorId', 'firstName lastName phone')
+            .populate('driverId', 'firstName lastName phone')
             .sort({ departureDate: -1 })
             .limit(100);
             
@@ -214,7 +215,7 @@ export const updateDepotTrip = async (req, res, next) => {
     try {
         const depotId = req.user.depotId;
         const tripId = req.params.id;
-        const { status, conductorId } = req.body;
+        const { status, conductorId, driverId } = req.body;
 
         const trip = await Trip.findById(tripId).populate('busId');
         if (!trip) return res.status(404).json({ success: false, message: 'Trip not found' });
@@ -241,10 +242,27 @@ export const updateDepotTrip = async (req, res, next) => {
             trip.conductorId = conductorId;
         }
 
+        if (driverId) {
+            const driver = await User.findOne({ _id: driverId, depotId, role: 'DRIVER', isActive: true });
+            if (!driver) {
+                return res.status(400).json({ success: false, message: 'Invalid driver assignment' });
+            }
+            
+            const conflictingTrip = await Trip.findOne({
+                _id: { $ne: tripId },
+                driverId,
+                status: { $in: ['OPEN', 'BOARDING', 'DEPARTED'] }
+            });
+            if (conflictingTrip) {
+                return res.status(400).json({ success: false, message: 'Driver is already assigned to an active trip' });
+            }
+            trip.driverId = driverId;
+        }
+
         if (status) {
             const validTransitions = {
-                'SCHEDULED': ['OPEN', 'CANCELLED'],
-                'OPEN': ['BOARDING', 'CANCELLED'],
+                'SCHEDULED': ['OPEN', 'BOARDING', 'DEPARTED', 'CANCELLED'],
+                'OPEN': ['BOARDING', 'DEPARTED', 'CANCELLED'],
                 'BOARDING': ['DEPARTED', 'CANCELLED'],
                 'DEPARTED': ['COMPLETED', 'CANCELLED'],
                 'COMPLETED': [],

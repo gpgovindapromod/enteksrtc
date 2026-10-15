@@ -5,6 +5,7 @@ const tripSchema = new mongoose.Schema(
     busId: { type: mongoose.Schema.Types.ObjectId, ref: 'Bus', required: true, index: true },
     routeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Route', required: true, index: true },
     conductorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    driverId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 
     departureDate: { type: Date, required: true, index: true },
     arrivalDate: { type: Date },

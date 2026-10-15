@@ -15,6 +15,7 @@ const AdminDashboardWidgets = React.lazy(() => import('./dashboards/AdminDashboa
 const PassengerDashboardWidgets = React.lazy(() => import('./dashboards/PassengerDashboardWidgets'));
 const StationMasterDashboard = React.lazy(() => import('./dashboards/StationMasterDashboard'));
 const ConductorDashboard = React.lazy(() => import('./dashboards/ConductorDashboard'));
+const FrontOfficeDashboard = React.lazy(() => import('./dashboards/FrontOfficeDashboard'));
 const DriverDashboard = React.lazy(() => import('./dashboards/DriverDashboard'));
 const SupportDashboard = React.lazy(() => import('./dashboards/SupportDashboard'));
 const SettingsView = React.lazy(() => import('./dashboards/SettingsView'));
@@ -29,8 +30,9 @@ const ROLE_COMPONENTS = {
   passenger: PassengerDashboardWithBoundary,
   admin: AdminDashboardWidgets,
   stationMaster: StationMasterDashboard,
+  frontOffice: FrontOfficeDashboard,
   conductor: ConductorDashboard,
-  driver: DriverDashboard,
+  driver: FrontOfficeDashboard,
   support: SupportDashboard,
 };
 
@@ -55,8 +57,8 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
   useEffect(() => {
     if (activeRole === ROLES.ADMIN) setActiveTab('Overview');
     else if (activeRole === ROLES.STATION_MASTER) setActiveTab('Overview');
+    else if (activeRole === ROLES.FRONT_OFFICE || activeRole === ROLES.DRIVER) setActiveTab('Dispatch');
     else if (activeRole === ROLES.CONDUCTOR) setActiveTab('My Route');
-    else if (activeRole === ROLES.DRIVER) setActiveTab('My Route');
     else if (activeRole === ROLES.SUPPORT) setActiveTab('Tickets');
     else if (activeRole === ROLES.PASSENGER) setActiveTab('Home');
     else setActiveTab('');
@@ -88,11 +90,13 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
           { id: 'Manifest', icon: Users, label: 'Manifest' },
           { id: 'Scan Tickets', icon: Ticket, label: 'Scan Tickets' }
         ];
+      case ROLES.FRONT_OFFICE:
       case ROLES.DRIVER:
         return [
-          { id: 'My Route', icon: Route, label: 'My Route' },
-          { id: 'Schedule', icon: Clock, label: 'Schedule' },
-          { id: 'Vehicle Alerts', icon: AlertTriangle, label: 'Alerts' }
+          { id: 'Dispatch', icon: Route, label: 'Dispatch & Fleet' },
+          { id: 'Counter Booking', icon: Ticket, label: 'Counter Booking' },
+          { id: 'Routes', icon: MapPin, label: 'Depot Routes' },
+          { id: 'Overview', icon: LayoutDashboard, label: 'Station Overview' }
         ];
       case ROLES.SUPPORT:
         return [
@@ -238,7 +242,7 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
             }>
               {activeTab === 'Settings' ? (
                 <SettingsView />
-              ) : activeTab === 'Home' || activeTab === 'Overview' || activeTab === 'Tracking' || activeTab === 'My Route' || activeTab === 'Tickets' || activeTab === 'Stations' || activeTab === 'Bookings' || activeTab === 'Loyalty' || activeTab === 'Support' || activeTab === 'Amenities' || activeTab === 'Fleet' || activeTab === 'Users' || activeTab === 'Revenue' || activeTab === 'Staff' || activeTab === 'Trips' ? (
+              ) : activeTab === 'Home' || activeTab === 'Overview' || activeTab === 'Tracking' || activeTab === 'My Route' || activeTab === 'Tickets' || activeTab === 'Stations' || activeTab === 'Bookings' || activeTab === 'Loyalty' || activeTab === 'Support' || activeTab === 'Amenities' || activeTab === 'Fleet' || activeTab === 'Users' || activeTab === 'Revenue' || activeTab === 'Staff' || activeTab === 'Trips' || activeTab === 'Dispatch' || activeTab === 'Counter Booking' || activeTab === 'Routes' ? (
                 <ActiveDashboardComponent data={dashboardData} loading={loading} user={user} activeTab={activeTab} setActiveTab={setActiveTab} filters={filters} setFilters={setFilters} />
               ) : (
                 <div className="flex flex-col items-center justify-center h-[60vh] border border-slate-200 dark:border-slate-800 bg-slate-100/50 dark:bg-slate-800/50 rounded-3xl mt-12 w-full animate-fade-in-up">

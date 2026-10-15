@@ -23,6 +23,7 @@ export const getDashboardData = async (req, res, next) => {
                 dashboardData = await getPassengerDashboard(userId);
                 break;
             case 'stationMaster':
+            case 'frontOffice':
                 dashboardData = await getStationMasterDashboard(userId);
                 break;
             case 'conductor':

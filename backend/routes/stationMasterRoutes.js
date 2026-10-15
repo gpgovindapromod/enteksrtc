@@ -14,9 +14,9 @@ import {
 
 const router = express.Router();
 
-// All routes require authentication and STATION_MASTER role
+// Routes require authentication and depot assignment
 router.use(protect);
-router.use(requireRole(['STATION_MASTER', 'station_master']));
+router.use(requireRole(['STATION_MASTER', 'station_master', 'FRONT_OFFICE', 'front_office']));
 router.use(checkDepotAssignment); // Custom middleware to ensure req.user.depotId exists
 
 // Dashboard
