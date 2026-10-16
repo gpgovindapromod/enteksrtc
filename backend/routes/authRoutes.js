@@ -13,12 +13,24 @@ const loginLimiter = rateLimit({
     message: { success: false, message: "Too many login attempts, please try again later." }
 });
 
-router.post("/register", validateRequest(registerSchema), register);
+const registerLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: { success: false, message: "Too many registration attempts, please try again later." }
+});
+
+const resetPasswordLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    message: { success: false, message: "Too many password reset attempts, please try again later." }
+});
+
+router.post("/register", registerLimiter, validateRequest(registerSchema), register);
 router.post("/login", loginLimiter, validateRequest(loginSchema), login);
 router.get("/me", protect, me);
 router.put("/me", protect, updateProfile);
 router.post("/logout", protect, logout);
 router.post("/verify-otp", validateRequest(verifyOtpSchema), verifyOtpStep);
-router.post("/reset-password", resetPassword);
+router.post("/reset-password", resetPasswordLimiter, resetPassword);
 
 export default router;

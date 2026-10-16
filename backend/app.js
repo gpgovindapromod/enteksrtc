@@ -66,6 +66,8 @@ app.use(express.json({
     }
 }));
 
+app.set('trust proxy', 1);
+
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
@@ -75,6 +77,23 @@ app.get("/", (req, res) => {
         success: true,
         message: "Ente KSRTC Backend Running"
     });
+});
+
+app.get("/healthz", (req, res) => {
+    res.status(200).json({ status: "UP", timestamp: new Date().toISOString() });
+});
+
+app.get("/ready", async (req, res) => {
+    try {
+        const { default: mongoose } = await import("mongoose");
+        const isDbReady = mongoose.connection.readyState === 1;
+        if (isDbReady) {
+            return res.status(200).json({ status: "READY", database: "CONNECTED" });
+        }
+        return res.status(503).json({ status: "NOT_READY", database: "DISCONNECTED" });
+    } catch (err) {
+        return res.status(503).json({ status: "NOT_READY", error: err.message });
+    }
 });
 
 import adminRoutes from "./routes/adminRoutes.js";

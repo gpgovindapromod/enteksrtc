@@ -21,9 +21,10 @@ export const searchTrips = async (req, res) => {
     await materializeTripsForDate(date);
 
     console.time(`Stop Validation - ${tId}`);
+    const escapeRegex = (string) => String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const [fromStop, toStop] = await Promise.all([
-      Stop.findOne({ stopName: new RegExp(`^${from.trim()}$`, 'i') }).select('_id stopName').lean(),
-      Stop.findOne({ stopName: new RegExp(`^${to.trim()}$`, 'i') }).select('_id stopName').lean()
+      Stop.findOne({ stopName: new RegExp(`^${escapeRegex(from.trim())}$`, 'i') }).select('_id stopName').lean(),
+      Stop.findOne({ stopName: new RegExp(`^${escapeRegex(to.trim())}$`, 'i') }).select('_id stopName').lean()
     ]);
 
     if (!fromStop || !toStop) {

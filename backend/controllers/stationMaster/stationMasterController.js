@@ -201,9 +201,9 @@ export const getDepotManifest = async (req, res, next) => {
 
         const bookings = await Booking.find({ tripId, bookingStatus: 'CONFIRMED' })
             .populate('passengerId', 'firstName lastName gender age phone')
-            .populate('boardingPoint', 'stopName')
-            .populate('droppingPoint', 'stopName')
-            .sort({ 'seatNumbers.0': 1 });
+            .populate('boardingStop', 'stopName')
+            .populate('droppingStop', 'stopName')
+            .lean();
 
         res.status(200).json({ success: true, data: bookings });
     } catch (error) {
