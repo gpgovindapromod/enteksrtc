@@ -5,6 +5,8 @@ import Bus from '../../database/models/Bus.js';
 import Stop from '../../database/models/Stop.js';
 import User from '../../database/models/User.js';
 import Depot from '../../database/models/Depot.js';
+import BookingSeat from '../../database/models/BookingSeat.js';
+import BusLayout from '../../database/models/BusLayout.js';
 import { normalizeRole } from '../../utils/roleUtils.js';
 
 export const getDashboardData = async (req, res, next) => {
@@ -27,7 +29,7 @@ export const getDashboardData = async (req, res, next) => {
                 dashboardData = await getStationMasterDashboard(userId);
                 break;
             case 'conductor':
-                dashboardData = getConductorDashboard(userId);
+                dashboardData = await getConductorDashboard(userId);
                 break;
             case 'support':
                 dashboardData = getSupportDashboard(userId);
@@ -294,13 +296,179 @@ const getStationMasterDashboard = async (userId) => {
     };
 };
 
-const getConductorDashboard = (userId) => {
+const getConductorDashboard = async (userId) => {
+    const now = new Date();
+    const trips = await Trip.find({
+        conductorId: userId,
+        status: { $ne: 'CANCELLED' },
+        $or: [
+            { departureDate: { $gte: now } },
+            { status: { $in: ['BOARDING', 'DEPARTED'] } }
+        ]
+    })
+        .sort({ departureDate: 1 })
+        .limit(8)
+        .populate({
+            path: 'busId',
+            populate: { path: 'layoutId', model: 'BusLayout' }
+        })
+        .populate({
+            path: 'routeId',
+            populate: [
+                { path: 'sourceStop', model: 'Stop' },
+                { path: 'destinationStop', model: 'Stop' }
+            ]
+        })
+        .populate('driverId', 'firstName lastName fullName phone employeeId')
+        .lean();
+
+    const activeTrip = trips.find(trip => ['BOARDING', 'DEPARTED'].includes(trip.status))
+        || trips.find(trip => new Date(trip.departureDate) >= now)
+        || trips[0];
+
+    if (!activeTrip) {
+        return {
+            currentTrip: null,
+            upcomingTrips: [],
+            seatSummary: { total: 0, occupied: 0, held: 0, available: 0, blocked: 0 },
+            seats: [],
+            manifest: []
+        };
+    }
+
+    const activeBookings = await Booking.find({
+        tripId: activeTrip._id,
+        bookingStatus: { $ne: 'CANCELLED' },
+        paymentStatus: { $nin: ['FAILED', 'REFUNDED'] },
+        $or: [
+            { bookingStatus: 'CONFIRMED' },
+            { holdExpiresAt: { $gt: now } }
+        ]
+    })
+        .populate('passengerId', 'firstName lastName fullName phone')
+        .populate('boardingStop', 'stopName')
+        .populate('droppingStop', 'stopName')
+        .lean();
+
+    const bookingIds = activeBookings.map(booking => booking._id);
+    const bookingSeats = bookingIds.length
+        ? await BookingSeat.find({ bookingId: { $in: bookingIds } }).lean()
+        : [];
+    const seatsByBooking = new Map();
+    bookingSeats.forEach(seat => {
+        const bookingId = String(seat.bookingId);
+        const seats = seatsByBooking.get(bookingId) || [];
+        seats.push(seat);
+        seatsByBooking.set(bookingId, seats);
+    });
+
+    const layout = activeTrip.busId?.layoutId;
+    const totalCapacity = activeTrip.busId?.capacity || layout?.seats?.length || 0;
+    const layoutSeats = layout?.seats?.length
+        ? layout.seats
+        : Array.from({ length: totalCapacity }, (_, index) => ({
+            seatNo: String(index + 1),
+            row: Math.floor(index / 4) + 1,
+            column: (index % 4) + 1,
+            type: 'SEATER'
+        }));
+
+    const seatState = new Map();
+    activeBookings.forEach(booking => {
+        const status = booking.isBlock
+            ? 'BLOCKED'
+            : booking.bookingStatus === 'PENDING'
+                ? 'HELD'
+                : 'OCCUPIED';
+        (seatsByBooking.get(String(booking._id)) || []).forEach(bookingSeat => {
+            seatState.set(bookingSeat.seatNo, {
+                status,
+                bookingId: booking._id,
+                passengerName: booking.isBlock
+                    ? 'Operational block'
+                    : bookingSeat.passengerName || booking.passengerId?.fullName ||
+                      [booking.passengerId?.firstName, booking.passengerId?.lastName].filter(Boolean).join(' ') ||
+                      'Passenger'
+            });
+        });
+    });
+
+    const seats = layoutSeats.map(seat => {
+        const seatNo = seat.seatNo || seat.seatNumber;
+        const state = seatState.get(seatNo);
+        return {
+            seatNo,
+            row: seat.row,
+            column: seat.column,
+            type: seat.type || 'SEATER',
+            status: state?.status || 'AVAILABLE',
+            bookingId: state?.bookingId || null,
+            passengerName: state?.passengerName || null
+        };
+    });
+
+    const occupied = seats.filter(seat => seat.status === 'OCCUPIED').length;
+    const held = seats.filter(seat => seat.status === 'HELD').length;
+    const blocked = seats.filter(seat => seat.status === 'BLOCKED').length;
+    const routeName = trip => trip.routeId
+        ? `${trip.routeId.sourceStop?.stopName || 'Origin'} → ${trip.routeId.destinationStop?.stopName || 'Destination'}`
+        : 'Route pending';
+    const driverName = activeTrip.driverId
+        ? activeTrip.driverId.fullName ||
+          [activeTrip.driverId.firstName, activeTrip.driverId.lastName].filter(Boolean).join(' ')
+        : 'Driver not assigned';
+
     return {
-        assignedBus: "KL-15-7890",
-        assignedRoute: "Trivandrum - Ernakulam",
-        passengersOnboard: 34,
-        totalSeats: 45,
-        upcomingStops: ["Kollam", "Alappuzha"]
+        currentTrip: {
+            id: activeTrip._id,
+            status: activeTrip.status,
+            departureDate: activeTrip.departureDate,
+            arrivalDate: activeTrip.arrivalDate,
+            route: routeName(activeTrip),
+            routeNumber: activeTrip.routeId?.routeNumber || null,
+            busNumber: activeTrip.busId?.busNumber || null,
+            registrationNumber: activeTrip.busId?.registrationNumber || null,
+            busType: activeTrip.busId?.busType || null,
+            driver: {
+                name: driverName,
+                phone: activeTrip.driverId?.phone || null,
+                employeeId: activeTrip.driverId?.employeeId || null
+            }
+        },
+        upcomingTrips: trips.map(trip => ({
+            id: trip._id,
+            status: trip.status,
+            departureDate: trip.departureDate,
+            arrivalDate: trip.arrivalDate,
+            route: routeName(trip),
+            busNumber: trip.busId?.busNumber || null,
+            registrationNumber: trip.busId?.registrationNumber || null,
+            driver: trip.driverId
+                ? trip.driverId.fullName ||
+                  [trip.driverId.firstName, trip.driverId.lastName].filter(Boolean).join(' ')
+                : 'Driver not assigned'
+        })),
+        seatSummary: {
+            total: seats.length,
+            occupied,
+            held,
+            blocked,
+            available: Math.max(0, seats.length - occupied - held - blocked)
+        },
+        seats,
+        manifest: activeBookings
+            .filter(booking => booking.bookingStatus === 'CONFIRMED' && !booking.isBlock)
+            .flatMap(booking => (seatsByBooking.get(String(booking._id)) || []).map(seat => ({
+                bookingId: booking._id,
+                bookingNumber: booking.bookingNumber,
+                seatNo: seat.seatNo,
+                passengerName: seat.passengerName || booking.passengerId?.fullName ||
+                    [booking.passengerId?.firstName, booking.passengerId?.lastName].filter(Boolean).join(' ') ||
+                    'Passenger',
+                phone: booking.passengerId?.phone || null,
+                boardingStop: booking.boardingStop?.stopName || 'Origin',
+                droppingStop: booking.droppingStop?.stopName || 'Destination'
+            })))
     };
 };
 
