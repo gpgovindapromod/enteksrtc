@@ -1,42 +1,52 @@
+import 'dotenv/config';
+import dns from 'dns';
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
-import dotenv from 'dotenv';
-dotenv.config();
-
-const userSchema = new mongoose.Schema({
-    role: { type: String, default: 'USER' },
-    email: String,
-    firstName: String,
-    password: { type: String, select: true }
-}, { strict: false });
-const User = mongoose.model('User', userSchema);
+import User from '../database/models/User.js';
 
 async function run() {
     await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI);
     
-    // Check for a normal user
-    let user = await User.findOne({ role: 'USER' });
+    const targetEmail = (process.argv[2] || 'govindapromod@gmail.com').toLowerCase().trim();
+    const newPassword = process.argv[3] || 'user123';
+
+    let user = await User.findOne({ email: targetEmail });
     if (!user) {
-        console.log("No normal USER found. Creating a new normal user...");
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash('user123', salt);
-        
+        user = await User.findOne({ role: 'USER' });
+    }
+
+    if (!user) {
+        console.log(`No user found. Creating new user: ${targetEmail}...`);
         user = new User({
             role: 'USER',
-            email: 'user@example.com',
+            email: targetEmail,
             firstName: 'Passenger',
-            password: hashedPassword
+            password: newPassword,
+            isVerified: true,
+            isActive: true
         });
         await user.save();
-        console.log("Created new normal user: user@example.com / user123");
+        console.log(`Created new user: ${targetEmail} / ${newPassword}`);
     } else {
-        console.log("Found existing normal user:", user.email);
-        console.log("Resetting password to 'user123'...");
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash('user123', salt);
+        console.log(`Found user: ${user.email} (${user.firstName} ${user.lastName || ''})`);
+        console.log(`Resetting password to '${newPassword}'...`);
+        user.password = newPassword;
+        user.isActive = true;
         await user.save();
-        console.log("Password reset successfully. You can login with: " + user.email + " / user123");
+        console.log(`Password reset successfully. You can login with: ${user.email} / ${newPassword}`);
     }
+
+    // Verify password comparison works
+    const testUser = await User.findOne({ email: user.email }).select('+password');
+    const isMatch = await testUser.comparePassword(newPassword);
+    console.log(`Verification check: comparePassword('${newPassword}') -> ${isMatch ? 'PASSED' : 'FAILED'}`);
+
+    await mongoose.disconnect();
     process.exit(0);
 }
-run().catch(console.error);
+
+run().catch((err) => {
+    console.error(err);
+    process.exit(1);
+});
+
