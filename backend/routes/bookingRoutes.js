@@ -11,7 +11,10 @@ import {
   getBooking,
   getBookingAudits,
 } from '../controllers/booking/views/bookingViewController.js';
-import { cancelBooking } from '../controllers/booking/bookingCancellationController.js';
+import {
+  cancelBooking,
+  getCancellationPreview,
+} from '../controllers/booking/bookingCancellationController.js';
 import rateLimit from 'express-rate-limit';
 import { protect, requireRole } from '../middleware/authMiddleware.js';
 
@@ -30,6 +33,7 @@ router.use(protect);
 router.post('/checkout', checkoutLimiter, checkout);
 router.post('/verify-payment', verifyPaymentHandler);
 router.get('/my-bookings', getUserBookings);
+router.get('/:bookingId/cancellation-preview', getCancellationPreview);
 router.get('/:bookingId', getBooking);
 router.post('/:bookingId/cancel', cancelBooking);
 router.post('/:bookingId/reconcile', reconcilePayment);

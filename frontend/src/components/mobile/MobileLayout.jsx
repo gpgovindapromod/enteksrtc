@@ -102,6 +102,7 @@ const MobileLayout = () => {
           { id: 'Home', icon: Search, label: 'Search' },
           { id: 'Dashboard', icon: LayoutDashboard, label: 'Dashboard' },
           { id: 'Tickets', icon: Ticket, label: 'Bookings' },
+          { id: 'Refunds', icon: CreditCard, label: 'Refunds' },
           { id: 'Profile', icon: User, label: 'Profile' }
         ];
     }
@@ -390,6 +391,7 @@ const MobileLayout = () => {
                   if (activeRole === ROLES.PASSENGER) {
                     if (link.id === 'Home') navigate('/');
                     else if (link.id === 'Tickets') navigate('/tickets');
+                    else if (link.id === 'Refunds') navigate('/profile?tab=Refunds');
                     else if (link.id === 'Dashboard' || link.id === 'Profile') navigate('/profile');
                   } else {
                     navigate(`/profile?tab=${link.id}`);
@@ -408,4 +410,3 @@ const MobileLayout = () => {
 };
 
 export default MobileLayout;
-

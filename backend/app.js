@@ -99,6 +99,7 @@ app.get("/ready", async (req, res) => {
 import adminRoutes from "./routes/adminRoutes.js";
 import stationMasterRoutes from "./routes/stationMasterRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import walletRoutes from "./routes/walletRoutes.js";
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
@@ -109,6 +110,7 @@ app.use("/api/trips", tripRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/stops", stopRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/wallet", walletRoutes);
 
 app.use(notFoundMiddleware);
 

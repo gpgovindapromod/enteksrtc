@@ -19,6 +19,7 @@ const FrontOfficeDashboard = React.lazy(() => import('./dashboards/FrontOfficeDa
 const DriverDashboard = React.lazy(() => import('./dashboards/DriverDashboard'));
 const SupportDashboard = React.lazy(() => import('./dashboards/SupportDashboard'));
 const SettingsView = React.lazy(() => import('./dashboards/SettingsView'));
+const CancellationRefundPage = React.lazy(() => import('../shared/CancellationRefundPage'));
 
 const PassengerDashboardWithBoundary = (props) => (
   <ErrorBoundary>
@@ -108,6 +109,7 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
         return [
           { id: 'Home', icon: LayoutDashboard, label: 'Home' },
           { id: 'Bookings', icon: Ticket, label: 'Bookings' },
+          { id: 'Refunds', icon: CreditCard, label: 'Refunds' },
           { id: 'Loyalty', icon: Star, label: 'Loyalty' },
           { id: 'Support', icon: LifeBuoy, label: 'Support' },
           { id: 'Amenities', icon: Coffee, label: 'Amenities' }
@@ -242,6 +244,8 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
             }>
               {activeTab === 'Settings' ? (
                 <SettingsView />
+              ) : activeRole === ROLES.PASSENGER && activeTab === 'Refunds' ? (
+                <CancellationRefundPage />
               ) : activeTab === 'Home' || activeTab === 'Overview' || activeTab === 'Tracking' || activeTab === 'My Route' || activeTab === 'Manifest' || activeTab === 'Scan Tickets' || activeTab === 'Tickets' || activeTab === 'Stations' || activeTab === 'Bookings' || activeTab === 'Loyalty' || activeTab === 'Support' || activeTab === 'Amenities' || activeTab === 'Fleet' || activeTab === 'Users' || activeTab === 'Revenue' || activeTab === 'Staff' || activeTab === 'Trips' || activeTab === 'Dispatch' || activeTab === 'Counter Booking' || activeTab === 'Routes' ? (
                 <ActiveDashboardComponent data={dashboardData} loading={loading} user={user} activeTab={activeTab} setActiveTab={setActiveTab} filters={filters} setFilters={setFilters} />
               ) : (

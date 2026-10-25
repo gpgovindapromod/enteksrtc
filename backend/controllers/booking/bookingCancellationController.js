@@ -3,6 +3,7 @@ import Payment from '../../database/models/Payment.js';
 import { auditBooking } from '../../utils/auditUtils.js';
 import { evaluateCancellation } from '../../utils/cancellationPolicy.js';
 import { createRefund } from '../../services/paymentService.js';
+import { creditWallet } from '../walletController.js';
 
 // ─── CANCEL BOOKING ────────────────────────────────────────────────────────────
 
@@ -97,6 +98,20 @@ export const cancelBooking = async (req, res) => {
               }
             } catch (err) {
               console.error('Refund initiation failed:', err);
+            }
+          }
+
+          if (payment.refundStatus === 'PROCESSED') {
+            try {
+              await creditWallet({
+                userId: booking.passengerId,
+                amountPaise: refundAmountToProcess,
+                referenceId: `BOOKING_REFUND:${booking._id}`,
+                description: `Refund for cancelled booking #${booking.bookingNumber}`,
+                metadata: { bookingId: booking._id, bookingNumber: booking.bookingNumber },
+              });
+            } catch (walletError) {
+              console.error('Wallet refund credit failed:', walletError);
             }
           }
         } else {
@@ -255,5 +270,66 @@ export const cancelBooking = async (req, res) => {
   } catch (error) {
     console.error('[cancelBooking] Error:', error);
     return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getCancellationPreview = async (req, res) => {
+  try {
+    const userId = req.user.id || req.user._id;
+    const booking = await Booking.findOne({
+      _id: req.params.bookingId,
+      passengerId: userId,
+    }).populate('tripId');
+
+    if (!booking) {
+      return res.status(404).json({ success: false, message: 'Booking not found' });
+    }
+
+    if (booking.bookingStatus === 'CANCELLED') {
+      return res.json({
+        success: true,
+        eligible: false,
+        reason: 'Booking is already cancelled',
+        refundAmountPaise: booking.refundAmountPaise || 0,
+        cancellationFeePaise: booking.cancellationFeePaise || 0,
+      });
+    }
+
+    const tripStarted = booking.tripId && (
+      ['DEPARTED', 'COMPLETED'].includes(booking.tripId.status) ||
+      (booking.tripId.departureDate && new Date() >= new Date(booking.tripId.departureDate))
+    );
+
+    if (tripStarted) {
+      return res.json({
+        success: true,
+        eligible: false,
+        reason: 'Cancellation is not permitted after the trip has started.',
+        refundAmountPaise: 0,
+        cancellationFeePaise: booking.farePaise || booking.totalFare || 0,
+      });
+    }
+
+    if (booking.paymentStatus !== 'PAID') {
+      return res.json({
+        success: true,
+        eligible: true,
+        reason: 'Booking can be cancelled without a refund.',
+        refundAmountPaise: 0,
+        cancellationFeePaise: 0,
+      });
+    }
+
+    const policy = evaluateCancellation(booking, booking.tripId);
+    return res.json({
+      success: true,
+      eligible: policy.eligible,
+      reason: policy.reason,
+      refundAmountPaise: policy.refundAmountPaise,
+      cancellationFeePaise: policy.cancellationFeePaise,
+    });
+  } catch (error) {
+    console.error('[getCancellationPreview] Error:', error);
+    return res.status(500).json({ success: false, message: 'Unable to calculate cancellation details.' });
   }
 };

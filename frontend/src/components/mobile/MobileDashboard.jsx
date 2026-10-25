@@ -9,6 +9,7 @@ import ConductorDashboard from '../desktop/dashboards/ConductorDashboard';
 import DriverDashboard from '../desktop/dashboards/DriverDashboard';
 import SupportDashboard from '../desktop/dashboards/SupportDashboard';
 import { ROLES, normalizeRole } from '../../utils/roleUtils';
+import CancellationRefundPage from '../shared/CancellationRefundPage';
 
 const MobileDashboard = ({
   theme,
@@ -47,6 +48,10 @@ const MobileDashboard = ({
 
   const ActiveDashboardComponent = ROLE_COMPONENTS[activeRole] || MobilePassengerDashboardWidgets;
   const currentTab = activeDashboardTab || (activeRole === ROLES.ADMIN ? 'Overview' : 'Home');
+
+  if (activeRole === ROLES.PASSENGER && currentTab === 'Refunds') {
+    return <CancellationRefundPage />;
+  }
 
   return (
     <div className="animate-fade-in-up bg-slate-50 dark:bg-slate-950 min-h-full pb-8">

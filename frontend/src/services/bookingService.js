@@ -91,6 +91,31 @@ export const cancelBooking = async (bookingId) => {
 };
 
 /**
+ * Preview cancellation eligibility and the server-calculated refund amount.
+ * @param {string} bookingId
+ */
+export const getCancellationPreview = async (bookingId) => {
+  try {
+    const response = await apiClient.get(`/api/bookings/${bookingId}/cancellation-preview`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+/**
+ * Fetch the authenticated passenger's wallet balance and transactions.
+ */
+export const getWallet = async () => {
+  try {
+    const response = await apiClient.get('/api/wallet');
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+/**
  * Dynamically loads the Razorpay Checkout script.
  * Returns a Promise that resolves when Razorpay is available on window.
  */
