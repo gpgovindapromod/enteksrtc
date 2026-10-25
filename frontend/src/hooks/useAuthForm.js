@@ -140,13 +140,20 @@ export const useAuthForm = (onLoginSuccess, onClose, recaptchaContainerId) => {
         });
         onLoginSuccess?.(result.user, result.token);
       } else if (authMode === 'signup') {
+        const normalizedSignupForm = {
+          ...signupForm,
+          fullName: signupForm.fullName.trim(),
+          email: signupForm.email.trim(),
+          phone: signupForm.phone.trim(),
+        };
+
         // --- SIGNUP VALIDATIONS ---
-        const isNameValid = validateSignupField('fullName', signupForm.fullName, signupForm);
-        const isAgeValid = validateSignupField('age', signupForm.age, signupForm);
-        const isEmailValid = validateSignupField('email', signupForm.email, signupForm);
-        const isPhoneValid = validateSignupField('phone', signupForm.phone, signupForm);
-        const isPasswordValid = validateSignupField('password', signupForm.password, signupForm);
-        const isConfirmPasswordValid = validateSignupField('confirmPassword', signupForm.confirmPassword, signupForm);
+        const isNameValid = validateSignupField('fullName', normalizedSignupForm.fullName, normalizedSignupForm);
+        const isAgeValid = validateSignupField('age', normalizedSignupForm.age, normalizedSignupForm);
+        const isEmailValid = validateSignupField('email', normalizedSignupForm.email, normalizedSignupForm);
+        const isPhoneValid = validateSignupField('phone', normalizedSignupForm.phone, normalizedSignupForm);
+        const isPasswordValid = validateSignupField('password', normalizedSignupForm.password, normalizedSignupForm);
+        const isConfirmPasswordValid = validateSignupField('confirmPassword', normalizedSignupForm.confirmPassword, normalizedSignupForm);
         
         if (!isNameValid || !isAgeValid || !isEmailValid || !isPhoneValid || !isPasswordValid || !isConfirmPasswordValid) {
           setIsSubmitting(false);
@@ -160,14 +167,17 @@ export const useAuthForm = (onLoginSuccess, onClose, recaptchaContainerId) => {
         }
 
         const result = await registerUser({
-          fullName: signupForm.fullName,
-          age: signupForm.age ? Number(signupForm.age) : undefined,
-          email: signupForm.email,
-          phone: signupForm.phone,
-          firebaseIdToken: signupForm.firebaseIdToken,
-          gender: signupForm.gender,
-          password: signupForm.password,
+          fullName: normalizedSignupForm.fullName,
+          age: normalizedSignupForm.age ? Number(normalizedSignupForm.age) : undefined,
+          email: normalizedSignupForm.email,
+          phone: normalizedSignupForm.phone,
+          firebaseIdToken: normalizedSignupForm.firebaseIdToken,
+          gender: normalizedSignupForm.gender,
+          password: normalizedSignupForm.password,
         });
+        if (!result?.user || !result?.token) {
+          throw new Error('Account creation did not complete. Please try again.');
+        }
         onLoginSuccess?.(result.user, result.token);
       } else if (authMode === 'forgot_password') {
         const isPhoneValid = validateSignupField('phone', signupForm.phone, signupForm);
@@ -205,7 +215,7 @@ export const useAuthForm = (onLoginSuccess, onClose, recaptchaContainerId) => {
 
       onClose?.();
     } catch (error) {
-      setAuthError(error.message);
+      setAuthError(error?.message || 'Unable to complete account creation. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

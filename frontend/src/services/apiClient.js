@@ -7,11 +7,21 @@ import axios from 'axios';
 // to configure the base URL, authentication headers, or global error handling.
 // -----------------------------------------------------------------------------
 
-const isLocalhost =
-  typeof window !== 'undefined' &&
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const isLocalhost = (hostname) => hostname === 'localhost' || hostname === '127.0.0.1';
+const configuredApiBaseUrl = String(import.meta.env.VITE_API_BASE_URL || '').trim();
+const browserHostname = typeof window !== 'undefined' ? window.location.hostname : '';
+const browserOrigin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost';
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (isLocalhost ? 'http://localhost:5011' : '');
+// A localhost API URL only works when the browser and backend run on the same
+// machine. For LAN access, use Vite's same-origin /api proxy instead.
+const configuredUrl = configuredApiBaseUrl ? new URL(configuredApiBaseUrl, browserOrigin) : null;
+const isMisleadingLocalhostUrl = configuredUrl
+  && isLocalhost(configuredUrl.hostname)
+  && !isLocalhost(browserHostname);
+
+export const API_BASE_URL = isMisleadingLocalhostUrl
+  ? ''
+  : configuredApiBaseUrl || (isLocalhost(browserHostname) ? 'http://localhost:5011' : '');
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,

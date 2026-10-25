@@ -51,7 +51,7 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="modern-auth-form mobile-form">
+            <form onSubmit={handleSubmit} noValidate className="modern-auth-form mobile-form">
               <div id="mobile-recaptcha-container" />
               {authMode === 'signup' && (
                 <>

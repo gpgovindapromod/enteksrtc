@@ -92,23 +92,37 @@ export const registerUser = async (payload = {}) => {
         throw error;
     }
 
-    const user = await User.create({
-        role: "USER", // HARDCODED: Prevent privilege escalation
-        depotId: payload.depotId || undefined,
-        fullName: payload.fullName || parsedName.fullName || `${firstName} ${lastName}`.trim(),
-        firstName,
-        lastName: lastName || undefined,
-        email,
-        phone: decodedToken.phone_number,
-        password,
-        age: payload.age || undefined,
-        employeeId: payload.employeeId || undefined,
-        gender: payload.gender || undefined,
-        dob: payload.dob || payload.dateOfBirth || undefined,
-        profileImage: payload.profileImage || undefined,
-        isVerified: true,
-        isActive: payload.isActive ?? true
-    });
+    let user;
+    try {
+        user = await User.create({
+            role: "USER", // HARDCODED: Prevent privilege escalation
+            depotId: payload.depotId || undefined,
+            fullName: payload.fullName || parsedName.fullName || `${firstName} ${lastName}`.trim(),
+            firstName,
+            lastName: lastName || undefined,
+            email,
+            phone: decodedToken.phone_number,
+            password,
+            age: payload.age || undefined,
+            employeeId: payload.employeeId || undefined,
+            gender: payload.gender || undefined,
+            dob: payload.dob || payload.dateOfBirth || undefined,
+            profileImage: payload.profileImage || undefined,
+            isVerified: true,
+            isActive: payload.isActive ?? true
+        });
+    } catch (error) {
+        if (error?.code === 11000) {
+            const duplicateField = Object.keys(error.keyPattern || {})[0];
+            const duplicateMessage = duplicateField === "phone"
+                ? "A user with this mobile number already exists."
+                : "A user with this email already exists.";
+            const duplicateError = new Error(duplicateMessage);
+            duplicateError.statusCode = 409;
+            throw duplicateError;
+        }
+        throw error;
+    }
 
     return {
         user: buildUserPayload(user),

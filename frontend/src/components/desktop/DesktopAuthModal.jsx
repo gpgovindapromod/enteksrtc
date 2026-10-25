@@ -64,7 +64,7 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                   <p className="auth-sub-title">Sign in to manage your bookings and live tracking</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="auth-interactive-form">
+                <form onSubmit={handleSubmit} noValidate className="auth-interactive-form">
                   <div className="auth-field-group">
                     <label className="auth-label">Email Address</label>
                     <div className="auth-input-wrapper">
@@ -181,7 +181,7 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="auth-interactive-form">
+                <form onSubmit={handleSubmit} noValidate className="auth-interactive-form">
                   <div id="desktop-recaptcha-container" />
 
                   {signupTab === 'mandatory' ? (
