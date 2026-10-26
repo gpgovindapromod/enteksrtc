@@ -3,6 +3,7 @@ import { Bus, Navigation, Clock, CalendarDays, Sun, Moon } from 'lucide-react';
 import MobileBookingWidget from './MobileBookingWidget';
 import GradualBlur from '../GradualBlur';
 import Marquee from '../home/Marquee';
+import NotificationCenter from '../notifications/NotificationCenter';
 
 const MobileHomeTab = ({
   origin,
@@ -75,6 +76,7 @@ const MobileHomeTab = ({
             >
               {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
             </button>
+            {isUserLoggedIn && <NotificationCenter placement="right" />}
           </div>
         </div>
       </nav>

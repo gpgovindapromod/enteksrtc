@@ -145,7 +145,7 @@ const MobileLayout = () => {
         </div>
       }>
         <Routes>
-          <Route path="/" element={isUserLoggedIn ? <Navigate to="/profile" replace /> : (
+          <Route path="/" element={isUserLoggedIn && activeRole !== ROLES.PASSENGER ? <Navigate to="/profile" replace /> : (
           <div className="tab-view-fadein" style={{ paddingBottom: '120px', overflowY: 'auto', flex: 1 }}>
             <MobileHomeTab
               origin={origin}
