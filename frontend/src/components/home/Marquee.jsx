@@ -1,4 +1,5 @@
 import React from 'react';
+import { Bus } from 'lucide-react';
 
 const Marquee = () => {
   return (
@@ -10,7 +11,7 @@ const Marquee = () => {
         {/* We repeat the items enough times to fill the screen and allow seamless scrolling */}
         {[...Array(16)].map((_, i) => (
           <div key={i} className="flex items-center gap-4 mx-8 shrink-0">
-            <span className="material-symbols-outlined text-primary text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>directions_bus</span>
+            <Bus className="w-9 h-9 text-primary" />
             <span className="font-outfit text-3xl font-black text-slate-900 dark:text-white uppercase tracking-widest opacity-80">Ente KSRTC</span>
             <span className="w-2 h-2 rounded-full bg-primary/30 mx-6"></span>
           </div>
@@ -21,3 +22,4 @@ const Marquee = () => {
 };
 
 export default Marquee;
+

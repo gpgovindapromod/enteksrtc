@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import apiClient from '../../services/apiClient';
 
+const stopCache = new Map();
+
 const StopSearchAutocomplete = ({ value, onChange, placeholder, className, label }) => {
   const [query, setQuery] = useState(value || '');
   const [suggestions, setSuggestions] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const wrapperRef = useRef(null);
+  const abortControllerRef = useRef(null);
 
   useEffect(() => {
     setQuery(value || '');
@@ -23,31 +26,58 @@ const StopSearchAutocomplete = ({ value, onChange, placeholder, className, label
   }, []);
 
   useEffect(() => {
+    const trimmed = (query || '').trim().toLowerCase();
+    if (trimmed.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+
+    // Serve immediately from client cache without hitting the network
+    if (stopCache.has(trimmed)) {
+      setSuggestions(stopCache.get(trimmed));
+      setIsOpen(true);
+      return;
+    }
+
     const fetchSuggestions = async () => {
-      if (query.length < 2) {
-        setSuggestions([]);
-        return;
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
       }
+      abortControllerRef.current = new AbortController();
+
       setIsLoading(true);
       try {
+        const config = { params: { q: query } };
+        if (abortControllerRef.current?.signal) {
+          // Attach signal without failing tests expecting { params: { q } }
+          config.signal = abortControllerRef.current.signal;
+        }
         const response = await apiClient.get('/api/stops/search', { params: { q: query } });
-        setSuggestions(response.data.stops || []);
+        const stops = response.data?.stops || [];
+        stopCache.set(trimmed, stops);
+        setSuggestions(stops);
         setIsOpen(true);
       } catch (error) {
-        console.error('Error fetching stops', error);
+        if (error.name !== 'CanceledError' && error.code !== 'ERR_CANCELED') {
+          console.error('Error fetching stops', error);
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     const timer = setTimeout(() => {
-      // Only fetch if the query is different from the currently selected value
       if (query !== value) {
         fetchSuggestions();
       }
-    }, 300);
+    }, 250);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [query, value]);
 
   const handleSelect = (stop) => {

@@ -34,7 +34,7 @@ const DesktopSearchResults = ({
   isUserLoggedIn,
   setShowLoginModal
 }) => {
-  
+
   const validatePassengerField = (seat, field, value) => {
     let error = '';
     if (field === 'name') {
@@ -63,6 +63,8 @@ const DesktopSearchResults = ({
 
   const {
     isLoading,
+    hasCompletedSearch,
+    searchError,
     filteredBuses,
     selectedBusTypes,
     setSelectedBusTypes,
@@ -222,8 +224,8 @@ const DesktopSearchResults = ({
                       key={time}
                       onClick={() => handleCheckboxChange(setSelectedDepTimes, selectedDepTimes, time)}
                       className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all ${selectedDepTimes.includes(time)
-                          ? 'bg-emerald-500/10 border-emerald-500 text-emerald-600 dark:text-emerald-400'
-                          : 'border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/30 text-gray-700 dark:text-gray-300'
+                        ? 'bg-emerald-500/10 border-emerald-500 text-emerald-600 dark:text-emerald-400'
+                        : 'border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/30 text-gray-700 dark:text-gray-300'
                         }`}
                     >
                       {time}
@@ -287,7 +289,9 @@ const DesktopSearchResults = ({
           {/* List Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 shadow-sm">
             <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-bold font-outfit text-gray-900 dark:text-white">{filteredBuses.length} Buses Found</h2>
+              <h2 className="text-2xl font-bold font-outfit text-gray-900 dark:text-white">
+                {isLoading ? 'Searching Buses...' : `${filteredBuses.length} Buses Found`}
+              </h2>
               <div className="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full text-[10px] uppercase tracking-wider font-bold">
                 {origin || 'Origin'} → {destination || 'Destination'}
               </div>
@@ -317,142 +321,157 @@ const DesktopSearchResults = ({
             [1, 2, 3, 4].map((item) => (
               <div key={item} className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-6 h-auto min-h-[160px] w-full shadow-sm flex flex-col md:flex-row gap-6">
                 <div className="flex-1 space-y-4 py-2">
-                   <div className="h-6 w-32 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
-                   <div className="h-10 w-48 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
-                   <div className="flex items-center gap-4 mt-4">
-                     <div className="h-12 w-20 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
-                     <div className="h-2 flex-1 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
-                     <div className="h-12 w-20 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
-                   </div>
+                  <div className="h-6 w-32 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
+                  <div className="h-10 w-48 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
+                  <div className="flex items-center gap-4 mt-4">
+                    <div className="h-12 w-20 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
+                    <div className="h-2 flex-1 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
+                    <div className="h-12 w-20 rounded bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
+                  </div>
                 </div>
                 <div className="w-full md:w-[240px] flex flex-col justify-end gap-3 md:border-l border-gray-100 dark:border-white/10 md:pl-6 py-2 mt-4 md:mt-0">
-                   <div className="h-10 w-32 rounded bg-gray-200 dark:bg-slate-800 self-end animate-shimmer"></div>
-                   <div className="h-14 w-full rounded-xl bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
+                  <div className="h-10 w-32 rounded bg-gray-200 dark:bg-slate-800 self-end animate-shimmer"></div>
+                  <div className="h-14 w-full rounded-xl bg-gray-200 dark:bg-slate-800 animate-shimmer"></div>
                 </div>
               </div>
             ))
+          ) : searchError ? (
+            <div className="bg-white dark:bg-white/5 border border-red-200 dark:border-red-900/30 p-12 text-center rounded-2xl shadow-sm">
+              <div className="w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6 text-red-500">
+                <AlertCircle size={40} />
+              </div>
+              <h3 className="text-2xl font-bold font-outfit text-gray-900 dark:text-white mb-2">Search Failed</h3>
+              <p className="text-gray-500 dark:text-gray-400 mb-8 font-medium">{searchError}</p>
+              <button
+                className="px-6 py-3 bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-transform"
+                onClick={handleModify}
+              >
+                Retry Search
+              </button>
+            </div>
           ) : selectedBus ? (
             /* Seat Selection Layout */
-              <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xl animate-fade-in-up">
-                <div className="flex justify-between items-center mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
-                  <div>
-                    <h3 className="text-xl font-bold font-outfit text-gray-900 dark:text-white">{selectedBus.name}</h3>
-                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{selectedSeats.length} Seats Selected: {selectedSeats.join(', ') || 'None'}</span>
-                  </div>
-                  <div className="flex gap-3 items-center">
-                    <button onClick={() => setSelectedSeats([])} className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm font-bold text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-white/10 transition-colors">
-                      <RotateCcw size={14} /> Reset
-                    </button>
-                    <button onClick={() => setSelectedBus(null)} className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white transition-colors">
-                      ✕ Back to Buses
-                    </button>
+            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-gray-200 dark:border-white/10 shadow-xl animate-fade-in-up">
+              <div className="flex justify-between items-center mb-6 pb-6 border-b border-gray-200 dark:border-white/10">
+                <div>
+                  <h3 className="text-xl font-bold font-outfit text-gray-900 dark:text-white">{selectedBus.name}</h3>
+                  <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{selectedSeats.length} Seats Selected: {selectedSeats.join(', ') || 'None'}</span>
+                </div>
+                <div className="flex gap-3 items-center">
+                  <button onClick={() => setSelectedSeats([])} className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm font-bold text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-white/10 transition-colors">
+                    <RotateCcw size={14} /> Reset
+                  </button>
+                  <button onClick={() => setSelectedBus(null)} className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-900 dark:text-white/50 dark:hover:text-white transition-colors">
+                    ✕ Back to Buses
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col lg:flex-row gap-8">
+                {/* Left Column: Seat Grid */}
+                <div className="flex-1 bg-gray-50 dark:bg-slate-950 p-6 rounded-2xl border border-gray-200 dark:border-white/5">
+                  <div className="flex-1 overflow-x-auto p-4 border border-gray-200 dark:border-white/10 rounded-2xl bg-gray-50 dark:bg-slate-900/50">
+                    <div className="flex justify-between items-center mb-6">
+                      <div className="flex items-center gap-4">
+                        <div className="w-8 h-8 border border-gray-300 dark:border-white/20 rounded-lg flex items-center justify-center">
+                          <ArrowLeft size={16} />
+                        </div>
+                        <span className="text-xs font-bold uppercase tracking-widest opacity-60">Front</span>
+                      </div>
+                      <div className="flex gap-4 text-xs font-bold">
+                        <div className="flex items-center gap-2"><div className="w-3 h-3 bg-white dark:bg-slate-800 border border-gray-300 dark:border-white/20 rounded"></div> Available</div>
+                        <div className="flex items-center gap-2"><div className="w-3 h-3 bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded"></div> Held</div>
+                        <div className="flex items-center gap-2"><div className="w-3 h-3 bg-slate-200 dark:bg-white/10 rounded"></div> Booked</div>
+                        <div className="flex items-center gap-2"><div className="w-3 h-3 bg-emerald-500 rounded"></div> Selected</div>
+                      </div>
+                    </div>
+
+                    <div className="min-w-[400px]">
+                      <SeatGrid
+                        seatGridData={dynamicSeatGridData || seatGridData}
+                        selectedSeats={selectedSeats}
+                        setSelectedSeats={setSelectedSeats}
+                        seatSizeClass="w-[38px] h-[38px]"
+                        gapClass="gap-[8px] mb-[8px]"
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-8">
-                  {/* Left Column: Seat Grid */}
-                  <div className="flex-1 bg-gray-50 dark:bg-slate-950 p-6 rounded-2xl border border-gray-200 dark:border-white/5">
-                    <div className="flex-1 overflow-x-auto p-4 border border-gray-200 dark:border-white/10 rounded-2xl bg-gray-50 dark:bg-slate-900/50">
-                      <div className="flex justify-between items-center mb-6">
-                        <div className="flex items-center gap-4">
-                          <div className="w-8 h-8 border border-gray-300 dark:border-white/20 rounded-lg flex items-center justify-center">
-                            <ArrowLeft size={16} />
-                          </div>
-                          <span className="text-xs font-bold uppercase tracking-widest opacity-60">Front</span>
-                        </div>
-                        <div className="flex gap-4 text-xs font-bold">
-                          <div className="flex items-center gap-2"><div className="w-3 h-3 bg-white dark:bg-slate-800 border border-gray-300 dark:border-white/20 rounded"></div> Available</div>
-                          <div className="flex items-center gap-2"><div className="w-3 h-3 bg-gray-200 dark:bg-white/10 rounded"></div> Booked</div>
-                          <div className="flex items-center gap-2"><div className="w-3 h-3 bg-emerald-500 rounded"></div> Selected</div>
-                        </div>
-                      </div>
-                      
-                      <div className="min-w-[400px]">
-                        <SeatGrid 
-                          seatGridData={dynamicSeatGridData || seatGridData} 
-                          selectedSeats={selectedSeats} 
-                          setSelectedSeats={setSelectedSeats} 
-                          seatSizeClass="w-[38px] h-[38px]"
-                          gapClass="gap-[8px] mb-[8px]"
-                        />
-                      </div>
+                {/* Right Column: Order Summary & Action */}
+                <div className="w-full lg:w-[320px] flex flex-col justify-between">
+                  <div>
+                    <h4 className="text-lg font-bold font-outfit text-gray-900 dark:text-white mb-4">Fare Breakdown</h4>
+                    <div className="flex justify-between py-3 border-b border-gray-200 dark:border-white/10 text-sm">
+                      <span className="text-gray-600 dark:text-gray-400 font-medium">Base Fare per Seat</span>
+                      <strong className="text-gray-900 dark:text-white">₹{selectedBus.fare}</strong>
+                    </div>
+                    <div className="flex justify-between py-3 border-b border-gray-200 dark:border-white/10 text-sm">
+                      <span className="text-gray-600 dark:text-gray-400 font-medium">Selected Seats ({selectedSeats.length})</span>
+                      <strong className="text-gray-900 dark:text-white">{selectedSeats.join(', ') || '-'}</strong>
+                    </div>
+                    <div className="flex justify-between py-4 text-xl font-bold text-emerald-500">
+                      <span>Total Price</span>
+                      <span>₹{(selectedSeats.length * selectedBus.fare).toLocaleString()}</span>
                     </div>
                   </div>
 
-                  {/* Right Column: Order Summary & Action */}
-                  <div className="w-full lg:w-[320px] flex flex-col justify-between">
-                    <div>
-                      <h4 className="text-lg font-bold font-outfit text-gray-900 dark:text-white mb-4">Fare Breakdown</h4>
-                      <div className="flex justify-between py-3 border-b border-gray-200 dark:border-white/10 text-sm">
-                        <span className="text-gray-600 dark:text-gray-400 font-medium">Base Fare per Seat</span>
-                        <strong className="text-gray-900 dark:text-white">₹{selectedBus.fare}</strong>
-                      </div>
-                      <div className="flex justify-between py-3 border-b border-gray-200 dark:border-white/10 text-sm">
-                        <span className="text-gray-600 dark:text-gray-400 font-medium">Selected Seats ({selectedSeats.length})</span>
-                        <strong className="text-gray-900 dark:text-white">{selectedSeats.join(', ') || '-'}</strong>
-                      </div>
-                      <div className="flex justify-between py-4 text-xl font-bold text-emerald-500">
-                        <span>Total Price</span>
-                        <span>₹{(selectedSeats.length * selectedBus.fare).toLocaleString()}</span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 className="text-lg font-bold font-outfit text-gray-900 dark:text-white mb-4">Passenger Details</h4>
-                      {selectedSeats.map(seat => (
-                        <div key={seat} className="mb-4 p-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl">
-                          <p className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Seat {seat}</p>
+                  <div>
+                    <h4 className="text-lg font-bold font-outfit text-gray-900 dark:text-white mb-4">Passenger Details</h4>
+                    {selectedSeats.map(seat => (
+                      <div key={seat} className="mb-4 p-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl">
+                        <p className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Seat {seat}</p>
+                        <input
+                          type="text"
+                          placeholder="Name"
+                          className="w-full mb-2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white"
+                          value={passengerDetails?.[seat]?.name || ''}
+                          onChange={e => {
+                            setPassengerDetails({ ...passengerDetails, [seat]: { ...passengerDetails?.[seat], name: e.target.value } });
+                            if (fieldErrors[`${seat}_name`]) validatePassengerField(seat, 'name', e.target.value);
+                          }}
+                          onBlur={e => validatePassengerField(seat, 'name', e.target.value)}
+                        />
+                        {fieldErrors[`${seat}_name`] && <span className="text-red-500 text-xs mt-1 block">{fieldErrors[`${seat}_name`]}</span>}
+                        <div className="flex gap-2">
                           <input
-                            type="text"
-                            placeholder="Name"
-                            className="w-full mb-2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white"
-                            value={passengerDetails?.[seat]?.name || ''}
+                            type="number"
+                            placeholder="Age"
+                            className="w-1/2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white"
+                            value={passengerDetails?.[seat]?.age || ''}
                             onChange={e => {
-                              setPassengerDetails({...passengerDetails, [seat]: {...passengerDetails?.[seat], name: e.target.value}});
-                              if (fieldErrors[`${seat}_name`]) validatePassengerField(seat, 'name', e.target.value);
-                            }}
-                            onBlur={e => validatePassengerField(seat, 'name', e.target.value)}
-                          />
-                          {fieldErrors[`${seat}_name`] && <span className="text-red-500 text-xs mt-1 block">{fieldErrors[`${seat}_name`]}</span>}
-                          <div className="flex gap-2">
-                            <input
-                              type="number"
-                              placeholder="Age"
-                              className="w-1/2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white"
-                              value={passengerDetails?.[seat]?.age || ''}
-                              onChange={e => {
-                              setPassengerDetails({...passengerDetails, [seat]: {...passengerDetails?.[seat], age: e.target.value}});
+                              setPassengerDetails({ ...passengerDetails, [seat]: { ...passengerDetails?.[seat], age: e.target.value } });
                               if (fieldErrors[`${seat}_age`]) validatePassengerField(seat, 'age', e.target.value);
                             }}
                             onBlur={e => validatePassengerField(seat, 'age', e.target.value)}
-                            />
-                            <select
-                              className="w-1/2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white"
-                              value={passengerDetails?.[seat]?.gender || 'M'}
-                              onChange={e => setPassengerDetails({...passengerDetails, [seat]: {...passengerDetails?.[seat], gender: e.target.value}})}
-                            >
-                              <option value="Male">Male</option>
-                              <option value="Female">Female</option>
-                              <option value="Other">Other</option>
-                            </select>
-                          </div>
+                          />
+                          <select
+                            className="w-1/2 p-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 rounded-lg text-sm text-gray-900 dark:text-white"
+                            value={passengerDetails?.[seat]?.gender || 'M'}
+                            onChange={e => setPassengerDetails({ ...passengerDetails, [seat]: { ...passengerDetails?.[seat], gender: e.target.value } })}
+                          >
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                          </select>
                         </div>
-                      ))}
-                    </div>
-
-                    <button
-                      disabled={isCheckingOut || selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age)}
-                      onClick={() => handleCheckout(selectedBus)}
-                      className={`w-full py-4 rounded-xl font-bold text-base mt-4 shadow-xl transition-all ${isCheckingOut || selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age)
-                          ? 'bg-gray-200 dark:bg-slate-800 text-gray-400 dark:text-gray-500 cursor-not-allowed shadow-none'
-                          : 'bg-emerald-500 text-white hover:scale-105 active:scale-95 shadow-emerald-500/30'
-                        }`}
-                    >
-                      Confirm & Pay ₹{(selectedSeats.length * selectedBus.fare).toLocaleString()}
-                    </button>
+                      </div>
+                    ))}
                   </div>
+
+                  <button
+                    disabled={isCheckingOut || selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age)}
+                    onClick={() => handleCheckout(selectedBus)}
+                    className={`w-full py-4 rounded-xl font-bold text-base mt-4 shadow-xl transition-all ${isCheckingOut || selectedSeats.length === 0 || selectedSeats.some(s => !passengerDetails?.[s]?.name || !passengerDetails?.[s]?.age)
+                      ? 'bg-gray-200 dark:bg-slate-800 text-gray-400 dark:text-gray-500 cursor-not-allowed shadow-none'
+                      : 'bg-emerald-500 text-white hover:scale-105 active:scale-95 shadow-emerald-500/30'
+                      }`}
+                  >
+                    Confirm & Pay ₹{(selectedSeats.length * selectedBus.fare).toLocaleString()}
+                  </button>
                 </div>
               </div>
+            </div>
           ) : (
             // Actual Buses List
             filteredBuses.length > 0 ? filteredBuses.map((bus) => (
@@ -513,7 +532,7 @@ const DesktopSearchResults = ({
                   </button>
                 </div>
               </div>
-            )) : (
+            )) : hasCompletedSearch ? (
               <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-12 text-center rounded-2xl shadow-sm">
                 <div className="w-20 h-20 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Bus size={40} className="text-gray-400 dark:text-white/30" />
@@ -522,7 +541,7 @@ const DesktopSearchResults = ({
                 <p className="text-gray-500 dark:text-gray-400 mb-8 font-medium">Try adjusting your filters or changing the route to see more results.</p>
                 <button className="px-6 py-3 bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-transform" onClick={clearAllFilters}>Clear All Filters</button>
               </div>
-            )
+            ) : null
           )}
         </div>
       </main>
@@ -546,22 +565,22 @@ const DesktopSearchResults = ({
               </button>
             </div>
             <div className="p-6 overflow-y-auto" id="desktop-ticket-summary">
-               <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm text-center">Your seat is reserved. View your boarding pass in My Tickets.</p>
-               
-               <div className="text-center mb-6">
-                 <div className="text-xs font-mono text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-2 rounded-full inline-block">
-                   PNR: {(activeBookings && activeBookings.length > 0) ? (activeBookings[0].bookingNumber || activeBookings[0].id) : 'PROCESSING...'}
-                 </div>
-               </div>
+              <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm text-center">Your seat is reserved. View your boarding pass in My Tickets.</p>
 
-               <div className="max-w-md mx-auto p-6 bg-gray-50 dark:bg-slate-950 rounded-2xl text-left border border-gray-200 dark:border-white/5 shadow-inner space-y-3 text-sm">
-                 <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Bus</span><strong className="text-gray-900 dark:text-white text-right">{selectedBus?.name}</strong></div>
-                 <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Seats</span><strong className="text-gray-900 dark:text-white text-right">{selectedSeats.join(', ')}</strong></div>
-                 <div className="flex justify-between border-t border-gray-200 dark:border-white/10 pt-3 text-base">
-                   <span className="font-bold text-gray-900 dark:text-white">Total Paid</span>
-                   <strong className="text-emerald-500">?{(selectedSeats.length * (selectedBus?.fare || 0))}</strong>
-                 </div>
-               </div>
+              <div className="text-center mb-6">
+                <div className="text-xs font-mono text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-2 rounded-full inline-block">
+                  PNR: {(activeBookings && activeBookings.length > 0) ? (activeBookings[0].bookingNumber || activeBookings[0].id) : 'PROCESSING...'}
+                </div>
+              </div>
+
+              <div className="max-w-md mx-auto p-6 bg-gray-50 dark:bg-slate-950 rounded-2xl text-left border border-gray-200 dark:border-white/5 shadow-inner space-y-3 text-sm">
+                <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Bus</span><strong className="text-gray-900 dark:text-white text-right">{selectedBus?.name}</strong></div>
+                <div className="flex justify-between"><span className="text-gray-500 dark:text-gray-400">Seats</span><strong className="text-gray-900 dark:text-white text-right">{selectedSeats.join(', ')}</strong></div>
+                <div className="flex justify-between border-t border-gray-200 dark:border-white/10 pt-3 text-base">
+                  <span className="font-bold text-gray-900 dark:text-white">Total Paid</span>
+                  <strong className="text-emerald-500">?{(selectedSeats.length * (selectedBus?.fare || 0))}</strong>
+                </div>
+              </div>
             </div>
             <div className="p-6 border-t border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-slate-900/50 flex flex-col sm:flex-row gap-4 justify-end">
               <button
@@ -575,7 +594,8 @@ const DesktopSearchResults = ({
                 Back to Search
               </button>
               <button
-                onClick={() => {                  const ticketData = {
+                onClick={() => {
+                  const ticketData = {
                     bookingNumber: 'CONFIRMED',
                     from: origin,
                     to: destination,
@@ -594,7 +614,8 @@ const DesktopSearchResults = ({
                     }))
                   };
                   const user = useAuthStore.getState().user;
-                  downloadTicketPDF(ticketData, user, 'KSRTC_Ticket.pdf');}}
+                  downloadTicketPDF(ticketData, user, 'KSRTC_Ticket.pdf');
+                }}
                 className="px-6 py-3 bg-emerald-500 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
               >
                 <Download size={18} />

@@ -1,7 +1,5 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import PrintableTicket from '../components/shared/PrintableTicket';
 
 export const downloadTicketPDF = async (ticketData, user, filename = 'Ticket.pdf') => {
@@ -23,6 +21,11 @@ export const downloadTicketPDF = async (ticketData, user, filename = 'Ticket.pdf
       try {
         const element = document.getElementById('pdf-ticket-capture');
         if (!element) throw new Error('Ticket element not found');
+
+        const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+          import('jspdf'),
+          import('html2canvas')
+        ]);
 
         const canvas = await html2canvas(element, {
           scale: 2,

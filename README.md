@@ -86,10 +86,18 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=<firebase-sender-id>
 VITE_FIREBASE_APP_ID=<firebase-app-id>
 ```
 
-## Project structure
+## Project Structure (Monorepo)
 
-- `backend/` - Express API server (Uses `jsonwebtoken` for authentication)
-- `frontend/` - React client app (Uses `react-router-dom` for navigation)
+- `backend/` - Express API server with Mongoose models, RBAC, and services
+- `frontend/` - React 19 + Vite client with responsive Desktop & Mobile views
+- `api_documentation.md` - Complete REST API specification
+
+## Key Features & Capabilities
+
+- **Dynamic Seat Layout Engine**: Automatically calculates and renders responsive seat layouts matching any `totalCapacity` (from 24-seat Minibuses to standard 51-seat KSRTC buses) entered by Admins or Station Masters.
+- **In-App Passenger Wallet**: Automated refund routing upon eligible booking cancellation with balance checking and transaction ledger.
+- **Multi-Channel Notifications**: Real-time dispatched alerts across In-App, Email, and SMS for booking confirmations, cancellations, seat releases, and manifest updates.
+- **Multi-Role Access Control (RBAC)**: Distinct permissions and tailored views for Passengers, Station Masters, Conductors, and System Administrators.
 
 ## Payment Integration (Razorpay)
 

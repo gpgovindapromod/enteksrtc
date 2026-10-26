@@ -52,12 +52,11 @@ export const useNotifications = () => {
   useEffect(() => {
     if (isUserLoggedIn && token) {
       fetchList(1, false);
-      fetchUnread();
     } else {
       setNotifications([]);
       setUnreadCount(0);
     }
-  }, [isUserLoggedIn, token, fetchList, fetchUnread]);
+  }, [isUserLoggedIn, token, fetchList]);
 
   // Bounded polling for unread count (every 30 seconds when tab is active)
   useEffect(() => {

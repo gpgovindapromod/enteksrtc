@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getStationMasterDashboard, getDepotStaff, addDepotStaff, updateDepotStaff, getDepotFleet, updateDepotFleet, getDepotTrips, getDepotManifest, updateDepotTrip } from '../../../services/stationMasterService';
-import { Users, Bus, Route, MapPin, CheckCircle, AlertTriangle, Play, X, User as UserIcon } from 'lucide-react';
+import { Users, Bus, Route, MapPin, CheckCircle, AlertTriangle, Play, X, User as UserIcon, Clock, Bell, Info } from 'lucide-react';
 import { useNotifications } from '../../../hooks/useNotifications';
 import { NotificationItem } from '../../notifications/NotificationItem';
 
@@ -69,7 +69,7 @@ const OverviewTab = ({ data }) => {
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
           <div className="flex justify-between items-start mb-4">
             <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-600">
-              <span className="material-symbols-outlined text-[24px]">schedule</span>
+              <Clock size={24} />
             </div>
           </div>
           <p className="text-3xl font-bold font-outfit text-slate-900 dark:text-white">
@@ -82,7 +82,7 @@ const OverviewTab = ({ data }) => {
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
           <div className="flex justify-between items-start mb-4">
             <div className="w-12 h-12 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-600">
-              <span className="material-symbols-outlined text-[24px]">route</span>
+              <Route size={24} />
             </div>
             {data?.trips?.cancelled > 0 && (
               <span className="text-xs font-bold px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-lg">
@@ -107,7 +107,7 @@ const OverviewTab = ({ data }) => {
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold">
-              <span className="material-symbols-outlined text-[20px]">notifications</span>
+              <Bell size={20} />
             </div>
             <div>
               <h3 className="font-bold text-base text-slate-900 dark:text-white">Depot Operational Alerts</h3>
@@ -134,7 +134,7 @@ const OverviewTab = ({ data }) => {
 
       <div className="bg-blue-50 dark:bg-blue-900/10 p-6 rounded-2xl border border-blue-100 dark:border-blue-900/30">
         <h3 className="text-lg font-bold text-blue-900 dark:text-blue-400 flex items-center gap-2 mb-2">
-          <span className="material-symbols-outlined text-[20px]">info</span>
+          <Info size={20} />
           Station Master Quick Actions
         </h3>
         <p className="text-sm text-blue-800 dark:text-blue-300">

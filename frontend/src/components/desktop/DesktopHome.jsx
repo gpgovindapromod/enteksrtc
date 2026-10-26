@@ -14,6 +14,7 @@ import { GalleryImages, TopRoutes, Testimonials } from '../../data/mockData';
 import StopSearchAutocomplete from '../shared/StopSearchAutocomplete';
 import ScrollReveal from '../shared/ScrollReveal';
 import TechText from '../common/TechText';
+import { Bus, Sun, Moon, MapPin, ArrowRightLeft, Flag, Calendar, ArrowRight, ChevronRight, Link2, Share2, Mail, Send } from 'lucide-react';
 
 const DesktopHome = () => {
   const navigate = useNavigate();
@@ -70,7 +71,7 @@ const DesktopHome = () => {
       <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ease-in-out px-4 ${isScrolled ? "py-2" : "py-4"}`} id="navbar">
         <div className={`flex justify-between items-center px-6 h-20 mx-auto transition-all duration-500 ease-in-out ${isScrolled ? "bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-lg rounded-full max-w-4xl" : "w-full max-w-container-max"}`} id="navbar-container">
           <div className="flex items-center gap-3 cursor-pointer active:scale-95 transition-transform duration-300">
-            <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>directions_bus</span>
+            <Bus className="w-8 h-8 text-primary" />
             <div className="flex flex-col">
               <span className="font-headline-md text-headline-md font-bold text-primary leading-none">Ente KSRTC</span>
               <span className={`text-xs uppercase tracking-widest mt-1 drop-shadow-md ${isScrolled ? 'text-gray-500 dark:text-white/60' : 'text-white/80'}`}>Premium Journey</span>
@@ -92,7 +93,9 @@ const DesktopHome = () => {
               <button className="text-sm font-medium bg-emerald-700 text-white px-4 py-1.5 rounded-full shadow-lg shadow-emerald-700/20 hover:brightness-110 active:scale-95 transition-all" onClick={() => setShowLoginModal(true)}>Login</button>
             )}
             <div className={`cursor-pointer active:scale-95 hover:scale-105 transition-transform duration-300 hover:text-primary drop-shadow-md ${isScrolled ? 'text-gray-700 dark:text-white/80' : 'text-white/80'}`}>
-              <span className="material-symbols-outlined" onClick={toggleTheme}>{theme === "dark" ? "light_mode" : "dark_mode"}</span>
+              <button type="button" onClick={toggleTheme} aria-label="Toggle Theme" className="p-1 flex items-center justify-center">
+                {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
             </div>
           </div>
         </div>
@@ -147,7 +150,7 @@ const DesktopHome = () => {
               <div className="flex-1 border-b-2 border-white/20 pb-3 focus-within:border-emerald-400 transition-colors px-0 md:pr-4">
                 <label htmlFor="origin-input" className="block text-[10px] text-white/70 uppercase tracking-widest mb-2 font-bold">From</label>
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-white/50" style={{ fontSize: '18px' }}>location_on</span>
+                  <MapPin className="w-4 h-4 text-white/50" />
                   <StopSearchAutocomplete
                     value={origin}
                     onChange={(name) => setOrigin(name)}
@@ -160,16 +163,17 @@ const DesktopHome = () => {
               <div className="hidden md:flex items-end pb-3 px-2">
                 <button
                   onClick={() => { const temp = origin; setOrigin(destination); setDestination(temp); }}
+                  aria-label="Swap origin and destination"
                   className="bg-white/10 border border-white/20 rounded-full p-2 hover:bg-emerald-500/20 hover:border-emerald-400 transition-all group flex-shrink-0"
                 >
-                  <span className="material-symbols-outlined text-white/60 group-hover:text-emerald-400 transition-colors" style={{ fontSize: '18px' }}>swap_horiz</span>
+                  <ArrowRightLeft className="w-4 h-4 text-white/60 group-hover:text-emerald-400 transition-colors" />
                 </button>
               </div>
 
               <div className="flex-1 border-b-2 border-white/20 pb-3 focus-within:border-emerald-400 transition-colors px-0 md:px-4">
                 <label htmlFor="destination-input" className="block text-[10px] text-white/70 uppercase tracking-widest mb-2 font-bold">To</label>
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-white/50" style={{ fontSize: '18px' }}>flag</span>
+                  <Flag className="w-4 h-4 text-white/50" />
                   <StopSearchAutocomplete
                     value={destination}
                     onChange={(name) => setDestination(name)}
@@ -184,7 +188,7 @@ const DesktopHome = () => {
               <div className="flex-1 border-b-2 border-white/20 pb-3 focus-within:border-emerald-400 transition-colors px-0 md:pl-4">
                 <label htmlFor="date-input" className="block text-[10px] text-white/70 uppercase tracking-widest mb-2 font-bold">Date</label>
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-white/50" style={{ fontSize: '18px' }}>calendar_month</span>
+                  <Calendar className="w-4 h-4 text-white/50" />
                   <input
                     id="date-input"
                     className="bg-transparent border-none w-full text-white text-base font-medium focus:ring-0 focus:outline-none p-0 cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:cursor-pointer"
@@ -201,7 +205,7 @@ const DesktopHome = () => {
                   className="bg-emerald-700 text-white h-12 md:h-14 px-8 rounded-xl font-bold text-base flex items-center justify-center gap-2 hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-300 shadow-lg shadow-emerald-700/30 group w-full md:w-auto"
                 >
                   <span>Search</span>
-                  <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform" style={{ fontSize: '20px' }}>arrow_forward</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
             </div>
@@ -221,7 +225,7 @@ const DesktopHome = () => {
           <ScrollReveal animation="fade-up">
             <div className="flex justify-between items-end mb-stack-lg">
               <h2 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold text-gray-900 dark:text-white">Top Routes</h2>
-              <a className="text-primary hover:brightness-110 flex items-center gap-1 transition-colors" href="#">View All <span className="material-symbols-outlined text-sm">chevron_right</span></a>
+              <a className="text-primary hover:brightness-110 flex items-center gap-1 transition-colors" href="#">View All <ChevronRight className="w-4 h-4" /></a>
             </div>
           </ScrollReveal>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
@@ -240,7 +244,7 @@ const DesktopHome = () => {
                       <div className="flex flex-col">
                         <span className="font-headline-md text-body-lg font-bold text-gray-900 dark:text-white">{route.from}</span>
                       </div>
-                      <span className="material-symbols-outlined text-primary/70 group-hover:text-primary transition-colors">arrow_right_alt</span>
+                      <ArrowRight className="w-5 h-5 text-primary/70 group-hover:text-primary transition-colors" />
                       <div className="flex flex-col text-right">
                         <span className="font-headline-md text-body-lg font-bold text-gray-900 dark:text-white">{route.to}</span>
                       </div>
@@ -308,7 +312,7 @@ const DesktopHome = () => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
             <div className="col-span-1 md:col-span-4 pr-8">
               <div className="flex items-center gap-3 mb-6">
-                <span className="material-symbols-outlined text-primary text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>directions_bus</span>
+                <Bus className="w-9 h-9 text-primary" />
                 <div className="flex flex-col">
                   <span className="font-headline-md text-2xl text-white font-black tracking-tight">Ente KSRTC</span>
                   <span className="text-xs text-primary uppercase tracking-widest font-bold">Premium Journey</span>
@@ -352,21 +356,21 @@ const DesktopHome = () => {
               <div>
                 <h3 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary"></span> Connect</h3>
                 <div className="flex gap-4 mb-6">
-                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-colors text-white/60">
-                    <span className="material-symbols-outlined text-[20px]">link</span>
+                  <a href="#" aria-label="Website Link" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-colors text-white/60">
+                    <Link2 className="w-5 h-5" />
                   </a>
-                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-colors text-white/60">
-                    <span className="material-symbols-outlined text-[20px]">share</span>
+                  <a href="#" aria-label="Share" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-colors text-white/60">
+                    <Share2 className="w-5 h-5" />
                   </a>
-                  <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-colors text-white/60">
-                    <span className="material-symbols-outlined text-[20px]">mail</span>
+                  <a href="#" aria-label="Email" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-colors text-white/60">
+                    <Mail className="w-5 h-5" />
                   </a>
                 </div>
                 <h4 className="text-sm font-bold text-white mb-3">Newsletter</h4>
                 <div className="flex relative">
-                  <input type="email" placeholder="Your email address" className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-3 pr-10 text-sm text-white focus:outline-none focus:border-primary transition-colors" />
-                  <button className="absolute right-1 top-1 bottom-1 px-3 bg-primary rounded-md text-white hover:brightness-110 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-[16px]">send</span>
+                  <input type="email" placeholder="Your email address" aria-label="Your email address" className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-3 pr-10 text-sm text-white focus:outline-none focus:border-primary transition-colors" />
+                  <button aria-label="Submit newsletter" className="absolute right-1 top-1 bottom-1 px-3 bg-primary rounded-md text-white hover:brightness-110 flex items-center justify-center">
+                    <Send className="w-4 h-4" />
                   </button>
                 </div>
               </div>

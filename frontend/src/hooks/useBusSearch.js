@@ -11,7 +11,13 @@ export const useBusSearch = ({
   onModify, // Added for URL syncing
   isSearching = true // Added this for mobile which only searches when isSearching is true
 }) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => {
+    const hasOrigin = (initialOrigin || '').trim().length > 0;
+    const hasDestination = (initialDestination || '').trim().length > 0;
+    return Boolean(isSearching && hasOrigin && hasDestination);
+  });
+  const [hasCompletedSearch, setHasCompletedSearch] = useState(false);
+  const [searchError, setSearchError] = useState(null);
   const [allBuses, setAllBuses] = useState([]);
   const [filteredBuses, setFilteredBuses] = useState([]);
   const [availableBusTypes, setAvailableBusTypes] = useState([]);
@@ -34,47 +40,62 @@ export const useBusSearch = ({
     setLocalDate(initialJourneyDate);
   }, [initialOrigin, initialDestination, initialJourneyDate]);
 
-  // Fetch buses once when route/date changes
+  // Fetch buses once when route/date changes, with AbortController for race condition prevention
   useEffect(() => {
+    if (!isSearching) {
+      setIsLoading(false);
+      return;
+    }
+
+    const trimmedOrigin = (initialOrigin || '').trim();
+    const trimmedDestination = (initialDestination || '').trim();
+
+    if (!trimmedOrigin || !trimmedDestination) {
+      setIsLoading(false);
+      setHasCompletedSearch(false);
+      setAllBuses([]);
+      setFilteredBuses([]);
+      setAvailableBusTypes([]);
+      setSearchError(null);
+      return;
+    }
+
+    const abortController = new AbortController();
+    setIsLoading(true);
+    setSearchError(null);
+
     const fetchBusesData = async () => {
-      if (!isSearching) {
-        setIsLoading(false);
-        return;
-      }
-
-      const trimmedOrigin = (initialOrigin || '').trim();
-      const trimmedDestination = (initialDestination || '').trim();
-
-      if (!trimmedOrigin || !trimmedDestination) {
-        setIsLoading(false);
-        setAllBuses([]);
-        setFilteredBuses([]);
-        setAvailableBusTypes([]);
-        return;
-      }
-      
-      setIsLoading(true);
       try {
         const buses = await fetchBuses({
           origin: trimmedOrigin,
           destination: trimmedDestination,
           date: initialJourneyDate
-        });
-        setAllBuses(buses);
+        }, abortController.signal);
         
-        // Extract unique bus types from the fetched data
-        const uniqueTypes = [...new Set(buses.map(bus => bus.type))].filter(Boolean);
-        setAvailableBusTypes(uniqueTypes);
+        if (!abortController.signal.aborted) {
+          setAllBuses(buses);
+          const uniqueTypes = [...new Set(buses.map(bus => bus.type))].filter(Boolean);
+          setAvailableBusTypes(uniqueTypes);
+          setHasCompletedSearch(true);
+          setIsLoading(false);
+        }
       } catch (error) {
-        console.error("Failed to fetch buses", error);
-        setAllBuses([]);
-        setAvailableBusTypes([]);
-      } finally {
-        setIsLoading(false);
+        if (!abortController.signal.aborted) {
+          console.error("Failed to fetch buses", error);
+          setAllBuses([]);
+          setAvailableBusTypes([]);
+          setSearchError(error?.response?.data?.message || error?.message || "Failed to load bus schedules. Please try again.");
+          setHasCompletedSearch(true);
+          setIsLoading(false);
+        }
       }
     };
 
     fetchBusesData();
+
+    return () => {
+      abortController.abort();
+    };
   }, [isSearching, initialOrigin, initialDestination, initialJourneyDate]);
 
   // Apply filters and sorting locally whenever filters or allBuses change
@@ -151,6 +172,8 @@ export const useBusSearch = ({
 
   return {
     isLoading,
+    hasCompletedSearch,
+    searchError,
     filteredBuses,
     availableBusTypes,
     selectedBusTypes,
@@ -169,6 +192,7 @@ export const useBusSearch = ({
     handleSwap,
     handleModify,
     handleCheckboxChange,
+    clearAllFilters,
     seatGridData: null  // use useSeatGrid hook instead
   };
 };

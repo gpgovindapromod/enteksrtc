@@ -17,9 +17,6 @@ export const searchTrips = async (req, res) => {
       return res.status(400).json({ success: false, message: 'from, to, and date are required' });
     }
 
-    // Materialize trips from recurring schedules just-in-time
-    await materializeTripsForDate(date);
-
     console.time(`Stop Validation - ${tId}`);
     const escapeRegex = (string) => String(string).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const [fromStop, toStop] = await Promise.all([
@@ -39,6 +36,9 @@ export const searchTrips = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Source and destination cannot be the same' });
     }
     console.timeEnd(`Stop Validation - ${tId}`);
+
+    // Materialize trips from recurring schedules just-in-time
+    await materializeTripsForDate(date);
 
     console.time(`Route Filtering - ${tId}`);
     // Find all routeStops for fromStop and toStop
@@ -255,6 +255,8 @@ export const getSeatAvailability = async (req, res) => {
     const bookedSeatsRecords = await BookingSeat.find({ bookingId: { $in: bookingIds } });
     const bookedSeatNumbers = bookedSeatsRecords.map(s => s.seatNo);
 
+    const currentUserId = req.user?.id ? String(req.user.id) : null;
+
     const seatMap = allSeats.map(seat => {
       const seatNo = seat.seatNumber || seat.seatNo;
       
@@ -262,15 +264,25 @@ export const getSeatAvailability = async (req, res) => {
       const bookingIdsForSeat = bookedSeatsRecords.filter(s => s.seatNo === seatNo).map(s => String(s.bookingId));
       let status = 'AVAILABLE';
       let isAvailable = true;
+      let isHeldByCurrentUser = false;
 
       for (const booking of overlappingBookings) {
         if (bookingIdsForSeat.includes(String(booking._id))) {
-          isAvailable = false;
+          const isMyHold = currentUserId && String(booking.passengerId) === currentUserId;
           if (booking.isBlock) {
+             isAvailable = false;
              status = 'BLOCKED';
           } else if (booking.bookingStatus === 'PENDING') {
-             status = 'HELD';
+             if (isMyHold) {
+               isAvailable = true; // The holding user can select and complete payment for their held seat
+               isHeldByCurrentUser = true;
+               status = 'HELD_BY_ME';
+             } else {
+               isAvailable = false;
+               status = 'HELD';
+             }
           } else {
+             isAvailable = false;
              status = 'BOOKED';
           }
           break;
@@ -281,6 +293,7 @@ export const getSeatAvailability = async (req, res) => {
         seatNumber: seatNo,
         isAvailable,
         status,
+        isHeldByCurrentUser,
         type: seat.type || 'SEATER'
       };
     });

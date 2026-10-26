@@ -65,6 +65,8 @@ const MobileSearchResults = ({
   
   const {
     isLoading,
+    hasCompletedSearch,
+    searchError,
     filteredBuses,
     selectedBusTypes,
     setSelectedBusTypes,
@@ -183,7 +185,7 @@ const MobileSearchResults = ({
               </div>
               
               <div className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 p-3 rounded-xl flex items-center gap-2 text-sm font-bold mb-6">
-                <Info size={16} /> {filteredBuses.length} Services found for your route.
+                <Info size={16} /> {isLoading ? 'Searching available services...' : `${filteredBuses.length} Services found for your route.`}
               </div>
 
               <div className="space-y-4">
@@ -192,6 +194,28 @@ const MobileSearchResults = ({
                   [1, 2, 3].map((item) => (
                     <div key={item} className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl h-48 animate-pulse shadow-sm"></div>
                   ))
+                ) : searchError ? (
+                  <div className="bg-white dark:bg-white/5 border border-red-200 dark:border-red-900/30 p-8 text-center rounded-2xl shadow-sm">
+                    <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500">
+                      <AlertTriangle size={32} />
+                    </div>
+                    <h3 className="text-lg font-bold font-outfit text-gray-900 dark:text-white mb-1">Search Failed</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-6 font-medium">{searchError}</p>
+                    <button className="px-5 py-2.5 bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-transform" onClick={() => setIsModifyOpen(true)}>
+                      Modify Search
+                    </button>
+                  </div>
+                ) : filteredBuses.length === 0 ? (
+                  hasCompletedSearch ? (
+                    <div className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 p-8 text-center rounded-2xl shadow-sm">
+                      <div className="w-16 h-16 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Bus size={32} className="text-gray-400 dark:text-white/30" />
+                      </div>
+                      <h3 className="text-lg font-bold font-outfit text-gray-900 dark:text-white mb-1">No buses found</h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-6 font-medium">Try adjusting your filters or changing the route to see more results.</p>
+                      <button className="px-5 py-2.5 bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-500/20 active:scale-95 transition-transform" onClick={clearAllFilters}>Clear All Filters</button>
+                    </div>
+                  ) : null
                 ) : (
                   // Actual Buses matching Desktop Aesthetic
                   filteredBuses.map((bus) => (
@@ -277,9 +301,11 @@ const MobileSearchResults = ({
                       </div>
                       <span className="text-xs font-bold uppercase tracking-widest opacity-60">Front</span>
                     </div>
-                    <div className="flex gap-4 text-xs font-bold">
-                      <div className="flex items-center gap-2"><div className="w-3 h-3 bg-white dark:bg-slate-800 border border-gray-300 dark:border-white/20 rounded"></div> Avail</div>
-                      <div className="flex items-center gap-2"><div className="w-3 h-3 bg-emerald-500 rounded"></div> Selected</div>
+                    <div className="flex gap-3 text-xs font-bold">
+                      <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-white dark:bg-slate-800 border border-gray-300 dark:border-white/20 rounded"></div> Avail</div>
+                      <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded"></div> Held</div>
+                      <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-slate-200 dark:bg-white/10 rounded"></div> Sold</div>
+                      <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-emerald-500 rounded"></div> Selected</div>
                     </div>
                   </div>
                   

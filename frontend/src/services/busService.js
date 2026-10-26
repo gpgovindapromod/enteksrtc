@@ -1,27 +1,26 @@
-// Universal Single Source of Truth for Bus Data, Search & Filtering Logic
-
-export const CITIES = [
-  'Bangalore', 'Trivandrum', 'Kochi', 'Calicut', 'Thrissur', 
-  'Tirunelveli', 'Chennai', 'Madurai', 'Kochi City Ride', 
-  'Kodakara (401)', 'Kodenchery', 'Kodungallur (73)', 
-  'Kollam (2)', 'Kollengode', 'Kollur'
-];
-
-export const filterCities = (query) => {
-  if (!query) return CITIES;
-  return CITIES.filter(city => city.toLowerCase().includes(query.toLowerCase()));
-};
-
-export const MOCK_BUSES = [
-  { id: 1, name: 'K-Swift Premium AC Sleeper (2+1)', brand: 'K-SWIFT', type: 'AC Sleeper', departure: '18:30', arrival: '08:45', duration: '14h 15m', fare: 1450, rating: 4.8 },
-  { id: 2, name: 'Swift Deluxe Air Bus (2+2)', brand: 'K-SWIFT', type: 'AC Semi-Sleeper', departure: '06:00', arrival: '20:30', duration: '14h 30m', fare: 950, rating: 4.5 },
-  { id: 3, name: 'Minnal Express (Non-AC Sleeper)', brand: 'KSRTC MINNAL', type: 'Non-AC Sleeper', departure: '20:00', arrival: '09:15', duration: '13h 15m', fare: 880, rating: 4.2 },
-  { id: 4, name: 'KSRTC Super Fast (2+3)', brand: 'KSRTC', type: 'Non-AC Semi-Sleeper', departure: '22:15', arrival: '13:00', duration: '14h 45m', fare: 720, rating: 3.9 }
-];
-
 import apiClient from './apiClient';
 
-export const fetchBuses = async ({ origin = '', destination = '', date = '' }) => {
+/**
+ * Dynamically search stops from the database backend.
+ * Falls back to an empty list on failure rather than hardcoded mock data.
+ */
+export const searchStopsApi = async (query = '') => {
+  if (!query || query.trim().length < 2) return [];
+  try {
+    const response = await apiClient.get('/api/stops/search', { params: { q: query.trim() } });
+    return (response.data?.stops || []).map(s => s.stopName);
+  } catch (error) {
+    console.error('Failed to search stops dynamically:', error);
+    return [];
+  }
+};
+
+export const filterCities = async (query) => {
+  return await searchStopsApi(query);
+};
+
+
+export const fetchBuses = async ({ origin = '', destination = '', date = '' }, signal) => {
   const trimmedOrigin = (origin || '').trim();
   const trimmedDestination = (destination || '').trim();
   if (!trimmedOrigin || !trimmedDestination || !date) {
@@ -30,7 +29,8 @@ export const fetchBuses = async ({ origin = '', destination = '', date = '' }) =
 
   try {
     const response = await apiClient.get('/api/trips/search', {
-      params: { from: trimmedOrigin, to: trimmedDestination, date }
+      params: { from: trimmedOrigin, to: trimmedDestination, date },
+      signal
     });
     
     return (response.data.trips || []).map(tripData => {
@@ -60,15 +60,81 @@ export const fetchBuses = async ({ origin = '', destination = '', date = '' }) =
   }
 };
 
-export const generateSeatLayoutData = (seatStateMap = {}) => {
-  const rows = 6;
-  const cols = 12;
+/**
+ * Universally generate dynamic seat layout grids based on the bus's totalCapacity.
+ * Supports standard KSRTC 51-seat layout, 24-seat minibuses, 36-seat semi-sleepers,
+ * or any custom capacity configured by Admins / Station Masters.
+ */
+export const generateSeatLayoutData = (seatStateMap = {}, totalCapacity = 51) => {
+  const cap = Number(totalCapacity) > 0 ? Number(totalCapacity) : 51;
+
+  // Case 1: Standard full-size 51-seat KSRTC layout (6 rows, 12 cols with doors and 3x2 distribution)
+  if (cap >= 48) {
+    const rows = 6;
+    const cols = 12;
+    const grid = [];
+    let seatNumberCounter = 1;
+
+    for (let r = 0; r < rows; r++) {
+      const rowSeats = [];
+      for (let c = 0; c < cols; c++) {
+        // Driver column (far left)
+        if (c === 0) {
+          if (r === 0) {
+            rowSeats.push({ isDriver: true, key: `driver` });
+          } else {
+            rowSeats.push({ isEmpty: true, key: `empty-${r}-${c}` });
+          }
+          continue;
+        }
+
+        // Aisle row (horizontal)
+        if (r === 3) {
+          rowSeats.push({ isAisle: true, key: `aisle-${c}` });
+          continue;
+        }
+
+        // Gaps in the bottom block for doors
+        if ((r === 4 || r === 5) && (c === 2 || c === 9)) {
+          rowSeats.push({ isEmpty: true, key: `door-${r}-${c}` });
+          continue;
+        }
+
+        // Check if we reached the bus capacity
+        if (seatNumberCounter > cap) {
+          rowSeats.push({ isEmpty: true, key: `empty-excess-${r}-${c}` });
+          continue;
+        }
+
+        const seatId = `${r}-${c}`;
+        const seatLabel = `${seatNumberCounter++}`;
+        const seatInfo = seatStateMap[seatLabel] || { isAvailable: true, status: 'AVAILABLE' };
+        const isBooked = !seatInfo.isAvailable;
+
+        rowSeats.push({
+          isSeat: true,
+          seatId,
+          seatLabel,
+          isBooked,
+          status: seatInfo.status || (isBooked ? 'BOOKED' : 'AVAILABLE')
+        });
+      }
+      grid.push({ rowId: `row-${r}`, seats: rowSeats });
+    }
+    return grid;
+  }
+
+  // Case 2: Dynamic layout for smaller buses (e.g. 24-seat, 30-seat, 36-seat, 40-seat)
+  // Standard 2+2 arrangement: Row 0 (window left), Row 1 (aisle left), Row 2 (aisle), Row 3 (aisle right), Row 4 (window right)
+  const rows = 5;
+  const seatsPerRow = 4; // 2 left, 2 right
+  const numColumns = Math.max(6, Math.ceil(cap / seatsPerRow) + 1); // +1 for driver column
   const grid = [];
   let seatNumberCounter = 1;
 
   for (let r = 0; r < rows; r++) {
     const rowSeats = [];
-    for (let c = 0; c < cols; c++) {
+    for (let c = 0; c < numColumns; c++) {
       // Driver column (far left)
       if (c === 0) {
         if (r === 0) {
@@ -79,22 +145,20 @@ export const generateSeatLayoutData = (seatStateMap = {}) => {
         continue;
       }
 
-      // Aisle row (horizontal)
-      if (r === 3) {
+      // Center Aisle row
+      if (r === 2) {
         rowSeats.push({ isAisle: true, key: `aisle-${c}` });
         continue;
       }
 
-      // Gaps in the bottom block for doors
-      if ((r === 4 || r === 5) && (c === 2 || c === 9)) {
-        rowSeats.push({ isEmpty: true, key: `door-${r}-${c}` });
+      // Check if seats are exhausted
+      if (seatNumberCounter > cap) {
+        rowSeats.push({ isEmpty: true, key: `empty-${r}-${c}` });
         continue;
       }
 
-      // Actual seat
       const seatId = `${r}-${c}`;
       const seatLabel = `${seatNumberCounter++}`;
-      
       const seatInfo = seatStateMap[seatLabel] || { isAvailable: true, status: 'AVAILABLE' };
       const isBooked = !seatInfo.isAvailable;
 
@@ -108,6 +172,7 @@ export const generateSeatLayoutData = (seatStateMap = {}) => {
     }
     grid.push({ rowId: `row-${r}`, seats: rowSeats });
   }
+
   return grid;
 };
 

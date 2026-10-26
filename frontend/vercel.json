@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)\\.(jpg|jpeg|png|webp|avif|svg|ico|css|js|woff|woff2)",

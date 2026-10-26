@@ -38,8 +38,8 @@ This document outlines all the current REST API endpoints configured in the back
 
 ---
 
-## 4. Bookings (`/api/bookings`)
-*Handles the core reservation workflow, payment verification, and booking management.*
+## 5. Bookings & Cancellation (`/api/bookings`)
+*Handles the core reservation workflow, seat hold locking, payment verification, cancellations, and refunds.*
 
 | HTTP Method | Endpoint | Description | Protected |
 | :--- | :--- | :--- | :--- |
@@ -47,22 +47,43 @@ This document outlines all the current REST API endpoints configured in the back
 | `POST` | `/api/bookings/verify-payment` | Verify payment provider's success signature | **Yes** |
 | `GET` | `/api/bookings/my-bookings` | List all bookings for the authenticated user | **Yes** |
 | `GET` | `/api/bookings/:bookingId` | Get details of a specific booking | **Yes** |
-| `POST` | `/api/bookings/:bookingId/cancel` | Cancel an active booking | **Yes** |
+| `GET` | `/api/bookings/:bookingId/cancel-preview` | Get cancellation refund & fee policy preview | **Yes** |
+| `POST` | `/api/bookings/:bookingId/cancel` | Cancel an active booking and process refund | **Yes** |
 | `POST` | `/api/bookings/webhook` | External Payment Provider Webhook handler | No |
 | `POST` | `/api/bookings/admin/cleanup-holds` | Manually clean up expired seat holds | **Yes** (Admin) |
 
 ---
 
-## 5. Stops / Stations (`/api/stops`)
-*Handles autocomplete and searching for bus stops/terminals.*
+## 6. Stops & Autocomplete (`/api/stops`)
+*Handles dynamic stop and station searching across Kerala.*
 
 | HTTP Method | Endpoint | Description | Protected |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/stops/search` | Search stops by keyword/name | No |
+| `GET` | `/api/stops/search` | Search stops by keyword/name (`?q=term`) | No |
 
 ---
 
-## 6. Station Master (`/api/station-master`)
+## 7. Passenger Wallet & Refunds (`/api/wallet`)
+*Handles user wallet balance, transaction ledger, and automated cancellation credits.*
+
+| HTTP Method | Endpoint | Description | Protected |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/wallet/balance` | Get current wallet balance in Rupees and Paise | **Yes** |
+| `GET` | `/api/wallet/transactions` | Paginated ledger of credit/debit transactions | **Yes** |
+
+---
+
+## 8. Notifications (`/api/notifications`)
+*Multi-channel notification dispatch system (In-App, SMS, Email).*
+
+| HTTP Method | Endpoint | Description | Protected |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/notifications/` | List user in-app notifications | **Yes** |
+| `PUT` | `/api/notifications/:id/read` | Mark a notification as read | **Yes** |
+
+---
+
+## 9. Station Master (`/api/station-master`)
 *Handles depot-level operations for fleet, staff, and trip management. Secured by `checkDepotAssignment`.*
 
 | HTTP Method | Endpoint | Description | Protected |
@@ -79,8 +100,8 @@ This document outlines all the current REST API endpoints configured in the back
 
 ---
 
-## 7. Admin (`/api/admin`)
-*System-wide management of users, financial analytics, and comprehensive activity tracking.*
+## 10. Admin (`/api/admin`)
+*System-wide management of users, fleet, financial analytics, and comprehensive activity tracking.*
 
 | HTTP Method | Endpoint | Description | Protected |
 | :--- | :--- | :--- | :--- |
@@ -88,6 +109,8 @@ This document outlines all the current REST API endpoints configured in the back
 | `POST` | `/api/admin/users` | Create new users (including Station Masters) | **Yes** (Admin) |
 | `PUT` | `/api/admin/users/:id` | Update user details, role, or status | **Yes** (Admin) |
 | `GET` | `/api/admin/fleet` | Retrieve system-wide fleet and route data | **Yes** (Admin) |
+| `POST` | `/api/admin/fleet` | Add new bus with custom totalCapacity and depot | **Yes** (Admin) |
+| `PUT` | `/api/admin/fleet/:id` | Update existing bus capacity or type | **Yes** (Admin) |
 | `GET` | `/api/admin/revenue` | Paginated revenue and payment transactions | **Yes** (Admin) |
 | `POST` | `/api/admin/revenue/refund/:id` | Process payment refunds | **Yes** (Admin) |
 | `GET` | `/api/admin/bookings` | System-wide booking records | **Yes** (Admin) |

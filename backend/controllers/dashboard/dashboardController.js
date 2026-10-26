@@ -59,6 +59,11 @@ const getAdminDashboard = async (userId, filters = {}) => {
         if (endDate) dateMatch.createdAt.$lte = new Date(endDate);
     }
 
+    const bookingMatch = { ...dateMatch };
+    if (bookingStatus) {
+        bookingMatch.bookingStatus = bookingStatus;
+    }
+
     // Execute all independent dashboard queries in parallel to eliminate sequential roundtrips
     const [
         totalUsers,

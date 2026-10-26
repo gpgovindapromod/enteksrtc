@@ -146,8 +146,14 @@ export const checkout = async (req, res) => {
       const boardingSequence = boardingRouteStop.sequence;
       const droppingSequence = droppingRouteStop.sequence;
 
-      // Overlap check: exclude expired holds so abandoned checkouts free seats
       const now = activeHoldCutoff();
+
+      // Overlap check: Find bookings that overlap this segment.
+      // We exclude:
+      // 1) Expired holds (holdExpiresAt <= now)
+      // 2) Bookings already held by THIS user (passengerId === userId && PENDING).
+      // This ensures this user is NOT blocked by their own active hold, while protecting other users' holds.
+      // Crucially, we do NOT release the existing hold before the new hold is safely acquired.
       const overlappingBookings = await Booking.find({
         tripId,
         bookingStatus: { $ne: 'CANCELLED' },
@@ -155,8 +161,14 @@ export const checkout = async (req, res) => {
         boardingSequence: { $lt: droppingSequence },
         droppingSequence: { $gt: boardingSequence },
         $or: [
-          { holdExpiresAt: { $gt: now } },  // active holds
-          { bookingStatus: 'CONFIRMED' },    // confirmed bookings (no hold needed)
+          {
+            holdExpiresAt: { $gt: now },
+            $or: [
+              { passengerId: { $ne: userId } },
+              { bookingStatus: 'CONFIRMED' }
+            ]
+          },
+          { bookingStatus: 'CONFIRMED' },
         ],
       }).select('_id').session(session);
 
@@ -168,7 +180,7 @@ export const checkout = async (req, res) => {
           seatNo: { $in: requestedSeatNos },
         }).session(session);
         if (alreadyBooked) {
-          throw new Error(`Seat ${alreadyBooked.seatNo} is already booked for this segment`);
+          throw new Error(`Seat ${alreadyBooked.seatNo} is already booked or held by another passenger`);
         }
       }
 
@@ -227,6 +239,25 @@ export const checkout = async (req, res) => {
         gender: seat.gender,
       }));
       await BookingSeat.insertMany(bookingSeats, { session });
+
+      // Now that the new hold is safely acquired with its seats, cancel any previous PENDING holds
+      // for this trip & user so old pending orders don't linger.
+      await Booking.updateMany(
+        {
+          _id: { $ne: newBooking._id },
+          tripId,
+          passengerId: userId,
+          bookingStatus: 'PENDING',
+        },
+        {
+          $set: {
+            bookingStatus: 'CANCELLED',
+            paymentStatus: 'FAILED',
+            holdExpiresAt: new Date(0),
+          },
+        },
+        { session }
+      );
 
       await session.commitTransaction();
       session.endSession();

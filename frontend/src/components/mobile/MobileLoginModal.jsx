@@ -300,6 +300,7 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                       aria-label="Email Address"
                       placeholder="Email Address"
                       value={loginForm.email}
+                      disabled={isSubmitting}
                       onChange={(e) => setLoginForm((prev) => ({ ...prev, email: e.target.value }))}
                       required
                     />
@@ -311,6 +312,7 @@ const MobileLoginModal = ({ showLoginModal, setShowLoginModal, onLoginSuccess })
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Password"
                       value={loginForm.password}
+                      disabled={isSubmitting}
                       onChange={(e) => {
                               setLoginForm((prev) => ({ ...prev, password: e.target.value }));
                               if (fieldErrors.password) validateLoginField('password', e.target.value);

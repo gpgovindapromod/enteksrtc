@@ -39,6 +39,8 @@ export const useSeatGrid = (selectedBus) => {
       return;
     }
 
+    const totalCapacity = selectedBus?.totalSeats || selectedBus?.capacity || selectedBus?.tripDetails?.bus?.totalSeats || selectedBus?.tripDetails?.bus?.capacity || 51;
+
     let cancelled = false;
 
     const fetchSeats = async () => {
@@ -59,11 +61,11 @@ export const useSeatGrid = (selectedBus) => {
           .map(s => String(s.seatNumber));
 
         setBookedSeats(taken);
-        setSeatGridData(generateSeatLayoutData(seatStateMap));
+        setSeatGridData(generateSeatLayoutData(seatStateMap, totalCapacity));
       } catch (err) {
         if (cancelled) return;
         console.error('useSeatGrid: failed to fetch seats', err);
-        setSeatGridData(generateSeatLayoutData([]));
+        setSeatGridData(generateSeatLayoutData([], totalCapacity));
       } finally {
         if (!cancelled) setIsLoadingSeats(false);
       }

@@ -464,25 +464,34 @@
   position: relative;
 }
 
+.password-wrapper .auth-input {
+  padding-right: 44px;
+}
+
 .password-toggle-btn {
   position: absolute;
-  right: 14px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: #94a3b8;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease;
-  z-index: 5;
+  transition: color 0.2s ease, transform 0.1s ease;
+  z-index: 20;
+  pointer-events: auto;
 }
 
 .password-toggle-btn:hover {
   color: #10b981;
+}
+
+.password-toggle-btn:active {
+  transform: translateY(-50%) scale(0.9);
 }
 
 .auth-link-forgot {

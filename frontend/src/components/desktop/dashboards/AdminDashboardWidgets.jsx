@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, Suspense, lazy, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { Users, Bus, TrendingUp, Calendar, CreditCard, ChevronRight, MapPin, Building2, UserCircle, Search, Filter, X } from 'lucide-react';
+import { Users, Bus, TrendingUp, Calendar, CreditCard, ChevronRight, MapPin, Building2, UserCircle, Search, Filter, X, Eye, EyeOff } from 'lucide-react';
 import { getAdminBookings, getAdminActivity, getAdminFleet, getAdminUsers, addAdminFleet, editAdminFleet, deleteAdminFleet, addAdminUser, editAdminUser, deleteAdminUser, toggleUserStatus, addAdminStation, editAdminStation, deleteAdminStation, toggleStationStatus } from '../../../services/adminService';
 
 // Lazy load the charts component
@@ -15,6 +15,7 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
   // Modals state
   const [showBusModal, setShowBusModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [showAdminPassword, setShowAdminPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDepot, setSelectedDepot] = useState('ALL');
   const [showStationModal, setShowStationModal] = useState(false);
@@ -219,13 +220,15 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
   };
 
   const openEditUserModal = (user) => {
+    if (!user) return;
     setEditingUser(user._id);
+    const fullNameParts = (user.fullName || user.name || '').trim().split(/\s+/);
     setUserForm({ 
-      firstName: user.firstName || user.fullName?.split(' ')[0] || '', 
-      lastName: user.lastName || user.fullName?.split(' ').slice(1).join(' ') || '', 
-      email: user.email, 
-      phone: user.phone, 
-      role: user.role, 
+      firstName: user.firstName || fullNameParts[0] || '', 
+      lastName: user.lastName || fullNameParts.slice(1).join(' ') || '', 
+      email: user.email || '', 
+      phone: user.phone || '', 
+      role: user.role || 'USER', 
       password: '',
       depotId: user.depotId?._id || user.depotId || ''
     });
@@ -768,7 +771,13 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
                   <option key={depot._id} value={depot._id}>{depot.depotName}</option>
                 ))}
               </select>
-              <button onClick={openAddBusModal} className="px-4 py-2 bg-[#1a7a40] text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-500/20 whitespace-nowrap">Add New Bus</button>
+              <button 
+                type="button"
+                onClick={openAddBusModal} 
+                className="px-4 py-2 bg-[#1a7a40] hover:bg-[#156333] cursor-pointer text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-500/20 whitespace-nowrap active:scale-95 transition-all"
+              >
+                Add New Bus
+              </button>
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -830,8 +839,20 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
                           </span>
                         </td>
                         <td className="p-4 text-right">
-                          <button onClick={() => openEditBusModal(bus)} className="text-blue-500 hover:text-blue-700 text-sm font-medium mr-3">Edit</button>
-                          <button onClick={() => handleDeleteBus(bus._id)} className="text-red-500 hover:text-red-700 text-sm font-medium">Delete</button>
+                          <button 
+                            type="button" 
+                            onClick={() => openEditBusModal(bus)} 
+                            className="text-blue-500 hover:text-blue-700 text-sm font-medium mr-3 cursor-pointer"
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            type="button" 
+                            onClick={() => handleDeleteBus(bus._id)} 
+                            className="text-red-500 hover:text-red-700 text-sm font-medium cursor-pointer"
+                          >
+                            Delete
+                          </button>
                         </td>
                       </tr>
                     ));
@@ -933,9 +954,25 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
                           </span>
                         </td>
                         <td className="p-4 text-right">
-                          <button onClick={() => openEditUserModal(user)} className="text-blue-500 hover:text-blue-700 text-sm font-medium mr-3">Edit</button>
-                          <button onClick={() => handleDeleteUser(user._id)} className="text-red-500 hover:text-red-700 text-sm font-medium mr-3">Delete</button>
-                          <button onClick={() => handleToggleUserStatus(user._id)} className={`${user.isActive ? 'text-orange-500 hover:text-orange-700' : 'text-green-500 hover:text-green-700'} text-sm font-medium`}>
+                          <button 
+                            type="button" 
+                            onClick={() => openEditUserModal(user)} 
+                            className="text-blue-500 hover:text-blue-700 text-sm font-medium mr-3 cursor-pointer"
+                          >
+                            Edit
+                          </button>
+                          <button 
+                            type="button" 
+                            onClick={() => handleDeleteUser(user._id)} 
+                            className="text-red-500 hover:text-red-700 text-sm font-medium mr-3 cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                          <button 
+                            type="button" 
+                            onClick={() => handleToggleUserStatus(user._id)} 
+                            className={`${user.isActive ? 'text-orange-500 hover:text-orange-700' : 'text-green-500 hover:text-green-700'} text-sm font-medium cursor-pointer`}
+                          >
                             {user.isActive ? 'Suspend' : 'Activate'}
                           </button>
                         </td>
@@ -960,7 +997,7 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
         </Suspense>
       )}
       {showBusModal && createPortal(
-        <div className="fixed inset-0 bg-black/50 z-[9999] flex justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 z-[100000] flex justify-center p-4 overflow-y-auto">
           <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl w-full max-w-md relative my-auto">
             <button onClick={() => setShowBusModal(false)} className="absolute top-4 right-4 p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 hover:text-red-500 z-10">
               <X size={20} />
@@ -1010,7 +1047,7 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
       )}
 
       {showUserModal && createPortal(
-        <div className="fixed inset-0 bg-black/50 z-[9999] flex justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 z-[100000] flex justify-center p-4 overflow-y-auto">
           <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl w-full max-w-md relative my-auto">
             <button onClick={() => setShowUserModal(false)} className="absolute top-4 right-4 p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 hover:text-red-500 z-10">
               <X size={20} />
@@ -1062,7 +1099,23 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
                 {!editingUser && (
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Temporary Password</label>
-                    <input type="password" required value={userForm.password} onChange={e => setUserForm({...userForm, password: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1a7a40]" />
+                    <div className="relative flex items-center">
+                      <input 
+                        type={showAdminPassword ? "text" : "password"} 
+                        required 
+                        value={userForm.password} 
+                        onChange={e => setUserForm({...userForm, password: e.target.value})} 
+                        className="w-full p-3 pr-10 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-[#1a7a40]" 
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowAdminPassword(!showAdminPassword)}
+                        className="absolute right-3 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                        aria-label="Toggle password visibility"
+                      >
+                        {showAdminPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
+                    </div>
                   </div>
                 )}
                 <button type="submit" disabled={isSubmitting} className="w-full py-3 bg-[#1a7a40] hover:bg-[#0ea5e9] text-white font-bold rounded-xl shadow-lg mt-4 transition-colors">
@@ -1076,7 +1129,7 @@ const AdminDashboardWidgets = ({ data, loading, activeTab, filters, setFilters }
       )}
 
       {showStationModal && createPortal(
-        <div className="fixed inset-0 bg-black/50 z-[9999] flex justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 z-[100000] flex justify-center p-4 overflow-y-auto">
           <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl w-full max-w-lg relative my-auto">
             <button onClick={() => setShowStationModal(false)} className="absolute top-4 right-4 p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 hover:text-red-500 z-10">
               <X size={20} />

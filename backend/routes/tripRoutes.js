@@ -3,12 +3,12 @@ import { searchTrips, getSeatAvailability, updateTripStatus } from '../controlle
 import { getTripInventory, blockSeat, unblockSeat } from '../controllers/trip/adminInventoryController.js';
 import { getTripTimetable, updateTripTimetable } from '../controllers/trip/timetableController.js';
 import { createRecurringSchedule, getRecurringSchedules, updateRecurringSchedule } from '../controllers/trip/recurringScheduleController.js';
-import { protect, requireRole } from '../middleware/authMiddleware.js';
+import { protect, requireRole, optionalProtect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.get('/search', searchTrips);
-router.get('/:tripId/seats', getSeatAvailability);
+router.get('/:tripId/seats', optionalProtect, getSeatAvailability);
 
 router.patch('/:tripId/status', protect, requireRole('ADMIN', 'STATION_MASTER'), updateTripStatus);
 router.get('/:tripId/inventory', protect, requireRole('ADMIN', 'STATION_MASTER'), getTripInventory);

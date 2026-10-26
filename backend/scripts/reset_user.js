@@ -7,8 +7,13 @@ import User from '../database/models/User.js';
 async function run() {
     await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI);
     
-    const targetEmail = (process.argv[2] || 'govindapromod@gmail.com').toLowerCase().trim();
-    const newPassword = process.argv[3] || 'user123';
+    const targetEmail = (process.argv[2] || process.env.RESET_USER_EMAIL || '').toLowerCase().trim();
+    const newPassword = process.argv[3] || process.env.RESET_USER_PASSWORD || 'user123';
+
+    if (!targetEmail) {
+        console.error('Usage: node reset_user.js <email> [newPassword]');
+        process.exit(1);
+    }
 
     let user = await User.findOne({ email: targetEmail });
     if (!user) {

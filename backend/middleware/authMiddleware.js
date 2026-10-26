@@ -43,6 +43,35 @@ export const protect = async (req, res, next) => {
     }
 };
 
+export const optionalProtect = async (req, res, next) => {
+    try {
+        const header = req.headers.authorization || "";
+        const bearerToken = header.startsWith("Bearer ") ? header.slice(7) : null;
+        const token = bearerToken || req.cookies?.jwt || req.cookies?.token;
+
+        if (!token) {
+            return next();
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "dev-secret");
+        const userId = decoded.sub || decoded.id;
+        const user = await User.findById(userId);
+
+        if (user && user.isActive) {
+            req.user = {
+                id: user._id.toString(),
+                role: user.role || "passenger",
+                email: user.email,
+                depotId: user.depotId ? user.depotId.toString() : null
+            };
+        }
+        next();
+    } catch {
+        // If token verification fails in optional mode, proceed as guest
+        next();
+    }
+};
+
 export const requireRole = (roles) => {
     return (req, res, next) => {
         if (!req.user || !roles.includes(req.user.role)) {

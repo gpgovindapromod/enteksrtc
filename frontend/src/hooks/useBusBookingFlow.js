@@ -21,6 +21,7 @@ export const useBusBookingFlow = ({
 
   useEffect(() => {
     if (selectedBus) {
+      const totalCapacity = selectedBus?.totalSeats || selectedBus?.capacity || selectedBus?.tripDetails?.bus?.totalSeats || selectedBus?.tripDetails?.bus?.capacity || 51;
       getTripSeatAvailability(selectedBus.id, selectedBus.boardingSequence, selectedBus.droppingSequence)
         .then(seats => {
           const seatStateMap = {};
@@ -28,13 +29,13 @@ export const useBusBookingFlow = ({
             const label = String(s.seatNumber || s.seatNo);
             seatStateMap[label] = { isAvailable: s.isAvailable, status: s.status };
           });
-          setDynamicSeatGridData(generateSeatLayoutData(seatStateMap));
+          setDynamicSeatGridData(generateSeatLayoutData(seatStateMap, totalCapacity));
         })
         .catch(() => {
-          setDynamicSeatGridData(generateSeatLayoutData());
+          setDynamicSeatGridData(generateSeatLayoutData({}, totalCapacity));
         });
     } else {
-      setDynamicSeatGridData(seatGridData || generateSeatLayoutData());
+      setDynamicSeatGridData(seatGridData || generateSeatLayoutData({}, 51));
     }
   }, [selectedBus, seatGridData]);
 

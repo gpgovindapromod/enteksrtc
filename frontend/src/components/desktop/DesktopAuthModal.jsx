@@ -73,6 +73,7 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                         className={`auth-input ${fieldErrors.email ? 'has-error' : ''}`}
                         placeholder="passenger@enteksrtc.com"
                         value={loginForm.email}
+                        disabled={isSubmitting}
                         onChange={(e) => {
                           setLoginForm((prev) => ({ ...prev, email: e.target.value }));
                           if (fieldErrors.email) validateLoginField('email', e.target.value);
@@ -99,6 +100,7 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                         className={`auth-input ${fieldErrors.password ? 'has-error' : ''}`}
                         placeholder="••••••••"
                         value={loginForm.password}
+                        disabled={isSubmitting}
                         onChange={(e) => {
                           setLoginForm((prev) => ({ ...prev, password: e.target.value }));
                           if (fieldErrors.password) validateLoginField('password', e.target.value);
@@ -321,27 +323,47 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
 
                       {otpVerified && (
                         <div className="grid grid-cols-2 gap-3 animate-fade-in-up">
-                          <div className="auth-field-group password-wrapper">
+                          <div className="auth-field-group">
                             <label className="auth-label">Create Password</label>
-                            <input
-                              type={showPassword ? 'text' : 'password'}
-                              className="auth-input"
-                              placeholder="••••••••"
-                              value={signupForm.password}
-                              onChange={(e) => setSignupForm((prev) => ({ ...prev, password: e.target.value }))}
-                              required
-                            />
+                            <div className="auth-input-wrapper password-wrapper">
+                              <input
+                                type={showPassword ? 'text' : 'password'}
+                                className="auth-input"
+                                placeholder="••••••••"
+                                value={signupForm.password}
+                                onChange={(e) => setSignupForm((prev) => ({ ...prev, password: e.target.value }))}
+                                required
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="password-toggle-btn"
+                                aria-label="Toggle password visibility"
+                              >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                              </button>
+                            </div>
                           </div>
                           <div className="auth-field-group">
                             <label className="auth-label">Confirm Password</label>
-                            <input
-                              type={showPassword ? 'text' : 'password'}
-                              className="auth-input"
-                              placeholder="••••••••"
-                              value={signupForm.confirmPassword}
-                              onChange={(e) => setSignupForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
-                              required
-                            />
+                            <div className="auth-input-wrapper password-wrapper">
+                              <input
+                                type={showPassword ? 'text' : 'password'}
+                                className="auth-input"
+                                placeholder="••••••••"
+                                value={signupForm.confirmPassword}
+                                onChange={(e) => setSignupForm((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+                                required
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="password-toggle-btn"
+                                aria-label="Toggle password visibility"
+                              >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                              </button>
+                            </div>
                           </div>
                         </div>
                       )}
