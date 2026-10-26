@@ -186,7 +186,7 @@ const MobileHomeTab = ({
         </div>
 
         {/* Footer */}
-        <footer className="bg-slate-900 text-white w-full relative z-10 pt-16 pb-10 mt-12 border-t border-white/10">
+        <footer id="contact" className="bg-slate-900 text-white w-full relative z-10 pt-16 pb-10 mt-12 border-t border-white/10">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex flex-col gap-10 mb-12">
               
@@ -225,7 +225,7 @@ const MobileHomeTab = ({
                   </h3>
                   <ul className="space-y-4">
                     <li><a className="text-sm text-white/60 hover:text-emerald-500 transition-colors" href="#">Help Center</a></li>
-                    <li><a className="text-sm text-white/60 hover:text-emerald-500 transition-colors" href="#">Contact</a></li>
+                    <li><a className="text-sm text-white/60 hover:text-emerald-500 transition-colors" href="#contact">Contact</a></li>
                     <li><a className="text-sm text-white/60 hover:text-emerald-500 transition-colors" href="#">Grievances</a></li>
                   </ul>
                 </div>

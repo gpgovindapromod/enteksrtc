@@ -79,7 +79,7 @@ const DesktopHome = () => {
           <div className="hidden lg:flex justify-center gap-8 flex-1 px-4">
             <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Home</a>
             <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#routes">Routes</a>
-            <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#">Contact</a>
+            <a className={`drop-shadow-md hover:text-primary hover:scale-105 transition-all duration-300 font-semibold ${isScrolled ? 'text-gray-800 dark:text-white' : 'text-white'}`} href="#contact">Contact</a>
           </div>
           <div className="flex items-center justify-end gap-5">
             <a className={`hidden lg:block drop-shadow-md text-sm hover:text-primary transition-colors duration-300 font-medium ${isScrolled ? 'text-gray-600 dark:text-white/70' : 'text-white/80'}`} href="#">Kerala Tourism</a>
@@ -303,7 +303,7 @@ const DesktopHome = () => {
         <div className="mt-20"><Marquee /></div>
       </main>
 
-      <footer className="bg-slate-900 text-white w-full relative z-10 pt-20 pb-10 mt-20 border-t border-white/10">
+      <footer id="contact" className="bg-slate-900 text-white w-full relative z-10 pt-20 pb-10 mt-20 border-t border-white/10">
         <div className="max-w-container-max mx-auto px-edge-margin-mobile md:px-edge-margin-desktop">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
             <div className="col-span-1 md:col-span-4 pr-8">
@@ -342,7 +342,7 @@ const DesktopHome = () => {
               <div>
                 <h3 className="font-headline-md text-lg font-bold text-white mb-6 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-primary"></span> Support</h3>
                 <ul className="space-y-4">
-                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Contact Us</a></li>
+                  <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#contact">Contact Us</a></li>
                   <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Help Center / FAQ</a></li>
                   <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">File a Complaint</a></li>
                   <li><a className="text-sm text-white/60 hover:text-primary transition-colors flex items-center gap-2 group" href="#">Feedback</a></li>

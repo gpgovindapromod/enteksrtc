@@ -197,8 +197,6 @@ const DesktopDashboard = ({ theme, toggleTheme, onLogout }) => {
             {activeRole === ROLES.PASSENGER && (
               <>
                 <button className="text-emerald-500 font-bold border-b-2 border-emerald-500 pb-1">Discover</button>
-                <button className="hover:text-slate-900 dark:text-white transition-colors">Routes</button>
-                <button className="hover:text-slate-900 dark:text-white transition-colors">Experience</button>
               </>
             )}
           </div>
