@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { getStationMasterDashboard, getDepotStaff, addDepotStaff, updateDepotStaff, getDepotFleet, updateDepotFleet, getDepotTrips, getDepotManifest, updateDepotTrip } from '../../../services/stationMasterService';
-import { Users, Bus, Route, MapPin, CheckCircle, AlertTriangle, Play, X, User as UserIcon, Clock, Bell, Info } from 'lucide-react';
+import { Users, Bus, Route, MapPin, CheckCircle, AlertTriangle, Play, X, User as UserIcon, Clock, Bell, Info, RefreshCw } from 'lucide-react';
 import { useNotifications } from '../../../hooks/useNotifications';
 import { NotificationItem } from '../../notifications/NotificationItem';
 
-const OverviewTab = ({ data }) => {
+const OverviewTab = ({ data, loading, error, onRefresh, lastUpdated }) => {
   const { notifications, unreadCount, markOneRead } = useNotifications();
   return (
     <div className="space-y-8 animate-fade-in-up">
@@ -22,14 +22,33 @@ const OverviewTab = ({ data }) => {
             {data?.depot?.address || 'Loading depot info...'}
           </p>
         </div>
-        <div className="flex items-center gap-2 ente-badge-pill">
+        <div className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
           </span>
-          <span className="text-xs font-bold text-emerald-500">System Online</span>
+          <span className="text-xs font-bold text-emerald-500 mr-2">System Online</span>
+          <button
+            type="button"
+            onClick={onRefresh}
+            disabled={loading}
+            className="ente-badge-pill py-1.5 px-3 text-xs font-bold disabled:opacity-60"
+            aria-label="Refresh station overview"
+          >
+            <RefreshCw size={13} className={loading ? 'animate-spin' : ''} />
+            Refresh
+          </button>
         </div>
       </div>
+
+      {error && (
+        <div className="flex items-center justify-between gap-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/20 dark:text-amber-300">
+          <span>{error} Showing the last available overview.</span>
+          <button type="button" onClick={onRefresh} className="font-bold underline">
+            Try again
+          </button>
+        </div>
+      )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -141,6 +160,11 @@ const OverviewTab = ({ data }) => {
           Use the sidebar to manage your depot's staff, view active fleet status, and monitor scheduled trips and passenger manifests. 
           You can update maintenance statuses and reassign driver/conductor roles for your assigned depot.
         </p>
+        {lastUpdated && (
+          <p className="text-xs text-blue-700/70 dark:text-blue-300/70 mt-3">
+            Last updated: {lastUpdated.toLocaleTimeString()}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -546,34 +570,53 @@ const StationMasterDashboard = ({ activeTab }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const requestIdRef = useRef(0);
 
-  useEffect(() => {
-    if (activeTab !== 'Overview') {
-        setLoading(false);
-        return;
-    }
-    const fetchDashboard = async () => {
+  const fetchDashboard = useCallback(async () => {
+      const requestId = ++requestIdRef.current;
+      setError(null);
+      setLoading(true);
+
       try {
         const res = await getStationMasterDashboard();
+        if (requestId !== requestIdRef.current) return;
+
         if (res?.success) {
-          setData(res.data);
+          const nextData = res.data || {};
+          setData(nextData);
+          setLastUpdated(new Date());
         } else {
-          setError('Failed to load dashboard data');
+          throw new Error(res?.message || 'Failed to load dashboard data.');
         }
       } catch (err) {
-        setError(err.message || 'An error occurred');
+        if (requestId === requestIdRef.current) {
+          setError(err.message || 'Unable to refresh dashboard data.');
+        }
       } finally {
-        setLoading(false);
+        if (requestId === requestIdRef.current) {
+          setLoading(false);
+        }
       }
-    };
+  }, []);
+
+  useEffect(() => {
+    if (activeTab !== 'Overview') return undefined;
+
     fetchDashboard();
-  }, [activeTab]);
+    const refreshTimer = window.setInterval(fetchDashboard, 30000);
+
+    return () => {
+      window.clearInterval(refreshTimer);
+      requestIdRef.current += 1;
+    };
+  }, [activeTab, fetchDashboard]);
 
   if (activeTab === 'Staff') return <StaffTab />;
   if (activeTab === 'Fleet') return <FleetTab />;
   if (activeTab === 'Trips') return <TripsTab />;
 
-  if (loading) return (
+  if (loading && !data) return (
     <div className="flex items-center justify-center h-64">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
     </div>
@@ -585,7 +628,15 @@ const StationMasterDashboard = ({ activeTab }) => {
     </div>
   );
 
-  return <OverviewTab data={data} />;
+  return (
+    <OverviewTab
+      data={data}
+      loading={loading}
+      error={error}
+      onRefresh={fetchDashboard}
+      lastUpdated={lastUpdated}
+    />
+  );
 };
 
 export default StationMasterDashboard;
