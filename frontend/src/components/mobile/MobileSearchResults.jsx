@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { ArrowLeft, RotateCcw, CheckCircle2, Info, SlidersHorizontal, ArrowDownWideNarrow, X, ChevronDown, ChevronUp, Clock, Download } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Bus, RotateCcw, CheckCircle2, Info, SlidersHorizontal, ArrowDownWideNarrow, X, ChevronDown, ChevronUp, Clock, Download } from 'lucide-react';
 import MobileBookingWidget from './MobileBookingWidget';
 import { useBusSearch } from '../../hooks/useBusSearch';
 import { useSeatGrid } from '../../hooks/useSeatGrid';
@@ -504,6 +504,5 @@ const MobileSearchResults = ({
 };
 
 export default MobileSearchResults;
-
 
 
