@@ -337,7 +337,7 @@ const MobileLayout = () => {
           setShowLoginModal={setShowLoginModal}
           onLoginSuccess={(user, token) => {
             setAuthSession({ user, token });
-            navigate('/profile');
+            navigate('/dashboard', { replace: true });
           }}
         />
       )}

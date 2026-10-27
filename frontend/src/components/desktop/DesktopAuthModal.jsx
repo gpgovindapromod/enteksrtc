@@ -81,6 +81,9 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                         onBlur={(e) => validateLoginField('email', e.target.value)}
                         required
                       />
+                      {fieldErrors.signup_age && (
+                        <span className="auth-field-error">{fieldErrors.signup_age}</span>
+                      )}
                     </div>
                     {fieldErrors.email && (
                       <span className="auth-field-error">{fieldErrors.email}</span>
@@ -222,6 +225,9 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                             onBlur={(e) => validateSignupField('age', e.target.value, signupForm)}
                             required
                           />
+                          {fieldErrors.signup_phone && (
+                            <span className="auth-field-error">{fieldErrors.signup_phone}</span>
+                          )}
                         </div>
                       </div>
 
@@ -343,6 +349,9 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                               </button>
                             </div>
+                            {fieldErrors.signup_password && (
+                              <span className="auth-field-error">{fieldErrors.signup_password}</span>
+                            )}
                           </div>
                           <div className="auth-field-group">
                             <label className="auth-label">Confirm Password</label>
@@ -364,6 +373,9 @@ const DesktopAuthModal = ({ show, onClose, onLoginSuccess }) => {
                                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                               </button>
                             </div>
+                            {fieldErrors.signup_confirmPassword && (
+                              <span className="auth-field-error">{fieldErrors.signup_confirmPassword}</span>
+                            )}
                           </div>
                         </div>
                       )}

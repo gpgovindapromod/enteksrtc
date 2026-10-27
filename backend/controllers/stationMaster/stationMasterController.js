@@ -3,6 +3,7 @@ import Bus from '../../database/models/Bus.js';
 import Trip from '../../database/models/Trip.js';
 import Depot from '../../database/models/Depot.js';
 import Booking from '../../database/models/Booking.js';
+import BookingSeat from '../../database/models/BookingSeat.js';
 import bcrypt from 'bcrypt';
 
 // Dashboard Overview
@@ -154,7 +155,7 @@ export const updateDepotFleet = async (req, res, next) => {
         // Station masters can only update maintenance status and basic non-identifying info
         const { status, maintenanceHistory } = req.body;
         
-        if (status && ['ACTIVE', 'MAINTENANCE', 'RETIRED'].includes(status)) {
+        if (status && ['ACTIVE', 'MAINTENANCE', 'INACTIVE'].includes(status)) {
             bus.status = status;
         }
         
@@ -205,7 +206,38 @@ export const getDepotManifest = async (req, res, next) => {
             .populate('droppingStop', 'stopName')
             .lean();
 
-        res.status(200).json({ success: true, data: bookings });
+        const bookingIds = bookings.map((booking) => booking._id);
+        const seats = await BookingSeat.find({ bookingId: { $in: bookingIds } })
+            .select('bookingId seatNo passengerName age gender')
+            .lean();
+        const seatsByBooking = new Map();
+
+        seats.forEach((seat) => {
+            const bookingId = seat.bookingId.toString();
+            const existing = seatsByBooking.get(bookingId) || [];
+            existing.push(seat);
+            seatsByBooking.set(bookingId, existing);
+        });
+
+        const manifest = bookings.map((booking) => {
+            const bookingSeats = seatsByBooking.get(booking._id.toString()) || [];
+            const firstSeat = bookingSeats[0];
+
+            return {
+                ...booking,
+                seats: bookingSeats,
+                seatNumbers: bookingSeats.map((seat) => seat.seatNo),
+                boardingPoint: booking.boardingStop,
+                droppingPoint: booking.droppingStop,
+                passengerId: booking.passengerId || (firstSeat ? {
+                    firstName: firstSeat.passengerName,
+                    age: firstSeat.age,
+                    gender: firstSeat.gender
+                } : null)
+            };
+        });
+
+        res.status(200).json({ success: true, data: manifest });
     } catch (error) {
         next(error);
     }

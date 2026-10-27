@@ -105,8 +105,9 @@ const DesktopLayout = () => {
             show={showLoginModal}
             onClose={() => setShowLoginModal(false)}
             onLoginSuccess={(user, token) => {
+              setShowLoginModal(false);
               setAuthSession({ user, token });
-              navigate('/dashboard');
+              navigate('/dashboard', { replace: true });
             }}
           />
         )}
@@ -124,4 +125,3 @@ const DesktopLayout = () => {
 };
 
 export default DesktopLayout;
-

@@ -65,7 +65,10 @@ export const sendPhoneOtp = async (phone, recaptchaContainerId) => {
 
   if (!hasFirebaseConfig || !auth) {
     console.warn("Mocking sendPhoneOtp due to missing Firebase config");
-    return { confirmationResult: { mock: true }, phone: normalizedPhone };
+    return {
+      confirmationResult: { mock: true, phone: normalizedPhone },
+      phone: normalizedPhone
+    };
   }
 
   if (recaptchaVerifier) {
@@ -93,8 +96,7 @@ export const confirmPhoneOtp = async (confirmationResult, otp) => {
 
   if (!hasFirebaseConfig || !auth) {
     console.warn("Mocking confirmPhoneOtp due to missing Firebase config");
-    // Return a mock token string if using dev environment without real keys
-    return "mock_firebase_id_token";
+    return `mock_firebase_id_token:${confirmationResult.phone}`;
   }
 
   try {

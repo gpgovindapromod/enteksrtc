@@ -152,7 +152,7 @@ const StaffTab = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '', lastName: '', email: '', phone: '',
-    role: 'DRIVER', password: 'password123', gender: 'MALE', dob: '', employeeId: ''
+    role: 'DRIVER', password: 'password123', gender: 'Male', dob: '', employeeId: ''
   });
 
   const loadStaff = () => {
@@ -180,7 +180,7 @@ const StaffTab = () => {
       loadStaff();
       setFormData({
         firstName: '', lastName: '', email: '', phone: '',
-        role: 'DRIVER', password: 'password123', gender: 'MALE', dob: '', employeeId: ''
+        role: 'DRIVER', password: 'password123', gender: 'Male', dob: '', employeeId: ''
       });
     } else {
       alert(res?.message || 'Failed to add staff');
@@ -211,9 +211,9 @@ const StaffTab = () => {
             <option value="CONDUCTOR">Conductor</option>
           </select>
           <select className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 outline-none focus:border-primary" value={formData.gender} onChange={e => setFormData({...formData, gender: e.target.value})}>
-            <option value="MALE">Male</option>
-            <option value="FEMALE">Female</option>
-            <option value="OTHER">Other</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
           </select>
           <button type="submit" className="md:col-span-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-colors">
             Save Staff Member
@@ -269,11 +269,19 @@ const FleetTab = () => {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(null);
 
-  const fetchFleet = () => {
-    getDepotFleet().then(res => {
-      if (res?.success) setFleet(res.data);
+  const [error, setError] = useState('');
+
+  const fetchFleet = async () => {
+    try {
+      setError('');
+      const res = await getDepotFleet();
+      if (res?.success) setFleet(res.data || []);
+      else setError(res?.message || 'Unable to load fleet.');
+    } catch (err) {
+      setError(err.message || 'Unable to load fleet.');
+    } finally {
       setLoading(false);
-    });
+    }
   };
 
   useEffect(() => {
@@ -288,12 +296,13 @@ const FleetTab = () => {
       if (res?.success) fetchFleet();
       else alert(res?.message || 'Failed to update bus status');
     } catch (err) {
-      alert('An error occurred');
+      alert(err.message || 'An error occurred');
     }
     setUpdating(null);
   };
 
   if (loading) return <div className="p-8 text-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div></div>;
+  if (error) return <div className="p-8 text-center text-red-500 font-semibold">{error}</div>;
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 animate-fade-in-up">
@@ -333,7 +342,7 @@ const FleetTab = () => {
                   >
                     <option value="ACTIVE">ACTIVE</option>
                     <option value="MAINTENANCE">MAINTENANCE</option>
-                    <option value="RETIRED">RETIRED</option>
+                    <option value="INACTIVE">INACTIVE</option>
                   </select>
                 </td>
               </tr>
@@ -351,12 +360,18 @@ const TripsTab = () => {
   const [loading, setLoading] = useState(true);
   const [manifest, setManifest] = useState(null);
   const [viewingTrip, setViewingTrip] = useState(null);
+  const [error, setError] = useState('');
 
   const fetchData = async () => {
     try {
+      setError('');
       const [tripsRes, staffRes] = await Promise.all([getDepotTrips(), getDepotStaff()]);
-      if (tripsRes?.success) setTrips(tripsRes.data);
-      if (staffRes?.success) setStaff(staffRes.data.filter(s => s.role === 'CONDUCTOR' && s.isActive));
+      if (tripsRes?.success) setTrips(tripsRes.data || []);
+      else throw new Error(tripsRes?.message || 'Unable to load trips.');
+      if (staffRes?.success) setStaff((staffRes.data || []).filter(s => s.role === 'CONDUCTOR' && s.isActive));
+      else throw new Error(staffRes?.message || 'Unable to load staff.');
+    } catch (err) {
+      setError(err.message || 'Unable to load depot operations.');
     } finally {
       setLoading(false);
     }
@@ -368,30 +383,45 @@ const TripsTab = () => {
 
   const handleUpdateStatus = async (tripId, newStatus) => {
     if (!window.confirm(`Mark trip as ${newStatus}?`)) return;
-    const res = await updateDepotTrip(tripId, { status: newStatus });
-    if (res?.success) fetchData();
-    else alert(res?.message || 'Failed to update trip status');
+    try {
+      const res = await updateDepotTrip(tripId, { status: newStatus });
+      if (res?.success) fetchData();
+      else alert(res?.message || 'Failed to update trip status');
+    } catch (err) {
+      alert(err.message || 'Failed to update trip status');
+    }
   };
 
   const handleAssignConductor = async (tripId, conductorId) => {
     if (!conductorId) return;
-    const res = await updateDepotTrip(tripId, { conductorId });
-    if (res?.success) {
-      alert('Conductor assigned successfully');
-      fetchData();
-    } else {
-      alert(res?.message || 'Failed to assign conductor');
+    try {
+      const res = await updateDepotTrip(tripId, { conductorId });
+      if (res?.success) {
+        alert('Conductor assigned successfully');
+        fetchData();
+      } else {
+        alert(res?.message || 'Failed to assign conductor');
+      }
+    } catch (err) {
+      alert(err.message || 'Failed to assign conductor');
     }
   };
 
   const loadManifest = async (trip) => {
     setViewingTrip(trip);
     setManifest(null);
-    const res = await getDepotManifest(trip._id);
-    if (res?.success) setManifest(res.data);
+    try {
+      const res = await getDepotManifest(trip._id);
+      if (res?.success) setManifest(res.data || []);
+      else setManifest([]);
+    } catch (err) {
+      setManifest([]);
+      alert(err.message || 'Unable to load passenger manifest.');
+    }
   };
 
   if (loading) return <div className="p-8 text-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div></div>;
+  if (error) return <div className="p-8 text-center text-red-500 font-semibold">{error}</div>;
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 p-6 animate-fade-in-up">
@@ -489,15 +519,15 @@ const TripsTab = () => {
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
                     {manifest.map(b => (
                       <tr key={b._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
-                        <td className="p-3 font-bold text-emerald-600 dark:text-emerald-400">{b.seatNumbers.join(', ')}</td>
+                        <td className="p-3 font-bold text-emerald-600 dark:text-emerald-400">{(b.seatNumbers || []).join(', ') || 'N/A'}</td>
                         <td className="p-3">
                           <div className="font-mono text-xs text-slate-500 mb-1">{b.bookingNumber}</div>
                           <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1">
-                            {b.passengerId?.fullName} <span className="text-xs font-normal text-slate-500">({b.passengerId?.age}{b.passengerId?.gender?.charAt(0)})</span>
+                            {b.passengerId?.fullName || [b.passengerId?.firstName, b.passengerId?.lastName].filter(Boolean).join(' ') || 'Passenger'} <span className="text-xs font-normal text-slate-500">({b.passengerId?.age || '—'}{b.passengerId?.gender ? b.passengerId.gender.charAt(0) : ''})</span>
                           </div>
                         </td>
-                        <td className="p-3 text-slate-600 dark:text-slate-300">{b.boardingPoint?.stopName}</td>
-                        <td className="p-3 text-slate-600 dark:text-slate-300">{b.droppingPoint?.stopName}</td>
+                        <td className="p-3 text-slate-600 dark:text-slate-300">{b.boardingPoint?.stopName || 'Origin'}</td>
+                        <td className="p-3 text-slate-600 dark:text-slate-300">{b.droppingPoint?.stopName || 'Destination'}</td>
                       </tr>
                     ))}
                   </tbody>

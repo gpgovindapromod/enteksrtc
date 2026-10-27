@@ -56,6 +56,28 @@ export const verifyFirebaseIdToken = async (idToken) => {
         throw error;
     }
 
+    // The frontend has a mock OTP flow for local development without Firebase
+    // credentials. Never accept this token format in production.
+    if (idToken.startsWith("mock_firebase_id_token:")) {
+        if (process.env.NODE_ENV === "production") {
+            const error = new Error("Firebase phone verification is required.");
+            error.statusCode = 401;
+            throw error;
+        }
+
+        const phoneNumber = idToken.slice("mock_firebase_id_token:".length);
+        if (!/^\+\d{8,15}$/.test(phoneNumber)) {
+            const error = new Error("Invalid development phone verification token.");
+            error.statusCode = 401;
+            throw error;
+        }
+
+        return {
+            uid: `mock-${phoneNumber}`,
+            phone_number: phoneNumber
+        };
+    }
+
     try {
         return await getAuth(getFirebaseApp()).verifyIdToken(idToken);
     } catch (error) {

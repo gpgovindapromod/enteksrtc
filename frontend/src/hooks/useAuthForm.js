@@ -47,6 +47,7 @@ export const useAuthForm = (onLoginSuccess, onClose, recaptchaContainerId) => {
       setSignupForm((prev) => ({ ...prev, phone: response.phone }));
       setConfirmationResult(response.confirmationResult);
       setOtpSent(true);
+      setOtpVerified(false);
     } catch (error) {
       setAuthError(error.message || 'Failed to send OTP');
     } finally {
@@ -62,6 +63,9 @@ export const useAuthForm = (onLoginSuccess, onClose, recaptchaContainerId) => {
     setAuthError('');
     setVerifyingOtp(true);
     try {
+      if (!confirmationResult) {
+        throw new Error('Request an OTP before verifying it.');
+      }
       const idToken = await confirmPhoneOtp(confirmationResult, signupForm.otp);
       await verifyOtp(idToken);
       setSignupForm((prev) => ({ ...prev, firebaseIdToken: idToken }));
@@ -139,6 +143,7 @@ export const useAuthForm = (onLoginSuccess, onClose, recaptchaContainerId) => {
           password: loginForm.password,
         });
         onLoginSuccess?.(result.user, result.token);
+        return;
       } else if (authMode === 'signup') {
         const normalizedSignupForm = {
           ...signupForm,
@@ -156,6 +161,10 @@ export const useAuthForm = (onLoginSuccess, onClose, recaptchaContainerId) => {
         const isConfirmPasswordValid = validateSignupField('confirmPassword', normalizedSignupForm.confirmPassword, normalizedSignupForm);
         
         if (!isNameValid || !isAgeValid || !isEmailValid || !isPhoneValid || !isPasswordValid || !isConfirmPasswordValid) {
+          if (signupTab === 'optional') {
+            setSignupTab('mandatory');
+          }
+          setAuthError('Please correct the highlighted fields before creating your account.');
           setIsSubmitting(false);
           return;
         }
@@ -179,6 +188,7 @@ export const useAuthForm = (onLoginSuccess, onClose, recaptchaContainerId) => {
           throw new Error('Account creation did not complete. Please try again.');
         }
         onLoginSuccess?.(result.user, result.token);
+        return;
       } else if (authMode === 'forgot_password') {
         const isPhoneValid = validateSignupField('phone', signupForm.phone, signupForm);
         const isPasswordValid = validateSignupField('password', signupForm.password, signupForm);
@@ -215,7 +225,11 @@ export const useAuthForm = (onLoginSuccess, onClose, recaptchaContainerId) => {
 
       onClose?.();
     } catch (error) {
-      setAuthError(error?.message || 'Unable to complete account creation. Please try again.');
+      setAuthError(
+        error?.response?.data?.message ||
+        error?.message ||
+        'Unable to complete account creation. Please try again.'
+      );
     } finally {
       setIsSubmitting(false);
     }
